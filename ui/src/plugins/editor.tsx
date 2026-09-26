@@ -1,4 +1,4 @@
-// Markdown editor pane: a <textarea> with list continuation, indentation and save.
+// Markdown editor pane (one per tab): a <textarea> with list continuation, indentation and save.
 import { type KeyboardEvent, useEffect, useRef } from 'react';
 import type { App } from '../core/app';
 import type { PaneProps, Plugin } from '../core/types';
@@ -38,22 +38,22 @@ function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
   if (edit) applyEdit(ta, edit);
 }
 
-function Editor({ app, active }: PaneProps) {
+function Editor({ app, tab, active }: PaneProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
-  // The textarea is uncontrolled (keeps the browser's undo history); sync it on load.
+  // The textarea is uncontrolled (keeps the browser's undo history); sync it when this tab loads.
   useEffect(() => {
-    if (ref.current && app.doc) ref.current.value = app.doc.raw;
-    return app.on('doc:loaded', (doc, { reset }) => {
+    if (ref.current && tab.doc) ref.current.value = tab.doc.raw;
+    return app.on('doc:loaded', (doc, { reset, tab: loaded }) => {
       const ta = ref.current;
-      if (!ta || ta.value === doc.raw) return;
+      if (loaded !== tab || !ta || ta.value === doc.raw) return;
       const { selectionStart, selectionEnd, scrollTop } = ta;
       ta.value = doc.raw;
       if (reset) return ta.setSelectionRange(0, 0);
       ta.setSelectionRange(selectionStart, selectionEnd);
       ta.scrollTop = scrollTop;
     });
-  }, [app]);
+  }, [app, tab]);
 
   useEffect(() => {
     if (active) ref.current?.focus();
@@ -63,10 +63,12 @@ function Editor({ app, active }: PaneProps) {
     <textarea
       ref={ref}
       hidden={!active}
+      data-editor={tab.id}
       spellCheck={false}
+      aria-label={tab.doc?.name}
       onKeyDown={onKeyDown}
-      onInput={(e) => app.update(e.currentTarget.value)}
-      className="block h-screen w-full resize-none bg-bg px-[max(40px,calc((100%-820px)/2))] pt-8 pb-20 font-mono text-[calc(14px*var(--zoom,1))] leading-relaxed text-fg outline-none [tab-size:4]"
+      onInput={(e) => app.update(e.currentTarget.value, tab)}
+      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(14px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
     />
   );
 }
@@ -74,14 +76,15 @@ function Editor({ app, active }: PaneProps) {
 function ModeToggle({ app }: { app: App }) {
   useAppVersion(app);
   if (!app.doc) return null;
+  const editing = app.mode === 'edit';
   return (
     <button
       type="button"
-      title="表示 / 編集の切替 (Ctrl+E)"
+      title={`${app.t('cmd.view.toggleEdit')} (Ctrl+E)`}
       onClick={() => app.run('view.toggleEdit')}
-      className="fixed top-2.5 right-4 z-10 cursor-pointer rounded-md border border-line bg-bg px-2.5 py-1.5 text-xs text-muted opacity-60 hover:opacity-100"
+      className="absolute top-2 right-5 z-10 cursor-pointer rounded-md border border-line bg-bg px-2.5 py-1 text-muted text-xs opacity-70 hover:opacity-100 print:hidden"
     >
-      {app.mode === 'edit' ? 'View' : 'Edit'}
+      {app.t(editing ? 'mode.view' : 'mode.edit')}
     </button>
   );
 }
@@ -91,14 +94,18 @@ const editor: Plugin = {
   setup(app) {
     app.addPane('edit', Editor);
     app.addOverlay(ModeToggle);
+    const hasDoc = () => !!app.doc;
     app.command({
       id: 'view.toggleEdit',
-      title: '表示 / 編集の切替',
+      title: 'cmd.view.toggleEdit',
       keys: ['Ctrl+E'],
-      run: () => app.doc && app.setMode(app.mode === 'edit' ? 'view' : 'edit'),
+      run: () => app.setMode(app.mode === 'edit' ? 'view' : 'edit'),
+      enabled: hasDoc,
+      checked: () => app.mode === 'edit',
     });
-    app.command({ id: 'file.save', title: '保存', keys: ['Ctrl+S'], run: () => app.save() });
-    app.backend.onCloseRequested(() => app.confirmDiscard());
+    app.command({ id: 'file.save', title: 'cmd.file.save', keys: ['Ctrl+S'], run: () => app.save(), enabled: hasDoc });
+    app.addMenuItem({ menu: 'edit', command: 'view.toggleEdit', group: 10 });
+    app.addMenuItem({ menu: 'file', command: 'file.save', group: 20 });
   },
 };
 export default editor;

@@ -22,7 +22,7 @@ mdviewer の価値は **「必要十分で、余計な機能がない」** こ�
 | シンタックスハイライト | 言語定義が重い。コードは等幅＋背景色で十分読める |
 | リッチなエディタ（CodeMirror 等）、ライブプレビュー | `textarea` + Markdown 用の編集操作で十分 |
 | `.tex` ファイル（LaTeX 文書全体）の組版 | TeX エンジンが必要で、ビューアの範囲を超える。Markdown 内の数式には対応済み |
-| タブ・ファイルツリー・履歴 | ファイルごとにウィンドウを開けば足りる |
+| ファイルツリー・セッションの復元 | ファイルはエクスプローラーから開けば足りる。タブと戻る／進むで行き来できる |
 | 実行時プラグイン | サイズ・起動速度・安全性とトレードオフになる |
 
 ## 開発環境
@@ -57,6 +57,7 @@ cargo test --workspace
 - ロジックを追加するときはテストも書く。Rust は同じファイルの `#[cfg(test)]`、UI は同じ場所の `*.test.ts(x)`（Vitest）
 - `src-tauri/src/commands.rs` は薄く保つ。処理は `mdcore` に置く
 - UI の状態とロジックは `ui/src/core` と `ui/src/lib` に置き、React・DOM に依存させない。React の部品には、つなぎ込みと表示だけを書く
+- 画面に出す文字列は直接書かず、`ui/src/i18n/ja.ts` と `en.ts` の両方にキーを追加して `app.t(key)` で使う（片方に足りないキーがあると型チェックで失敗する）。コマンドの `title` もメッセージのキー
 - TypeScript は `strict`。`any` は使わない。整形と Lint は Biome（`npm run format` で自動修正）
 - **セキュリティ**: WebView（画面側）は信頼しない。ファイルのパスを画面側から受け取って読み書きする IPC を追加しない（`src-tauri/src/session.rs` を通す）。文書由来のパスは `mdcore::paths::resolve_relative` で解決する。詳しくは [SECURITY.md](SECURITY.md)
 - スタイルは Tailwind のユーティリティとテーマ色（`text-fg`, `bg-bg` など）で書く。Markdown 本文のスタイルは `ui/src/styles/markdown.css` に書く

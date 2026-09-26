@@ -6,6 +6,7 @@ members = ["crates/mdcore", "src-tauri"]
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+authors = ["Kenichiro Murata"]
 repository = "https://github.com/muraken720/mdviewer"
 
 [workspace.dependencies]

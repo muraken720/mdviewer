@@ -1,43 +1,51 @@
-// Viewer pane: shows the rendered document (or the start screen / an error), plus toasts.
+// Viewer pane (one per tab): the rendered document in its own scroll area, or the start screen.
+// Also shows toasts.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { StartScreen } from '../components/StartScreen';
 import type { App } from '../core/app';
-import type { Pane, PaneProps, Plugin } from '../core/types';
+import type { PaneProps, Plugin } from '../core/types';
 import { useAppVersion } from '../core/useApp';
 import { sanitize } from '../lib/sanitize';
 
-/** The viewer pane. `scroll.reset` is set when a new document is opened. */
-function createViewer(scroll: { reset: boolean }): Pane {
-  return function Viewer({ app, active }: PaneProps) {
-    useAppVersion(app);
-    const ref = useRef<HTMLElement>(null);
-    const html = app.doc?.html;
-    const safeHtml = useMemo(() => (html === undefined ? '' : sanitize(html)), [html]);
+function Viewer({ app, tab, active }: PaneProps) {
+  useAppVersion(app);
+  const scroller = useRef<HTMLDivElement>(null);
+  const article = useRef<HTMLElement>(null);
+  const html = tab.doc?.html;
+  const safeHtml = useMemo(() => (html === undefined ? '' : sanitize(html)), [html]);
 
-    useLayoutEffect(() => {
-      if (!ref.current || html === undefined) return;
-      if (scroll.reset) {
-        window.scrollTo(0, 0);
-        scroll.reset = false;
-      }
-      app.emit('view:updated', ref.current);
-    }, [app, html]);
+  useLayoutEffect(() => {
+    if (article.current && html !== undefined) app.emit('view:updated', article.current, tab);
+  }, [app, tab, html]);
 
-    return (
-      <main hidden={!active} className="mx-auto max-w-[900px] px-10 pt-8 pb-20 [zoom:var(--zoom,1)]">
-        {app.error ? (
-          <p className="text-caution">{app.error}</p>
-        ) : app.doc ? (
+  // Restore this tab's scroll position when it is shown or a page is loaded (history, reload).
+  const doc = tab.doc;
+  useLayoutEffect(() => {
+    if (active && scroller.current && doc) scroller.current.scrollTop = tab.scroll;
+  }, [active, doc, tab]);
+
+  return (
+    <div
+      ref={scroller}
+      hidden={!active}
+      data-viewer={tab.id}
+      onScroll={(e) => {
+        tab.scroll = e.currentTarget.scrollTop;
+      }}
+      className="h-full overflow-auto print:overflow-visible"
+    >
+      <main className="mx-auto max-w-[900px] px-4 pt-6 pb-16 sm:px-8 sm:pt-8 lg:px-10 [zoom:var(--zoom,1)]">
+        {tab.doc ? (
           // Rendered by Rust, sanitised by lib/sanitize.ts, and scripts are blocked by the CSP in
           // src-tauri/tauri.conf.json. Plugins post-process it on `view:updated`.
           // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitised document HTML (see above)
-          <article ref={ref} className="markdown" dangerouslySetInnerHTML={{ __html: safeHtml }} />
+          <article ref={article} className="markdown" dangerouslySetInnerHTML={{ __html: safeHtml }} />
         ) : (
           <StartScreen app={app} />
         )}
       </main>
-    );
-  };
+    </div>
+  );
 }
 
 function Toast({ app }: { app: App }) {
@@ -47,7 +55,7 @@ function Toast({ app }: { app: App }) {
     const off = app.on('toast', (m) => {
       setMessage(m);
       clearTimeout(timer);
-      timer = setTimeout(() => setMessage(null), 5000);
+      timer = setTimeout(() => setMessage(null), 6000);
     });
     return () => {
       off();
@@ -58,7 +66,7 @@ function Toast({ app }: { app: App }) {
   return (
     <div
       role="alert"
-      className="fixed bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-md bg-caution px-4 py-2 text-sm text-white shadow"
+      className="-translate-x-1/2 fixed bottom-4 left-1/2 z-30 w-max max-w-[calc(100vw-2rem)] break-words rounded-md bg-caution px-4 py-2 text-sm text-white shadow"
     >
       {message}
     </div>
@@ -68,12 +76,8 @@ function Toast({ app }: { app: App }) {
 const view: Plugin = {
   name: 'view',
   setup(app) {
-    const scroll = { reset: false };
-    app.addPane('view', createViewer(scroll));
+    app.addPane('view', Viewer);
     app.addOverlay(Toast);
-    app.on('doc:loaded', (_doc, { reset }) => {
-      if (reset) scroll.reset = true;
-    });
   },
 };
 export default view;

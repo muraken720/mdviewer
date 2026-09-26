@@ -28,7 +28,7 @@ function ZoomBadge({ app }: { app: App }) {
   }, [app]);
   if (!label) return null;
   return (
-    <div className="pointer-events-none fixed right-4 bottom-4 z-10 rounded-md bg-fg px-2.5 py-1 text-xs text-bg">
+    <div className="pointer-events-none absolute right-5 bottom-4 z-10 rounded-md bg-fg px-2.5 py-1 text-xs text-bg">
       {label}
     </div>
   );
@@ -50,12 +50,15 @@ const zoom: Plugin = {
     app.addOverlay(ZoomBadge);
     app.command({
       id: 'zoom.in',
-      title: '拡大（Ctrl+ホイールでも可）',
-      keys: ['Ctrl+=', 'Ctrl++', 'Ctrl+;'],
+      title: 'cmd.zoom.in',
+      keys: ['Ctrl++', 'Ctrl+=', 'Ctrl+;'],
       run: () => set(level + STEP),
     });
-    app.command({ id: 'zoom.out', title: '縮小', keys: ['Ctrl+-'], run: () => set(level - STEP) });
-    app.command({ id: 'zoom.reset', title: '100% に戻す', keys: ['Ctrl+0'], run: () => set(1) });
+    app.command({ id: 'zoom.out', title: 'cmd.zoom.out', keys: ['Ctrl+-'], run: () => set(level - STEP) });
+    app.command({ id: 'zoom.reset', title: 'cmd.zoom.reset', keys: ['Ctrl+0'], run: () => set(1) });
+    app.addMenuItem({ menu: 'view', command: 'zoom.in', group: 10, order: 1 });
+    app.addMenuItem({ menu: 'view', command: 'zoom.out', group: 10, order: 2 });
+    app.addMenuItem({ menu: 'view', command: 'zoom.reset', group: 10, order: 3 });
 
     window.addEventListener(
       'wheel',
