@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import "@fontsource-variable/noto-sans-jp";
+@import "./markdown.css";
+
+/* Colors are CSS variables so light/dark follow the OS; Tailwind utilities map onto them
+   (text-fg, bg-bg, border-line, text-muted, bg-caution, ...). */
+:root {
+  --fg: #1f2328; --muted: #59636e; --bg: #ffffff; --line: #d1d9e0;
+  --code-bg: #f6f8fa; --link: #0969da;
+  --note: #0969da; --tip: #1a7f37; --important: #8250df; --warning: #9a6700; --caution: #d1242f;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e6edf3; --muted: #9198a1; --bg: #0d1117; --line: #3d444d;
+    --code-bg: #151b23; --link: #4493f8;
+    --note: #4493f8; --tip: #3fb950; --important: #ab7df8; --warning: #d29922; --caution: #f85149;
+  }
+}
+
+/* Color emoji fonts, listed explicitly (as GitHub does) so emoji do not depend on the OS's
+   automatic font fallback. Windows: Segoe UI Emoji / Symbol; macOS: Apple Color Emoji; Linux: Noto. */
+:root { --font-emoji: "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji"; }
+
+@theme inline {
+  --font-sans: "Noto Sans JP Variable", "Noto Sans JP", system-ui, sans-serif, var(--font-emoji);
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, "DejaVu Sans Mono", "Noto Sans Mono", "Noto Sans JP Variable", "Noto Sans JP", monospace, var(--font-emoji);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-bg: var(--bg);
+  --color-line: var(--line);
+  --color-code: var(--code-bg);
+  --color-link: var(--link);
+  --color-caution: var(--caution);
+}
+
+html, body { background: var(--bg); color: var(--fg); }
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media print {
+  button, [role="alert"] { display: none !important; }
+  main { max-width: none !important; padding: 0 !important; }
+}
