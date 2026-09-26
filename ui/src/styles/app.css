@@ -3,8 +3,8 @@
 @import "./markdown.css";
 
 /* Colors are CSS variables; Tailwind utilities map onto them (text-fg, bg-bg, border-line,
-   text-muted, bg-caution, ...). The theme plugin sets <html data-theme="light|dark"> from the
-   View menu setting; without it (plugin turned off) the OS setting decides. */
+   text-muted, bg-caution, ...). The theme plugin sets <html data-theme="light|dark"> (View menu;
+   the OS setting on first launch); without it (plugin turned off) the OS setting decides. */
 :root {
   --fg: #1f2328; --muted: #59636e; --bg: #ffffff; --line: #d1d9e0;
   --code-bg: #f6f8fa; --link: #0969da;

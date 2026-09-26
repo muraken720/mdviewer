@@ -4,7 +4,7 @@ import { fakeBackend } from '../test/fake-backend';
 import { checkForChange } from './auto-reload';
 import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
-import theme, { parseTheme, resolveTheme } from './theme';
+import theme, { initialTheme, parseTheme } from './theme';
 import { windowTitle } from './title';
 import { clampZoom, MAX, MIN } from './zoom';
 
@@ -71,23 +71,32 @@ test('typeset renders inline, display and ```math blocks with KaTeX', async () =
   expect(root.textContent).toContain('\\badcommand'); // unknown commands are shown (in red), not thrown
 });
 
-test('parseTheme and resolveTheme', () => {
+test('parseTheme and initialTheme', () => {
   expect(parseTheme('dark')).toBe('dark');
-  expect(parseTheme('purple')).toBe('auto');
-  expect(parseTheme(null)).toBe('auto');
-  expect(resolveTheme('auto', true)).toBe('dark');
-  expect(resolveTheme('auto', false)).toBe('light');
-  expect(resolveTheme('light', true)).toBe('light');
-  expect(resolveTheme('dark', false)).toBe('dark');
+  expect(parseTheme('auto')).toBeNull(); // value from an earlier build
+  expect(parseTheme(null)).toBeNull();
+  expect(initialTheme(null, true)).toBe('dark');
+  expect(initialTheme(null, false)).toBe('light');
+  expect(initialTheme('light', true)).toBe('light');
+  expect(initialTheme('dark', false)).toBe('dark');
 });
 
-test('theme: the saved choice is applied at startup, and a new choice is saved', () => {
-  const backend = fakeBackend();
-  const saved = new Map<string, string>([['theme', 'dark']]);
-  const storage = {
+function memory(initial: Record<string, string> = {}) {
+  const saved = new Map(Object.entries(initial));
+  return {
+    saved,
     get: (k: string) => saved.get(k) ?? null,
     set: (k: string, v: string | number) => void saved.set(k, String(v)),
   };
+}
+
+test('theme: first launch saves the detected theme; later launches keep the saved one', () => {
+  const first = memory();
+  new App({ backend: fakeBackend(), storage: first }).use(theme);
+  expect(first.saved.get('theme')).toMatch(/^(light|dark)$/); // jsdom has no matchMedia: light
+
+  const storage = memory({ theme: 'dark' });
+  const backend = fakeBackend();
   const app = new App({ backend, storage }).use(theme);
   expect(document.documentElement.dataset.theme).toBe('dark');
   expect(backend.calls).toContainEqual(['setTheme', 'dark']);
@@ -95,10 +104,8 @@ test('theme: the saved choice is applied at startup, and a new choice is saved',
 
   app.run('theme.light');
   expect(document.documentElement.dataset.theme).toBe('light');
-  expect(saved.get('theme')).toBe('light');
+  expect(storage.saved.get('theme')).toBe('light');
+  expect(backend.calls).toContainEqual(['setTheme', 'light']);
   expect(app.getCommand('theme.light')?.checked?.()).toBe(true);
-
-  app.run('theme.auto');
-  expect(saved.get('theme')).toBe('auto');
-  expect(backend.calls).toContainEqual(['setTheme', null]);
+  expect(app.getCommand('theme.auto')).toBeUndefined();
 });

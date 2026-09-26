@@ -18,7 +18,6 @@ export const en: Messages = {
   'cmd.zoom.in': 'Zoom In',
   'cmd.zoom.out': 'Zoom Out',
   'cmd.zoom.reset': 'Actual Size',
-  'cmd.theme.auto': 'Theme: Automatic (system)',
   'cmd.theme.light': 'Theme: Light',
   'cmd.theme.dark': 'Theme: Dark',
   'cmd.lang.auto': 'Language: Automatic (system)',

@@ -47,7 +47,7 @@ Documentation is in Japanese; issues and pull requests in English are welcome.
 | 拡大・縮小 | <kbd>Ctrl</kbd>+ホイール / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd>（<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%）。倍率は次回も維持 |
 | 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd>。未保存の編集は上書きしない |
 | リンク | `#見出し` は文書内ジャンプ、`other.md` はビューアで開く、`https://` は既定のブラウザで開く |
-| テーマ（ダークモード） | 「表示」メニューで 自動（OS の設定に追従）／ライト／ダーク を選べる（選択は次回も維持）。図（Mermaid）の色も切り替わる |
+| テーマ（ダークモード） | 「表示」メニューで ライト／ダーク を切り替え（選択は次回も維持）。初回起動時は Windows の設定に合わせて自動で選ぶ。図（Mermaid）の色も切り替わる |
 | 日本語フォント | Noto Sans JP を同梱（PC にインストールされていなくても同じ見た目） |
 | 絵文字 | ✅ ⚠️ 🚀 などをカラーで表示（Windows では Segoe UI Emoji）。国旗の絵文字は Windows の制約で文字（`JP` など）になる。`:rocket:` のようなショートコードは変換しない |
 

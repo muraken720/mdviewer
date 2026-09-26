@@ -1,20 +1,21 @@
-// Color theme: automatic (follows the OS), light or dark. The choice is remembered.
-// The resolved theme is set as <html data-theme="light|dark">; app.css picks colors from it.
+// Color theme: light or dark, chosen from the View menu and remembered.
+// On the first launch (nothing saved yet) the OS setting decides, and that choice is saved.
+// The theme is set as <html data-theme="light|dark">; app.css picks colors from it.
 
 import type { Plugin } from '../core/types';
 
-export type ThemeSetting = 'auto' | 'light' | 'dark';
 export type Theme = 'light' | 'dark';
 
-const OPTIONS: ThemeSetting[] = ['auto', 'light', 'dark'];
+const OPTIONS: Theme[] = ['light', 'dark'];
 
-export function parseTheme(value: unknown): ThemeSetting {
-  return OPTIONS.includes(value as ThemeSetting) ? (value as ThemeSetting) : 'auto';
+/** The saved theme, or null if none was saved yet (or the value is unknown). */
+export function parseTheme(value: unknown): Theme | null {
+  return OPTIONS.includes(value as Theme) ? (value as Theme) : null;
 }
 
-export function resolveTheme(setting: ThemeSetting, systemDark: boolean): Theme {
-  if (setting === 'auto') return systemDark ? 'dark' : 'light';
-  return setting;
+/** The theme to use: the saved one, else the OS setting. */
+export function initialTheme(saved: unknown, systemDark: boolean): Theme {
+  return parseTheme(saved) ?? (systemDark ? 'dark' : 'light');
 }
 
 /** The theme in effect (also used by plugins that draw their own colors, such as Mermaid). */
@@ -27,34 +28,28 @@ export function currentTheme(): Theme {
 const theme: Plugin = {
   name: 'theme',
   setup(app) {
-    let setting = parseTheme(app.storage.get('theme'));
-    const media = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+    let current = initialTheme(app.storage.get('theme'), systemDark);
 
     const apply = () => {
-      const resolved = resolveTheme(setting, media?.matches ?? false);
-      if (document.documentElement.dataset.theme === resolved) return;
-      document.documentElement.dataset.theme = resolved;
-      app.emit('plugin:theme', resolved);
+      app.storage.set('theme', current);
+      // The window frame (title bar) follows too.
+      void app.backend.setTheme(current).catch(() => {});
+      if (document.documentElement.dataset.theme === current) return;
+      document.documentElement.dataset.theme = current;
+      app.emit('plugin:theme', current);
     };
-    const set = (next: ThemeSetting) => {
-      setting = next;
-      app.storage.set('theme', next);
-      // The window frame (title bar) follows too; `null` hands it back to the OS.
-      void app.backend.setTheme(next === 'auto' ? null : next).catch(() => {});
-      apply();
-      app.emit('plugin:theme-setting', next);
-    };
-
-    void app.backend.setTheme(setting === 'auto' ? null : setting).catch(() => {});
     apply();
-    media?.addEventListener?.('change', apply);
 
     OPTIONS.forEach((option, i) => {
       app.command({
         id: `theme.${option}`,
         title: `cmd.theme.${option}`,
-        run: () => set(option),
-        checked: () => setting === option,
+        run: () => {
+          current = option;
+          apply();
+        },
+        checked: () => current === option,
       });
       app.addMenuItem({ menu: 'view', command: `theme.${option}`, group: 80, order: i });
     });
