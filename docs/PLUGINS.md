@@ -69,7 +69,8 @@ Markdown プラグインは既定で有効です。`settings.json` の `"plugins
 ## UI プラグイン（JavaScript）
 
 `{ name, setup(app) }` を default export する ES Module を `ui/plugins/` に置き、`ui/plugins/index.js` の配列に加えます。
-`enabledByDefault: false` を付けると既定で無効になり、`settings.json` で `true` にしたときだけ読み込まれます（例: `mermaid.js`）。
+`enabledByDefault: false` を付けると既定で無効になり、`settings.json` で `true` にしたときだけ読み込まれます。
+既定で無効にするのは、利用者によっては邪魔になる振る舞いを持つ場合に限ります。**同梱ファイルは無効でも exe に含まれるので、サイズ対策にはなりません**（サイズ・速度は遅延読み込みで対処します）。
 
 重いライブラリが必要なときは `ui/vendor/<name>/` に置き、`setup` では読み込まず、実際に必要になった時点で `<script>` を追加して読み込みます（`mermaid.js` の `loadMermaid()` を参照）。
 

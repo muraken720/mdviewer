@@ -20,7 +20,7 @@
 | ダークモード | OS の設定に追従 |
 
 対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パス画像。
-Mermaid は既定で無効のプラグインです（[設定](#設定) で有効化）。
+```` ```mermaid ```` ブロックは図として描画します（Mermaid 11）。
 
 ### エディタ
 
@@ -44,7 +44,7 @@ Mermaid は既定で無効のプラグインです（[設定](#設定) で有効
 ```json
 {
   "plugins": {
-    "mermaid": true,
+    "mermaid": false,
     "auto-reload": false
   }
 }
@@ -52,7 +52,7 @@ Mermaid は既定で無効のプラグインです（[設定](#設定) で有効
 
 | プラグイン | 既定 | 内容 |
 |---|---|---|
-| `mermaid` | 無効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
+| `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込むので、起動速度には影響しない |
 | `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
 | `editor`, `zoom`, `links`, `auto-reload`, `title`, `open-file`, `view` | 有効 | 各 UI 機能 |
 

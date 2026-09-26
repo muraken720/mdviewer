@@ -1,5 +1,6 @@
 // Built-in UI plugins, in load order. Add or remove UI features here.
-// Plugins with `enabledByDefault: false` are turned on in settings.json (see docs/PLUGINS.md).
+// Any plugin can be turned off in settings.json; plugins with `enabledByDefault: false` must be
+// turned on there (see docs/PLUGINS.md).
 import view from './view.js';
 import editor from './editor.js';
 import title from './title.js';

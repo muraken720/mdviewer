@@ -1,6 +1,7 @@
-// Mermaid diagrams for ```mermaid code blocks. Off by default: enable with
-//   { "plugins": { "mermaid": true } }  in settings.json.
-// The library (ui/vendor/mermaid, ~3.5 MB) is loaded only when a document contains a diagram.
+// Mermaid diagrams for ```mermaid code blocks. Disable with
+//   { "plugins": { "mermaid": false } }  in settings.json.
+// The library (ui/vendor/mermaid, ~3.5 MB) is loaded only when a document contains a diagram,
+// so it costs nothing at startup.
 const SRC = 'vendor/mermaid/mermaid.min.js';
 
 let loading = null;
@@ -43,7 +44,6 @@ async function renderDiagrams(root) {
 
 export default {
   name: 'mermaid',
-  enabledByDefault: false,
   setup(app) {
     const $view = document.getElementById('view');
     const run = () => renderDiagrams($view).catch((e) => console.error(e));
