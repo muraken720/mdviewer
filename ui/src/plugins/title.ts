@@ -11,6 +11,7 @@ const title: Plugin = {
     const update = () => void app.backend.setTitle(windowTitle(app.doc, app.dirty));
     app.on('doc:loaded', update);
     app.on('doc:dirty', update);
+    app.on('tabs:changed', update);
   },
 };
 export default title;

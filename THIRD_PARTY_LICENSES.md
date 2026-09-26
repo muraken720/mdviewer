@@ -6610,7 +6610,7 @@ DEALINGS IN THE SOFTWARE.
 ```
 ### MIT License
 
-Used by: cfg-if 1.0.5
+Used by: cfg-if 1.0.5, socket2 0.6.5
 
 ```text
 Copyright (c) 2014 Alex Crichton
@@ -6638,6 +6638,32 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+```
+### MIT License
+
+Used by: mio 1.2.3
+
+```text
+Copyright (c) 2014 Carl Lerche and other MIO contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 ```
 ### MIT License
@@ -7543,7 +7569,7 @@ DEALINGS IN THE SOFTWARE.
 ```
 ### MIT License
 
-Used by: tracing-core 0.1.36, tracing 0.1.44
+Used by: tracing-attributes 0.1.31, tracing-core 0.1.36, tracing 0.1.44
 
 ```text
 Copyright (c) 2019 Tokio Contributors
@@ -8447,7 +8473,7 @@ developed by Chen Jiaju, licensed under the MIT License and the Apache License 2
 ```
 ### MIT License
 
-Used by: mdcore 0.1.0, mdviewer 0.1.0, brotli-decompressor 5.0.3, dpi 0.1.2, tauri-codegen 2.6.3, tauri-macros 2.6.3, tauri-plugin-dialog 2.7.3, tauri-plugin-fs 2.5.2, tauri-plugin-opener 2.5.5, tauri-runtime-wry 2.11.4, tauri-runtime 2.11.3, tauri-utils 2.9.3, tauri 2.11.6, unic-char-property 0.9.0, unic-char-range 0.9.0, unic-common 0.9.0, unic-ucd-ident 0.9.0, unic-ucd-version 0.9.0, webview2-com-macros 0.8.1, webview2-com-sys 0.38.2, webview2-com 0.38.2, windows-collections 0.2.0, windows-core 0.61.2, windows-future 0.2.1, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.1.3, windows-link 0.2.1, windows-numerics 0.2.0, windows-result 0.3.4, windows-strings 0.4.2, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.1.0, windows-version 0.1.7, windows 0.61.3, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
+Used by: mdcore 0.1.0, mdviewer 0.1.0, brotli-decompressor 5.0.3, dpi 0.1.2, tauri-codegen 2.6.3, tauri-macros 2.6.3, tauri-plugin-dialog 2.7.3, tauri-plugin-fs 2.5.2, tauri-plugin-opener 2.5.5, tauri-plugin-single-instance 2.4.5, tauri-runtime-wry 2.11.4, tauri-runtime 2.11.3, tauri-utils 2.9.3, tauri 2.11.6, unic-char-property 0.9.0, unic-char-range 0.9.0, unic-common 0.9.0, unic-ucd-ident 0.9.0, unic-ucd-version 0.9.0, webview2-com-macros 0.8.1, webview2-com-sys 0.38.2, webview2-com 0.38.2, windows-collections 0.2.0, windows-core 0.61.2, windows-future 0.2.1, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.1.3, windows-link 0.2.1, windows-numerics 0.2.0, windows-result 0.3.4, windows-strings 0.4.2, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.1.0, windows-version 0.1.7, windows 0.61.3, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
 
 ```text
 MIT License

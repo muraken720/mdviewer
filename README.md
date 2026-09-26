@@ -21,6 +21,12 @@ Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in
 | 機能 | 操作 |
 |---|---|
 | Markdown を整形表示 | `.md` をダブルクリック / ウィンドウにドロップ / <kbd>Ctrl</kbd>+<kbd>O</kbd> |
+| タブ | 別のファイルは新しいタブで開く（起動中に別の `.md` をダブルクリックしても同じウィンドウのタブに開く）。<kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> で切替、<kbd>Ctrl</kbd>+<kbd>W</kbd> で閉じる |
+| 戻る・進む | 文書内のリンクで開いた文書は同じタブに開き、<kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd>、タブバー左のボタン、マウスの戻る／進むボタン、「移動」メニューで行き来できる（スクロール位置も戻る） |
+| 検索 | <kbd>Ctrl</kbd>+<kbd>F</kbd>。一致箇所をハイライトし件数を表示。<kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd>（または <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>）で次／前へ |
+| メニュー | ファイル・編集・表示・移動・ヘルプ。<kbd>Alt</kbd> または <kbd>F10</kbd> でメニューへ移動、<kbd>Alt</kbd>+<kbd>F</kbd> などで直接開く |
+| 言語 | メニューは日本語と英語。OS の言語設定に合わせて自動で選び、「表示」メニューで切り替えられる（選択は次回も維持） |
+| ヘルプ | <kbd>F1</kbd> でショートカット一覧。「ヘルプ → mdviewer について」でバージョン・作者・ライセンス |
 | 編集モードに切替 | <kbd>Ctrl</kbd>+<kbd>E</kbd> または右上のボタン（もう一度押すと、編集内容をビューアに反映して表示） |
 | 保存 | <kbd>Ctrl</kbd>+<kbd>S</kbd>（元ファイルの改行コード CRLF/LF と BOM を維持）。未保存の間はタイトルに `●` |
 | 拡大・縮小 | <kbd>Ctrl</kbd>+ホイール / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd>（<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%）。倍率は次回も維持 |
@@ -86,13 +92,13 @@ Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in
 | `math` | 有効 | 数式。KaTeX は数式を含む文書を開いたときだけ読み込む |
 | `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
 | `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
-| `editor`, `zoom`, `links`, `auto-reload`, `title`, `open-file`, `view` | 有効 | 各 UI 機能 |
+| `menu`, `tabs`, `view`, `editor`, `find`, `language`, `help`, `zoom`, `links`, `auto-reload`, `title`, `open-file` | 有効 | 各 UI 機能 |
 
 設定の変更は次回起動時に反映されます。
 
 ### やらないこと
 
-シンタックスハイライト、ライブプレビュー（左右分割）、タブ、ファイルツリー、エクスポートなど。
+シンタックスハイライト、ライブプレビュー（左右分割）、ファイルツリー、セッションの復元、エクスポートなど。
 理由と判断基準は [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) を参照してください。
 
 ## インストール

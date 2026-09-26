@@ -1,38 +1,18 @@
 import type { App } from '../core/app';
+import type { Command } from '../core/types';
+import { ShortcutList } from './ShortcutList';
 
-/** Shown when no document is open: how to open one, and the shortcut list built from commands. */
+const HIGHLIGHTS = ['file.open', 'view.toggleEdit', 'find.open', 'nav.back', 'help.shortcuts'];
+
+/** Shown in an empty tab: how to open a file and the main shortcuts. */
 export function StartScreen({ app }: { app: App }) {
-  const commands = app.commands().flatMap((c) => (c.title && c.keys?.[0] ? [{ ...c, key: c.keys[0] }] : []));
+  const commands = HIGHLIGHTS.map((id) => app.getCommand(id)).filter((c): c is Command => !!c);
   return (
-    <div className="pt-[18vh] text-center text-muted">
-      <p>Markdown ファイルをドロップ、またはダブルクリックで開きます</p>
-      <table className="mx-auto mt-6 text-left text-sm">
-        <tbody>
-          {commands.map((c) => (
-            <tr key={c.id}>
-              <td className="py-1 pr-6 whitespace-nowrap">
-                <Keys spec={c.key} />
-              </td>
-              <td className="py-1">{c.title}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col items-center px-4 pt-[15vh] text-center text-muted">
+      <p>{app.t('start.open')}</p>
+      <div className="mt-6">
+        <ShortcutList app={app} commands={commands} />
+      </div>
     </div>
-  );
-}
-
-function Keys({ spec }: { spec: string }) {
-  const parts = spec.split(/\+(?=.)/);
-  return (
-    <>
-      {parts.map((p, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: static list; the same key can repeat
-        <span key={i}>
-          {i > 0 && '+'}
-          <kbd className="rounded border border-b-2 border-line px-1.5 py-0.5 font-mono text-xs">{p}</kbd>
-        </span>
-      ))}
-    </>
   );
 }

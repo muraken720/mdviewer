@@ -27,11 +27,12 @@ export function anchorId(href: string): string {
   }
 }
 
-export function followLink(app: App, href: string | null): void {
+export function followLink(app: App, href: string | null, root: ParentNode = document): void {
   if (!href) return;
   switch (classifyLink(href)) {
     case 'anchor':
-      document.getElementById(anchorId(href))?.scrollIntoView();
+      // Look up the id inside this tab's document only (several tabs can have the same ids).
+      root.querySelector(`[id="${CSS.escape(anchorId(href))}"]`)?.scrollIntoView();
       break;
     case 'web':
       void app.backend.openUrl(href);
@@ -58,7 +59,7 @@ const links: Plugin = {
         const a = (e.target as Element).closest('a, area');
         if (!a) return;
         e.preventDefault();
-        if (e.type === 'click') followLink(app, a.getAttribute('href') ?? a.getAttribute('xlink:href'));
+        if (e.type === 'click') followLink(app, a.getAttribute('href') ?? a.getAttribute('xlink:href'), root);
       };
       root.addEventListener('click', onClick);
       root.addEventListener('auxclick', onClick);

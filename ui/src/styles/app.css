@@ -34,7 +34,14 @@
   --color-caution: var(--caution);
 }
 
+html, body, #root { height: 100%; }
 html, body { background: var(--bg); color: var(--fg); }
+/* Each tab scrolls in its own pane; the window itself does not scroll. */
+body { overflow: hidden; }
+
+/* Find in page (CSS Custom Highlight API). */
+::highlight(find) { background-color: #fff08a; color: #1f2328; }
+::highlight(find-current) { background-color: #ff9f43; color: #1f2328; }
 body {
   font-family: var(--font-sans);
   font-size: 16px;
@@ -43,6 +50,8 @@ body {
 }
 
 @media print {
-  button, [role="alert"] { display: none !important; }
+  body { overflow: visible; }
+  button, [role="alert"], [role="search"] { display: none !important; }
   main { max-width: none !important; padding: 0 !important; }
+  [role="tabpanel"] { position: static !important; }
 }
