@@ -1,11 +1,11 @@
 import { expect, test } from 'vitest';
 import { App } from '../core/app';
 import { fakeBackend } from '../test/fake-backend';
-import { classifyLink } from './links';
-import { clampZoom, MAX, MIN } from './zoom';
 import { checkForChange } from './auto-reload';
-import { windowTitle } from './title';
+import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
+import { windowTitle } from './title';
+import { clampZoom, MAX, MIN } from './zoom';
 
 test('classifyLink', () => {
   expect(classifyLink('#intro')).toBe('anchor');
@@ -13,10 +13,18 @@ test('classifyLink', () => {
   expect(classifyLink('MAILTO:a@b')).toBe('web');
   expect(classifyLink('other.md')).toBe('file');
   expect(classifyLink('../docs/a.md#x')).toBe('file');
-  expect(classifyLink('C:\\notes\\a.md')).toBe('file');
+  expect(classifyLink('C:\\notes\\a.md')).toBe('ignore');
+  expect(classifyLink('//evil/share/a.md')).toBe('ignore');
+  expect(classifyLink('\\\\evil\\share\\a.md')).toBe('ignore');
+  expect(classifyLink('/etc/a.md')).toBe('ignore');
   expect(classifyLink('javascript:alert(1)')).toBe('ignore');
   expect(classifyLink('file:///c/a.md')).toBe('ignore');
   expect(classifyLink('')).toBe('ignore');
+});
+
+test('anchorId decodes, and tolerates malformed input', () => {
+  expect(anchorId('#%E6%A6%82%E8%A6%81')).toBe('概要');
+  expect(anchorId('#100%')).toBe('100%');
 });
 
 test('clampZoom', () => {

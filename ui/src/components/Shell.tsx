@@ -10,6 +10,7 @@ export function Shell({ app }: { app: App }) {
         <Pane key={mode} app={app} active={app.mode === mode} />
       ))}
       {app.overlays().map((Overlay, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: overlays are registered once at startup and never reordered
         <Overlay key={i} app={app} />
       ))}
     </>

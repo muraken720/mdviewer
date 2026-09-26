@@ -1,5 +1,15 @@
 import { expect, test } from 'vitest';
-import { applyEdit, enter, inCodeFence, indent, outdent, parseListItem, toggleWrap, type EditorState, type Edit } from './markdown-edit';
+import {
+  applyEdit,
+  type Edit,
+  type EditorState,
+  enter,
+  inCodeFence,
+  indent,
+  outdent,
+  parseListItem,
+  toggleWrap,
+} from './markdown-edit';
 
 // Write states with "|" for the cursor, or "[" "]" for a selection.
 function state(src: string): EditorState {
@@ -12,7 +22,7 @@ function state(src: string): EditorState {
   return { text: src.replace('[', '').replace(']', ''), start, end };
 }
 function show(text: string, [s, e]: [number, number]) {
-  return s === e ? text.slice(0, s) + '|' + text.slice(s) : text.slice(0, s) + '[' + text.slice(s, e) + ']' + text.slice(e);
+  return s === e ? `${text.slice(0, s)}|${text.slice(s)}` : `${text.slice(0, s)}[${text.slice(s, e)}]${text.slice(e)}`;
 }
 function run(op: (s: EditorState) => Edit | null, src: string) {
   const s = state(src);
@@ -78,7 +88,15 @@ test('toggleWrap wraps and unwraps', () => {
 });
 
 test('parseListItem', () => {
-  expect(parseListItem('  12. [ ] x')).toEqual({ prefix: '  12. [ ] ', indent: '  ', marker: '12.', num: 12, delim: '.', space: ' ', task: '[ ] ' });
+  expect(parseListItem('  12. [ ] x')).toEqual({
+    prefix: '  12. [ ] ',
+    indent: '  ',
+    marker: '12.',
+    num: 12,
+    delim: '.',
+    space: ' ',
+    task: '[ ] ',
+  });
   expect(parseListItem('-no space')).toBeNull();
   expect(parseListItem('text')).toBeNull();
 });

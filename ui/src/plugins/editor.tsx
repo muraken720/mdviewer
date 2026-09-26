@@ -1,9 +1,9 @@
 // Markdown editor pane: a <textarea> with list continuation, indentation and save.
-import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { type KeyboardEvent, useEffect, useRef } from 'react';
 import type { App } from '../core/app';
 import type { PaneProps, Plugin } from '../core/types';
 import { useAppVersion } from '../core/useApp';
-import { enter, indent, outdent, toggleWrap, type Edit, type EditOperation } from '../lib/markdown-edit';
+import { type Edit, type EditOperation, enter, indent, outdent, toggleWrap } from '../lib/markdown-edit';
 
 const KEYS: Record<string, EditOperation> = {
   Enter: enter,

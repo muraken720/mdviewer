@@ -1,11 +1,20 @@
 # mdviewer
 
+[![CI](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 軽量・高速な Windows 向け Markdown ビューア／エディタ。
 生成AIが書き出した `.md` を、HTML に変換せずそのまま読みやすく表示し、その場で直すためのツールです。
 
 - **軽い**: exe 単体で約 11 MB、うち約 5 MB は日本語フォント（Noto Sans JP）。描画には OS 標準の WebView2 を使うので、ブラウザエンジンは同梱しない（Rust + Tauri 2）
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
 - **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ
+
+## English
+
+mdviewer is a small, fast Markdown viewer/editor for Windows, made for reading the Markdown that AI tools produce without converting it to HTML first.
+It renders GitHub Flavored Markdown, math (KaTeX: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`) and Mermaid diagrams, has a minimal editor with list continuation, and auto-reloads when the file changes.
+Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in Japanese; issues and pull requests in English are welcome.
 
 ## 機能
 
@@ -21,7 +30,9 @@
 | 日本語フォント | Noto Sans JP を同梱（PC にインストールされていなくても同じ見た目） |
 | 絵文字 | ✅ ⚠️ 🚀 などをカラーで表示（Windows では Segoe UI Emoji）。国旗の絵文字は Windows の制約で文字（`JP` など）になる。`:rocket:` のようなショートコードは変換しない |
 
-対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パス画像、数式、図。
+対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、画像、数式、図。
+
+画像は、文書からの相対パス（`![](img/a.png)` など）と https の URL を表示します。安全のため、絶対パス（`C:\...`）やネットワーク共有（`\\server\...`）の画像、リンク先は開きません（[SECURITY.md](SECURITY.md)）。
 
 ### 数式（TeX / LaTeX）
 
@@ -109,6 +120,7 @@ UI は TypeScript + React + Tailwind CSS（Vite でビルド）、Markdown の�
 npm ci                           # 依存パッケージのインストール
 npm run tauri dev                # 開発実行（UI はホットリロード）
 npm test                         # UI テスト（Vitest）
+npm run lint                     # Lint + フォーマット確認（Biome）
 npm run typecheck                # 型チェック
 cargo test --workspace           # Rust テスト（先に npm run build が必要）
 npm run tauri build              # リリースビルド + インストーラ作成（Windows 上で実行）
@@ -119,6 +131,7 @@ Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.a
 - 構成と設計: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - プラグインの作り方: [docs/PLUGINS.md](docs/PLUGINS.md)
 - コントリビュート: [CONTRIBUTING.md](CONTRIBUTING.md)
+- セキュリティ: [SECURITY.md](SECURITY.md)
 
 ## ライセンス
 
@@ -130,5 +143,6 @@ Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.a
 |---|---|
 | [React](https://react.dev/) | MIT |
 | [KaTeX](https://katex.org/)（フォントを含む） | MIT |
+| [DOMPurify](https://github.com/cure53/DOMPurify) | Apache-2.0 または MPL-2.0 |
 | [Mermaid](https://mermaid.js.org/) | MIT |
 | [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（[Fontsource](https://fontsource.org/)） | SIL Open Font License 1.1 |

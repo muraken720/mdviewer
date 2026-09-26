@@ -10,21 +10,35 @@ export interface Doc {
   mtime: number;
 }
 
-/** Host services. `backend/tauri.ts` implements it for the app; tests use `test/fake-backend.ts`. */
+/**
+ * Host services. `backend/tauri.ts` implements it for the app; tests use `test/fake-backend.ts`.
+ *
+ * The host decides which files may be read or written (see src-tauri/src/session.rs): the UI can
+ * open only files the user chose or relative links from the current document, and `reload`,
+ * `render`, `save` and `mtime` always act on the current document.
+ */
 export interface Backend {
   settings(): Promise<Settings>;
-  load(path: string, base?: string | null): Promise<Doc>;
-  render(text: string, path: string): Promise<string>;
-  /** Returns the new modification time. */
-  save(path: string, text: string): Promise<number>;
-  mtime(path: string): Promise<number>;
+  /** Open a file the user chose (command line, dialog, drop). */
+  open(path: string): Promise<Doc>;
+  /** Open a relative link found in the current document. */
+  openLink(href: string): Promise<Doc>;
+  /** Re-read the current document. */
+  reload(): Promise<Doc>;
+  /** Render unsaved text as if it were the current document. */
+  render(text: string): Promise<string>;
+  /** Save to the current document; returns the new modification time. */
+  save(text: string): Promise<number>;
+  /** Modification time of the current document (0 if unknown). */
+  mtime(): Promise<number>;
   pickFile(): Promise<string | null>;
   /** OK/Cancel dialog; resolves true for OK. */
   ask(message: string): Promise<boolean>;
   openUrl(url: string): Promise<void>;
   initialPath(): Promise<string | null>;
   setTitle(title: string): Promise<void>;
-  onDrop(cb: (paths: string[]) => void): void;
+  /** The user dropped a file on the window. */
+  onOpenRequest(cb: (path: string) => void): void;
   /** `cb` resolves false to cancel closing. */
   onCloseRequested(cb: () => Promise<boolean>): void;
 }
@@ -73,7 +87,7 @@ export interface AppEvents {
   'doc:saved': [doc: Doc];
   'doc:error': [error: unknown];
   'mode:changed': [mode: Mode];
-  'toast': [message: string];
+  toast: [message: string];
   /** The viewer's element after its HTML was replaced (plugins post-process it). */
   'view:updated': [root: HTMLElement];
   [custom: `plugin:${string}`]: unknown[];

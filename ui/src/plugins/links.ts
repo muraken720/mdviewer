@@ -4,25 +4,40 @@ import type { Plugin } from '../core/types';
 
 export type LinkKind = 'anchor' | 'web' | 'file' | 'ignore';
 
+/**
+ * What clicking a link does. Only plain relative paths open in the viewer: absolute paths, drive
+ * letters and network shares (`//host`, `\\host`) are ignored. The Rust side enforces the same
+ * rules (src-tauri/src/session.rs); this just avoids pointless requests.
+ */
 export function classifyLink(href: string | null): LinkKind {
   if (!href) return 'ignore';
   if (href.startsWith('#')) return 'anchor';
   if (/^(https?:|mailto:)/i.test(href)) return 'web';
-  if (/^[a-z]:[\\/]/i.test(href)) return 'file'; // Windows absolute path (C:\...)
-  if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return 'ignore'; // javascript:, file:, etc.
+  if (/^[\\/]/.test(href) || href.includes(':')) return 'ignore'; // absolute, UNC, other schemes
   return 'file';
 }
 
+/** Element id for "#fragment" (tolerates malformed percent-encoding). */
+export function anchorId(href: string): string {
+  const raw = href.slice(1);
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 export function followLink(app: App, href: string | null): void {
+  if (!href) return;
   switch (classifyLink(href)) {
     case 'anchor':
-      document.getElementById(decodeURIComponent(href!.slice(1)))?.scrollIntoView();
+      document.getElementById(anchorId(href))?.scrollIntoView();
       break;
     case 'web':
-      void app.backend.openUrl(href!);
+      void app.backend.openUrl(href);
       break;
     case 'file':
-      void app.open(href!, app.doc?.path ?? null);
+      void app.openLink(href);
       break;
     case 'ignore':
       break;
@@ -37,12 +52,16 @@ const links: Plugin = {
     app.on('view:updated', (root) => {
       if (wired.has(root)) return;
       wired.add(root);
-      root.addEventListener('click', (e) => {
-        const a = (e.target as Element).closest('a[href]');
+      // Every link is handled here; nothing in the document may navigate the window.
+      // `auxclick` covers middle-click (which would otherwise open a new window).
+      const onClick = (e: MouseEvent) => {
+        const a = (e.target as Element).closest('a, area');
         if (!a) return;
         e.preventDefault();
-        followLink(app, a.getAttribute('href'));
-      });
+        if (e.type === 'click') followLink(app, a.getAttribute('href') ?? a.getAttribute('xlink:href'));
+      };
+      root.addEventListener('click', onClick);
+      root.addEventListener('auxclick', onClick);
     });
   },
 };

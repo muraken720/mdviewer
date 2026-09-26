@@ -43,6 +43,7 @@ Tauri CLI を使わずに `cargo build` で配布用の exe を作るときは�
 CI と同じ内容です。
 
 ```sh
+npm run lint        # 直すときは npm run format
 npm run typecheck
 npm test
 npm run build
@@ -56,7 +57,8 @@ cargo test --workspace
 - ロジックを追加するときはテストも書く。Rust は同じファイルの `#[cfg(test)]`、UI は同じ場所の `*.test.ts(x)`（Vitest）
 - `src-tauri/src/commands.rs` は薄く保つ。処理は `mdcore` に置く
 - UI の状態とロジックは `ui/src/core` と `ui/src/lib` に置き、React・DOM に依存させない。React の部品には、つなぎ込みと表示だけを書く
-- TypeScript は `strict`。`any` は使わない
+- TypeScript は `strict`。`any` は使わない。整形と Lint は Biome（`npm run format` で自動修正）
+- **セキュリティ**: WebView（画面側）は信頼しない。ファイルのパスを画面側から受け取って読み書きする IPC を追加しない（`src-tauri/src/session.rs` を通す）。文書由来のパスは `mdcore::paths::resolve_relative` で解決する。詳しくは [SECURITY.md](SECURITY.md)
 - スタイルは Tailwind のユーティリティとテーマ色（`text-fg`, `bg-bg` など）で書く。Markdown 本文のスタイルは `ui/src/styles/markdown.css` に書く
 - 実行時の依存（`dependencies`）を追加するときは、exe サイズと起動時間への影響を PR に書き、ライセンスを README に記載する
 - Tauri は、Rust の `tauri` クレートと npm の `@tauri-apps/api` / `@tauri-apps/cli` を同じマイナーバージョンにそろえる（そろっていないと `tauri build` が失敗する）

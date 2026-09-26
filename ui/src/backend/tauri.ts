@@ -8,17 +8,20 @@ export function tauriBackend(): Backend {
   const win = getCurrentWindow();
   return {
     settings: () => invoke<Settings>('settings'),
-    load: (path, base = null) => invoke<Doc>('load', { path, base }),
-    render: (text, path) => invoke<string>('render', { text, path }),
-    save: (path, text) => invoke<number>('save', { path, text }),
-    mtime: (path) => invoke<number>('mtime', { path }),
+    open: (path) => invoke<Doc>('open', { path }),
+    openLink: (href) => invoke<Doc>('open_link', { href }),
+    reload: () => invoke<Doc>('reload'),
+    render: (text) => invoke<string>('render', { text }),
+    save: (text) => invoke<number>('save', { text }),
+    mtime: () => invoke<number>('mtime'),
     pickFile: () => invoke<string | null>('pick_file'),
     ask: (message) => invoke<boolean>('ask', { message }),
     openUrl: (url) => invoke<void>('open_url', { url }),
     initialPath: () => invoke<string | null>('initial_path'),
     setTitle: (title) => win.setTitle(title),
-    onDrop: (cb) => {
-      void listen<{ paths?: string[] }>('tauri://drag-drop', (e) => cb(e.payload.paths ?? []));
+    onOpenRequest: (cb) => {
+      // Emitted by src-tauri/src/main.rs after the dropped file was allowed.
+      void listen<string>('open-request', (e) => cb(e.payload));
     },
     onCloseRequested: (cb) => {
       void win.onCloseRequested(async (e) => {

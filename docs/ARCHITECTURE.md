@@ -27,12 +27,12 @@
 │  WebView2（ui/ → Vite でビルドした ui/dist を埋め込み）   Rust（src-tauri/）     │
 │  ┌──────────────────────────────────────┐   IPC    ┌────────────────────────┐ │
 │  │ main.tsx                             │ ───────▶ │ commands.rs            │ │
-│  │  ├ core/app.ts   App（状態・イベント・  │  invoke  │  load / render / save /│ │
-│  │  │               コマンド・プラグイン管理）│          │  mtime / settings /    │ │
-│  │  ├ components/Shell.tsx（画面の枠）    │ ◀─────── │  ask / pick_file /     │ │
-│  │  ├ backend/tauri.ts（Tauri 呼び出し）   │   Doc    │  open_url              │ │
+│  │  ├ core/app.ts   App（状態・イベント・  │  invoke  │  open / open_link /    │ │
+│  │  │               コマンド・プラグイン管理）│          │  reload / render / save│ │
+│  │  ├ components/Shell.tsx（画面の枠）    │ ◀─────── │  mtime / pick_file /   │ │
+│  │  ├ backend/tauri.ts（Tauri 呼び出し）   │   Doc    │  ask / open_url        │ │
 │  │  └ plugins/                           │          │ settings.rs            │ │
-│  │     view · editor · title · open-file │          │ platform.rs（OS 依存）  │ │
+│  │     view · editor · title · open-file │          │ session.rs（ファイル権限）│ │
 │  │     links · zoom · auto-reload        │          └───────────┬────────────┘ │
 │  │     math（KaTeX, 遅延読込）             │                      │              │
 │  │     mermaid（Mermaid, 遅延読込）        │          ┌───────────▼────────────┐ │
@@ -52,9 +52,12 @@
 | `crates/mdcore/` | Markdown → HTML パイプライン（`Renderer` / `Plugin`）、組み込みプラグイン、パス・URL 処理、ファイルの読み書き（改行コードと BOM の維持）。依存は pulldown-cmark のみ |
 | `src-tauri/src/main.rs` | 起動、設定の読み込み、Markdown プラグインの登録（`renderer()`） |
 | `src-tauri/src/commands.rs` | UI から呼ぶ IPC コマンド。薄く保ち、処理は `mdcore` に任せる |
+| `src-tauri/src/session.rs` | 開いてよいファイルと現在の文書の管理（画面側に任意のパスを読み書きさせない） |
+| `src-tauri/src/navigation.rs` | アプリ以外の URL へのページ移動を拒否する |
 | `src-tauri/src/settings.rs` / `platform.rs` | `settings.json` の読み込み / OS 依存の処理 |
 | `ui/src/core/` | `App`（状態・イベント・コマンドとキーマップ・プラグイン管理）と型定義。React・DOM に依存しない |
 | `ui/src/lib/markdown-edit.ts` | エディタの編集操作。純粋関数 |
+| `ui/src/lib/sanitize.ts` | 表示前の HTML の無害化（DOMPurify） |
 | `ui/src/backend/tauri.ts` | `Backend` インターフェースの Tauri 実装 |
 | `ui/src/components/` | 画面の枠（`Shell`）と共通部品 |
 | `ui/src/plugins/` | UI の機能。`index.ts` が登録一覧 |
@@ -75,19 +78,19 @@
 
 ### ファイルを開く
 
-1. `open-file` プラグインが、起動引数・ドロップ・<kbd>Ctrl</kbd>+<kbd>O</kbd> のいずれかからパスを受け取り、`app.open(path)` を呼ぶ
-2. `App` が `backend.load()`、つまり IPC の `load` を呼ぶ
-3. `commands::load` が `Document::read` で読み込み、`Renderer::render` で HTML に変換する
-4. 変換中に `LocalImages` が参照しているローカル画像を集める。`load` は、そのファイルだけをアセットプロトコルで読めるよう許可する
+1. ユーザーがファイルを選ぶ（起動引数・<kbd>Ctrl</kbd>+<kbd>O</kbd>・ドロップ）。Rust 側がそのパスを「開いてよいファイル」として `Session` に登録する。ドロップの場合は、Rust が `open-request` イベントで画面側に知らせる
+2. `open-file` プラグインが `app.open(path)` を呼び、`App` が IPC の `open` を呼ぶ。文書内のリンクの場合は `app.openLink(href)` から IPC の `open_link` を呼び、Rust が現在の文書を基準に相対パスを解決する
+3. Rust が、許可されたファイルかを確認し、`Document::read` で読み込み、`Renderer::render` で HTML に変換して、「現在の文書」として記録する
+4. 変換中に `LocalImages` が、相対パスで参照されている画像ファイルを集める。Rust は、そのファイルだけをアセットプロトコルで読めるよう許可する
 5. `Doc { path, name, raw, html, mtime }` を返す。`App` が `doc:loaded` を発行する
-6. `view` が本文を描画し、`view:updated` を発行する。数式や図があれば、このとき初めて KaTeX / Mermaid を読み込む
+6. `view` が HTML を無害化してから描画し、`view:updated` を発行する。数式や図があれば、このとき初めて KaTeX / Mermaid を読み込む
 7. `auto-reload` は 1 秒ごとに更新日時（`mtime`）を比べ、変わっていれば `app.reload()` を呼ぶ（未保存の編集がある間は呼ばない）
 
 ### 編集して保存する
 
 ```
 editor (textarea) ──input──▶ app.update(text) ──▶ doc:dirty ──▶ タイトルに ●
-      Ctrl+S ──▶ app.save() ──▶ IPC save ──▶ document::save（元の CRLF/BOM で書き込み）──▶ doc:saved
+      Ctrl+S ──▶ app.save() ──▶ IPC save（保存先は Rust が持つ「現在の文書」）──▶ document::save（元の CRLF/BOM で書き込み）──▶ doc:saved
       Ctrl+E ──▶ app.setMode('view') ──▶ app.refresh() ──▶ IPC render ──▶ doc:rendered ──▶ view
 ```
 
@@ -118,14 +121,21 @@ editor (textarea) ──input──▶ app.update(text) ──▶ doc:dirty ─�
 
 ## セキュリティ
 
-Markdown には生の HTML を書けるため、文書は信頼できないものとして扱います。
+Markdown には生の HTML を書けるため、文書は信頼できないものとして扱います。脅威モデルと対策の一覧は [SECURITY.md](../SECURITY.md) にあります。設計上の要点は次のとおりです。
 
-- **CSP** `script-src 'self'`：文書内の `<script>` や `onerror=` などのインラインのイベントハンドラは実行されない
-  - Vite の設定で `assetsInlineLimit: 0` とし、`data:` URI を生成しない
-  - KaTeX と Mermaid は `eval` を使わない
-- **Mermaid**：`securityLevel: 'strict'` で描画する
-- **アセットスコープ**：あらかじめ許可しているファイルはない。開いた文書が参照している画像ファイルだけを個別に許可する
-- **外部リンク**：`open_url` は `http(s):` と `mailto:` 以外を拒否する（Rust 側で検証）。`javascript:` や `file:` のリンクは UI 側で無視する
+- **WebView（画面側）を信頼しない**
+  - ファイルの読み書きは Rust の `Session` が管理する
+  - 画面側が渡せるのは、ユーザーが選んだファイルのパスと、文書内のリンク文字列（相対パス）だけ
+  - 保存・再読み込み・更新日時の確認は、Rust が記録している「現在の文書」に対してだけ行う
+- **文書由来のパスは `mdcore::paths::resolve_relative` だけで解決する**
+  - 普通の相対パス以外（絶対パス、ドライブ指定、UNC パス、URL）は拒否する
+  - 画像として読み込みを許可するのは、画像の拡張子を持つファイルだけ
+- **多層防御**
+  - CSP：`script-src 'self'`、`object-src` / `frame-src` / `base-uri` / `form-action` は `'none'`
+  - DOMPurify による HTML の無害化
+  - Rust 側のページ移動の禁止（`navigation.rs`）
+  - Vite の設定で `data:` URI を生成しない（`assetsInlineLimit: 0`）
+- **外部リンク**：`mdcore::url::is_web_url` で検証した `http(s):` と `mailto:` の URL だけを、Tauri の opener プラグインで既定のブラウザに渡す
 
 ## サイズと速度
 

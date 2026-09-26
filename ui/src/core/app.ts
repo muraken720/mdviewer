@@ -88,7 +88,11 @@ export class App {
     const list = this.#listeners.get(event) ?? [];
     list.push(fn as Listener<never[]>);
     this.#listeners.set(event, list);
-    return () => this.#listeners.set(event, (this.#listeners.get(event) ?? []).filter((f) => f !== fn));
+    return () =>
+      this.#listeners.set(
+        event,
+        (this.#listeners.get(event) ?? []).filter((f) => f !== fn),
+      );
   }
 
   emit<E extends keyof AppEvents>(event: E, ...args: AppEvents[E]): void {
@@ -168,10 +172,20 @@ export class App {
     return !this.dirty || this.backend.ask(DISCARD_MESSAGE);
   }
 
-  async open(path: string, base: string | null = null): Promise<void> {
+  /** Open a file the user chose. */
+  open(path: string): Promise<void> {
+    return this.#open(() => this.backend.open(path));
+  }
+
+  /** Open a relative link from the current document. */
+  openLink(href: string): Promise<void> {
+    return this.#open(() => this.backend.openLink(href));
+  }
+
+  async #open(load: () => Promise<Doc>): Promise<void> {
     if (!(await this.confirmDiscard())) return;
     try {
-      this.#loaded(await this.backend.load(path, base), true);
+      this.#loaded(await load(), true);
     } catch (err) {
       this.error = String(err);
       this.emit('doc:error', err);
@@ -182,7 +196,7 @@ export class App {
   async reload({ force = false } = {}): Promise<boolean> {
     if (!this.doc || (this.dirty && !force)) return false;
     try {
-      this.#loaded(await this.backend.load(this.doc.path), false);
+      this.#loaded(await this.backend.reload(), false);
       return true;
     } catch {
       return false; // the file may be mid-write; the next change retries
@@ -202,7 +216,7 @@ export class App {
     const doc = this.doc;
     if (!doc || doc.raw === this.#renderedText) return;
     const text = doc.raw;
-    doc.html = await this.backend.render(text, doc.path);
+    doc.html = await this.backend.render(text);
     this.#renderedText = text;
     this.emit('doc:rendered', doc);
   }
@@ -210,11 +224,11 @@ export class App {
   async save(): Promise<boolean> {
     const doc = this.doc;
     if (!doc) return false;
-    const onDisk = await this.backend.mtime(doc.path);
+    const onDisk = await this.backend.mtime();
     if (onDisk && onDisk !== doc.mtime && !(await this.backend.ask(OVERWRITE_MESSAGE))) return false;
     const text = doc.raw;
     try {
-      doc.mtime = await this.backend.save(doc.path, text);
+      doc.mtime = await this.backend.save(text);
     } catch (err) {
       this.emit('toast', `保存できませんでした: ${String(err)}`);
       return false;

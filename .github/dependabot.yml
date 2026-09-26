@@ -1,0 +1,22 @@
+# Monthly dependency updates, grouped to keep the PR count low.
+# Tauri: keep the Rust crate `tauri` and npm `@tauri-apps/*` on the same minor version
+# (CI's Windows job runs `tauri build`, which fails on a mismatch).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      tauri: { patterns: ["@tauri-apps/*"] }
+      npm-dependencies: { patterns: ["*"] }
+  - package-ecosystem: cargo
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      tauri: { patterns: ["tauri", "tauri-*"] }
+      cargo-dependencies: { patterns: ["*"] }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions: { patterns: ["*"] }

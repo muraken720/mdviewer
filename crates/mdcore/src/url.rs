@@ -33,15 +33,25 @@ pub fn encode_component(s: &str) -> String {
     out
 }
 
-/// `http:`, `https:` or `mailto:` — the only links handed to the OS.
+/// True for `http://host…`, `https://host…` and `mailto:…` URLs — the only links handed to
+/// the OS. Rejects whitespace, control characters and quotes anywhere, so the string can be
+/// passed to the OS as a single, unambiguous argument.
 pub fn is_web_url(s: &str) -> bool {
-    let l = s.trim_start().to_ascii_lowercase();
-    l.starts_with("http://") || l.starts_with("https://") || l.starts_with("mailto:")
-}
-
-/// A reference to a local file relative to the document (not a URL, data URI or fragment).
-pub fn is_local_ref(s: &str) -> bool {
-    !(s.is_empty() || s.starts_with('#') || s.starts_with("data:") || s.contains("://") || is_web_url(s))
+    if s.is_empty()
+        || s.chars()
+            .any(|c| c.is_whitespace() || c.is_control() || "\"<>\\`".contains(c))
+    {
+        return false;
+    }
+    let lower = s.to_ascii_lowercase();
+    let has_host = |rest: &str| !rest.is_empty() && !rest.starts_with(['/', '?', '#']);
+    if let Some(rest) = lower
+        .strip_prefix("https://")
+        .or_else(|| lower.strip_prefix("http://"))
+    {
+        return has_host(rest);
+    }
+    lower.strip_prefix("mailto:").is_some_and(|rest| !rest.is_empty())
 }
 
 #[cfg(test)]
@@ -66,15 +76,24 @@ mod tests {
     }
 
     #[test]
-    fn classify() {
-        assert!(is_web_url("HTTPS://x"));
-        assert!(is_web_url("mailto:a@b"));
-        assert!(!is_web_url("file:///c"));
-        assert!(!is_web_url("javascript:alert(1)"));
-        assert!(is_local_ref("img/a.png"));
-        assert!(is_local_ref("../a.md#x"));
-        assert!(!is_local_ref("#x"));
-        assert!(!is_local_ref("https://x/a.png"));
-        assert!(!is_local_ref("data:image/png;base64,xx"));
+    fn web_urls() {
+        assert!(is_web_url("HTTPS://example.com/a?b=c#d"));
+        assert!(is_web_url("http://localhost:8080"));
+        assert!(is_web_url("mailto:a@example.com"));
+        for bad in [
+            "",
+            "file:///c",
+            "javascript:alert(1)",
+            " https://x",
+            "https://x y",
+            "https://x\"y",
+            "https://x\n",
+            "https:///path",
+            "https://",
+            "mailto:",
+            "ms-settings:",
+        ] {
+            assert!(!is_web_url(bad), "{bad:?}");
+        }
     }
 }
