@@ -7,7 +7,9 @@ export default {
       if (p) await app.open(p);
     }, ['Ctrl+O']);
 
-    app.command('file.reload', () => app.reload(), ['F5', 'Ctrl+R']);
+    app.command('file.reload', async () => {
+      if (await app.confirmDiscard()) await app.reload({ force: true });
+    }, ['F5', 'Ctrl+R']);
 
     app.backend.onDrop((paths) => {
       if (paths[0]) app.open(paths[0]);

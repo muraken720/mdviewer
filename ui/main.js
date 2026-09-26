@@ -1,12 +1,16 @@
-import { createApp } from './core.js';
+import { createApp, isPluginEnabled } from './core.js';
 import { tauriBackend, browserStorage } from './backend.js';
 import plugins from './plugins/index.js';
 
-const app = createApp({ backend: tauriBackend(), storage: browserStorage() });
-for (const p of plugins) app.use(p);
+const backend = tauriBackend();
+const settings = await backend.settings().catch(() => ({}));
+const app = createApp({ backend, storage: browserStorage(), settings });
+for (const p of plugins) {
+  if (isPluginEnabled(p, settings)) app.use(p);
+}
 
 window.addEventListener('keydown', (e) => {
-  if (app.handleKey(e)) e.preventDefault();
+  if (!e.defaultPrevented && app.handleKey(e)) e.preventDefault();
 });
 
 app.start();

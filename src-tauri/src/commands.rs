@@ -1,4 +1,5 @@
 //! IPC commands called from the UI (`invoke(...)`). Keep these thin: logic lives in `mdcore`.
+//! The UI-side counterpart is `ui/backend.js`.
 
 use std::path::{Path, PathBuf};
 
@@ -6,9 +7,11 @@ use mdcore::document::{self, Document};
 use mdcore::{paths, url, Renderer};
 use serde::Serialize;
 use tauri::{Manager, State, WebviewWindow};
-use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 
-/// Payload sent to the UI. Keep in sync with `ui/core.js`.
+use crate::settings::Settings;
+
+/// Payload sent to the UI. Keep in sync with the `Doc` typedef in `ui/core.js`.
 #[derive(Serialize)]
 pub struct Loaded {
     path: String,
@@ -22,6 +25,11 @@ pub struct Loaded {
 #[tauri::command]
 pub fn initial_path() -> Option<String> {
     std::env::args().skip(1).find(|a| !a.starts_with('-'))
+}
+
+#[tauri::command]
+pub fn settings(settings: State<'_, Settings>) -> Settings {
+    settings.inner().clone()
 }
 
 /// Read and render `path`. If `base` (the current document) is given, `path` is resolved
@@ -38,21 +46,27 @@ pub fn load(
         None => PathBuf::from(&path),
     };
     let doc = Document::read(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let out = renderer.render(&doc.text, doc.dir());
-
-    let scope = window.asset_protocol_scope();
-    for asset in &out.assets {
-        let _ = scope.allow_file(asset);
-    }
-    let _ = window.set_title(&format!("{} - mdviewer", doc.name()));
-
+    let html = render_html(&window, &renderer, &doc.text, doc.dir());
     Ok(Loaded {
         path: doc.path.to_string_lossy().into_owned(),
         name: doc.name(),
         raw: doc.text,
-        html: out.html,
+        html,
         mtime: doc.mtime,
     })
+}
+
+/// Render unsaved editor text as if it were the file at `path`.
+#[tauri::command]
+pub fn render(window: WebviewWindow, renderer: State<'_, Renderer>, text: String, path: String) -> String {
+    let dir = Path::new(&path).parent().unwrap_or(Path::new(""));
+    render_html(&window, &renderer, &text, dir)
+}
+
+/// Save editor text, keeping the file's BOM and line endings. Returns the new mtime.
+#[tauri::command]
+pub fn save(path: String, text: String) -> Result<u64, String> {
+    document::save(Path::new(&path), &text).map_err(|e| format!("{path}: {e}"))
 }
 
 /// Modification time in ms (0 if unavailable). Polled by the auto-reload UI plugin.
@@ -71,6 +85,17 @@ pub async fn pick_file(app: tauri::AppHandle) -> Option<String> {
         .map(|p| p.to_string_lossy().into_owned())
 }
 
+/// OK/Cancel confirmation dialog. Returns true for OK.
+#[tauri::command]
+pub async fn ask(app: tauri::AppHandle, message: String) -> bool {
+    app.dialog()
+        .message(message)
+        .title("mdviewer")
+        .kind(MessageDialogKind::Warning)
+        .buttons(MessageDialogButtons::OkCancel)
+        .blocking_show()
+}
+
 /// Open a web link in the default browser. Only `http(s):` and `mailto:` are accepted.
 #[tauri::command]
 pub fn open_url(url: String) -> Result<(), String> {
@@ -78,4 +103,14 @@ pub fn open_url(url: String) -> Result<(), String> {
         return Err(format!("refused to open: {url}"));
     }
     crate::platform::open_in_browser(&url).map_err(|e| e.to_string())
+}
+
+/// Render and grant the webview access to the local images the document refers to.
+fn render_html(window: &WebviewWindow, renderer: &Renderer, text: &str, dir: &Path) -> String {
+    let out = renderer.render(text, dir);
+    let scope = window.asset_protocol_scope();
+    for asset in &out.assets {
+        let _ = scope.allow_file(asset);
+    }
+    out.html
 }

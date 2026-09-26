@@ -4,6 +4,7 @@ import { createApp } from '../../ui/core.js';
 import { classifyLink } from '../../ui/plugins/links.js';
 import { clampZoom, MIN, MAX } from '../../ui/plugins/zoom.js';
 import { checkForChange } from '../../ui/plugins/auto-reload.js';
+import { windowTitle } from '../../ui/plugins/title.js';
 import { fakeBackend } from './fake-backend.js';
 
 test('classifyLink', () => {
@@ -35,4 +36,15 @@ test('checkForChange reloads only when mtime changes', async () => {
   assert.equal(await checkForChange(app), true);
   assert.equal(app.doc.raw, 'v2');
   assert.equal(await checkForChange(app), false);
+
+  app.update('unsaved');
+  backend.fs.set('/a.md', { raw: 'v3', mtime: 3 });
+  assert.equal(await checkForChange(app), false, 'never overwrites unsaved edits');
+  assert.equal(app.doc.raw, 'unsaved');
+});
+
+test('windowTitle', () => {
+  assert.equal(windowTitle(null, false), 'mdviewer');
+  assert.equal(windowTitle({ name: 'a.md' }, false), 'a.md - mdviewer');
+  assert.equal(windowTitle({ name: 'a.md' }, true), '● a.md - mdviewer');
 });

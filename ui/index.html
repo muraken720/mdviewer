@@ -7,19 +7,20 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<button id="toggle" title="表示切替 (Ctrl+E)" hidden>Raw</button>
+<button id="toggle" title="表示 / 編集の切替 (Ctrl+E)" hidden>Edit</button>
 <div id="zoom" hidden></div>
 <main id="view" class="markdown">
   <div class="empty">
     <p>Markdown ファイルをドロップ、または <kbd>Ctrl</kbd>+<kbd>O</kbd> で開く</p>
     <table>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>表示 / Raw 切替</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>表示 / 編集 切替</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>保存</td></tr>
       <tr><td><kbd>Ctrl</kbd>+ホイール</td><td>拡大 / 縮小（<kbd>Ctrl</kbd>+<kbd>0</kbd> で戻す）</td></tr>
       <tr><td><kbd>F5</kbd></td><td>再読み込み（変更は自動反映）</td></tr>
     </table>
   </div>
 </main>
-<pre id="raw" hidden></pre>
+<textarea id="editor" spellcheck="false" hidden></textarea>
 <script type="module" src="main.js"></script>
 </body>
 </html>

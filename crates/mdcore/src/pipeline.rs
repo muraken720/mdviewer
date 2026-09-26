@@ -62,6 +62,12 @@ impl Renderer {
         self
     }
 
+    /// Keep only the plugins for which `keep(name)` returns true (used for user settings).
+    pub fn retain(mut self, keep: impl Fn(&str) -> bool) -> Self {
+        self.plugins.retain(|p| keep(p.name()));
+        self
+    }
+
     /// Names of the registered plugins, in order.
     pub fn plugin_names(&self) -> Vec<&'static str> {
         self.plugins.iter().map(|p| p.name()).collect()
@@ -155,5 +161,11 @@ mod tests {
             Renderer::new().with(Tables).with(Upper).plugin_names(),
             ["tables", "upper"]
         );
+    }
+
+    #[test]
+    fn retain_disables_plugins() {
+        let r = Renderer::new().with(Tables).with(Upper).retain(|n| n != "upper");
+        assert_eq!(r.plugin_names(), ["tables"]);
     }
 }

@@ -5,24 +5,62 @@
 
 - **軽い**: exe 単体で数 MB（Rust + Tauri 2。描画は OS 標準の WebView2 を使うのでランタイムを同梱しない）
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
-- **余計なものがない**: 「読む」ために毎回使う機能だけ
+- **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ
 
 ## 機能
 
 | 機能 | 操作 |
 |---|---|
 | Markdown を整形表示 | `.md` をダブルクリック / ウィンドウにドロップ / <kbd>Ctrl</kbd>+<kbd>O</kbd> |
-| Raw テキストに切替 | <kbd>Ctrl</kbd>+<kbd>E</kbd> または右上のボタン |
+| 編集モードに切替 | <kbd>Ctrl</kbd>+<kbd>E</kbd> または右上のボタン（もう一度押すと、編集内容をビューアに反映して表示） |
+| 保存 | <kbd>Ctrl</kbd>+<kbd>S</kbd>（元ファイルの改行コード CRLF/LF と BOM を維持）。未保存の間はタイトルに `●` |
 | 拡大・縮小 | <kbd>Ctrl</kbd>+ホイール / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd>（<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%）。倍率は次回も維持 |
-| 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd> |
+| 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd>。未保存の編集は上書きしない |
 | リンク | `#見出し` は文書内ジャンプ、`other.md` はビューアで開く、`https://` は既定のブラウザで開く |
 | ダークモード | OS の設定に追従 |
 
 対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パス画像。
+Mermaid は既定で無効のプラグインです（[設定](#設定) で有効化）。
+
+### エディタ
+
+| 操作 | 動作 |
+|---|---|
+| <kbd>Enter</kbd> | インデントを維持。箇条書き・番号付きリスト（番号は自動で +1）・タスクリスト・引用を継続。空の項目で押すとリストを抜ける（ネストしていれば 1 段戻る） |
+| <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | リスト項目や選択行をインデント／アウトデント |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> | 太字／斜体の切替 |
+| <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> | 元に戻す／やり直し（上記の自動編集も含む） |
+
+コードブロック（```` ``` ````）の中ではリストの自動継続は行わず、インデントだけを維持します。日本語入力の変換確定の <kbd>Enter</kbd> には反応しません。
+未保存のまま閉じる・別ファイルを開く・<kbd>F5</kbd> を押したときは確認します。
+
+## 設定
+
+設定ファイルで、プラグインごとに有効／無効を切り替えられます。ファイルがなければすべて既定値です。
+
+- Windows: `%APPDATA%\io.github.muraken720.mdviewer\settings.json`
+- Linux: `~/.config/io.github.muraken720.mdviewer/settings.json`
+
+```json
+{
+  "plugins": {
+    "mermaid": true,
+    "auto-reload": false
+  }
+}
+```
+
+| プラグイン | 既定 | 内容 |
+|---|---|---|
+| `mermaid` | 無効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
+| `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
+| `editor`, `zoom`, `links`, `auto-reload`, `title`, `open-file`, `view` | 有効 | 各 UI 機能 |
+
+設定の変更は次回起動時に反映されます。
 
 ### やらないこと
 
-編集、シンタックスハイライト、Mermaid・数式、タブ、ファイルツリー、エクスポートなど。
+シンタックスハイライト、数式、ライブプレビュー（左右分割）、タブ、ファイルツリー、エクスポートなど。
 理由と判断基準は [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) を参照してください。
 
 ## インストール
@@ -60,3 +98,5 @@ Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.a
 ## ライセンス
 
 [MIT](LICENSE)
+
+同梱しているサードパーティ製ソフトウェア: [Mermaid](https://github.com/mermaid-js/mermaid) 11.17.2（MIT, `ui/vendor/mermaid/LICENSE`）

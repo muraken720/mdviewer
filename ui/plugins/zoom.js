@@ -10,14 +10,13 @@ export function clampZoom(z) {
 export default {
   name: 'zoom',
   setup(app) {
-    const targets = [document.getElementById('view'), document.getElementById('raw')];
     const $badge = document.getElementById('zoom');
     let zoom = clampZoom(Number(app.storage.get('zoom')) || 1);
     let timer;
 
     const set = (z, show = true) => {
       zoom = clampZoom(z);
-      for (const t of targets) t.style.zoom = zoom;
+      document.documentElement.style.setProperty('--zoom', zoom);
       app.storage.set('zoom', zoom);
       if (!show) return;
       $badge.textContent = `${Math.round(zoom * 100)}%`;
