@@ -6,6 +6,8 @@
 //!
 //! Nothing in this crate depends on Tauri, so everything here is unit-testable with `cargo test`.
 
+#![forbid(unsafe_code)]
+
 pub mod document;
 pub mod paths;
 pub mod pipeline;

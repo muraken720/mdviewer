@@ -21,7 +21,8 @@ export async function renderDiagrams(root: HTMLElement): Promise<void> {
   if (blocks.length === 0) return;
   const m = await loadMermaid();
   for (const code of blocks) {
-    const pre = code.parentElement!;
+    const pre = code.parentElement;
+    if (!pre) continue;
     try {
       const { svg } = await m.render(`mermaid-${++seq}`, code.textContent ?? '');
       const div = document.createElement('div');

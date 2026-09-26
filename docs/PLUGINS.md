@@ -68,7 +68,7 @@ Markdown プラグインは既定で有効です。`settings.json` に `"plugins
 ### 指針
 
 - 入出力はイベント列（またはソース文字列）だけにし、ファイルシステムや OS に触れない。必要なら `LocalImages` のように関数を外から渡してもらう
-- ローカルファイルを参照させるときは `ctx.assets` に追加する（追加しないと WebView から読めない）
+- ローカルファイルを参照させるときは `ctx.assets` に追加する（追加しないと WebView から読めない）。文書由来のパスは必ず `paths::resolve_relative` で解決し、必要な拡張子のファイルだけを追加する（[SECURITY.md](../SECURITY.md)）
 - 生成する HTML に `<script>` を含めない（CSP によって実行されない）
 
 ## UI プラグイン（TypeScript）
@@ -102,12 +102,12 @@ export default myPlugin;
 | `app.run(id)` / `app.commands()` | コマンドの実行 / 一覧 |
 | `app.addPane(mode, Component)` | そのモードで表示する画面を登録する。画面はモードが変わってもマウントされたままで、`active` プロパティで表示・非表示を切り替える |
 | `app.addOverlay(Component)` | 画面の上に重ねる部品を登録する（ボタン、バッジ、通知など） |
-| `app.open(path, base?)` | 文書を開く（`base` を渡すと、その文書からの相対パスとして解決する） |
+| `app.open(path)` / `app.openLink(href)` | ユーザーが選んだファイルを開く / 現在の文書からの相対リンクを開く |
 | `app.reload({ force? })` | 再読み込みする。未保存の変更があるときは、`force` を付けない限り何もしない |
 | `app.update(text)` / `app.refresh()` / `app.save()` | テキストの更新 / 変更があれば再描画 / 保存（外部で変更されていれば確認する） |
 | `app.confirmDiscard()` | 未保存の変更を破棄してよいか確認する（変更がなければすぐに true を返す） |
 | `app.setMode(mode)` | 表示と編集を切り替える。`'view'` に切り替えるときは `refresh()` も行う |
-| `app.backend` | ホスト機能（`Backend` 型：`load`, `render`, `save`, `mtime`, `pickFile`, `ask`, `openUrl`, `initialPath`, `setTitle`, `onDrop`, `onCloseRequested`） |
+| `app.backend` | ホスト機能（`Backend` 型：`open`, `openLink`, `reload`, `render`, `save`, `mtime`, `pickFile`, `ask`, `openUrl`, `initialPath`, `setTitle`, `onOpenRequest`, `onCloseRequested`）。`reload` / `render` / `save` / `mtime` は常に現在の文書に対して働く |
 
 画面部品の中で `app` の変化に追随して再描画したいときは、`useAppVersion(app)`（`core/useApp.ts`）を呼びます。
 
@@ -173,6 +173,6 @@ export default wordCount;
   - `Backend` 型（`core/types.ts`）
   - Tauri 実装（`backend/tauri.ts`）
   - テスト用の偽実装（`test/fake-backend.ts`）
-  - Rust のコマンド（`src-tauri/src/commands.rs`）
+  - Rust のコマンド（`src-tauri/src/commands.rs`）。画面側からファイルのパスを受け取って読み書きするコマンドは作らない（`session.rs` を通す）
 - キー操作は `keydown` を自分で監視せず、`app.command()` で登録する（キーの衝突を見つけやすくするため）。例外はエディタの中だけで効くキー（Enter, Tab など）で、`editor.tsx` が textarea で処理する
 - 新しいエディタ操作は、`lib/markdown-edit.ts` に `EditOperation`（`(state) => Edit | null`）の純粋関数として追加し、`editor.tsx` の `KEYS` に割り当てる

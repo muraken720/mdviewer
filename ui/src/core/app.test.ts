@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { App, DISCARD_MESSAGE, OVERWRITE_MESSAGE, isPluginEnabled, keySpec } from './app';
 import { fakeBackend } from '../test/fake-backend';
+import { App, DISCARD_MESSAGE, isPluginEnabled, keySpec, OVERWRITE_MESSAGE } from './app';
 import type { Pane } from './types';
 
 const Dummy: Pane = () => null;
@@ -83,7 +83,11 @@ test('editing marks the doc dirty; switching to view re-renders once', async () 
   await app.setMode('view');
   await app.setMode('edit');
   await app.setMode('view');
-  expect(events).toEqual([['dirty', false], ['dirty', true], ['rendered', '<p>v3</p>']]);
+  expect(events).toEqual([
+    ['dirty', false],
+    ['dirty', true],
+    ['rendered', '<p>v3</p>'],
+  ]);
   app.update('v1');
   expect(app.dirty).toBe(false);
 });
@@ -124,6 +128,14 @@ test('a failed save is reported as a toast', async () => {
   expect(toasts[0]).toMatch(/disk full/);
 });
 
+test('links open relative to the current document', async () => {
+  const { app, backend } = appWith({ '/docs/a.md': 'a', '/docs/sub/b.md': 'b' });
+  await app.open('/docs/a.md');
+  await app.openLink('sub/b.md');
+  expect(app.doc?.path).toBe('/docs/sub/b.md');
+  expect(backend.calls.at(-1)).toEqual(['openLink', 'sub/b.md']);
+});
+
 test('unsaved edits are protected from reload and open', async () => {
   const { app, backend } = appWith({ '/a.md': 'v1', '/b.md': 'b' }, { answer: false });
   await app.open('/a.md');
@@ -145,7 +157,13 @@ test('plugins are set up once, in order; contributions are collected', () => {
   const { app } = appWith();
   const order: string[] = [];
   const Overlay = () => null;
-  app.use({ name: 'a', setup: () => order.push('a') }).use({ name: 'b', setup: (a) => (order.push('b'), a.addOverlay(Overlay)) });
+  app.use({ name: 'a', setup: () => order.push('a') }).use({
+    name: 'b',
+    setup: (a) => {
+      order.push('b');
+      a.addOverlay(Overlay);
+    },
+  });
   expect(order).toEqual(['a', 'b']);
   expect(app.plugins()).toEqual(['a', 'b']);
   expect(app.overlays()).toEqual([Overlay]);

@@ -28,7 +28,9 @@ function ZoomBadge({ app }: { app: App }) {
   }, [app]);
   if (!label) return null;
   return (
-    <div className="pointer-events-none fixed right-4 bottom-4 z-10 rounded-md bg-fg px-2.5 py-1 text-xs text-bg">{label}</div>
+    <div className="pointer-events-none fixed right-4 bottom-4 z-10 rounded-md bg-fg px-2.5 py-1 text-xs text-bg">
+      {label}
+    </div>
   );
 }
 
@@ -46,7 +48,12 @@ const zoom: Plugin = {
     apply();
 
     app.addOverlay(ZoomBadge);
-    app.command({ id: 'zoom.in', title: '拡大（Ctrl+ホイールでも可）', keys: ['Ctrl+=', 'Ctrl++', 'Ctrl+;'], run: () => set(level + STEP) });
+    app.command({
+      id: 'zoom.in',
+      title: '拡大（Ctrl+ホイールでも可）',
+      keys: ['Ctrl+=', 'Ctrl++', 'Ctrl+;'],
+      run: () => set(level + STEP),
+    });
     app.command({ id: 'zoom.out', title: '縮小', keys: ['Ctrl+-'], run: () => set(level - STEP) });
     app.command({ id: 'zoom.reset', title: '100% に戻す', keys: ['Ctrl+0'], run: () => set(1) });
 

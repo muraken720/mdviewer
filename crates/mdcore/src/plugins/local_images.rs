@@ -2,12 +2,17 @@ use std::path::Path;
 
 use pulldown_cmark::{CowStr, Event, Tag};
 
-use crate::{paths, url, Context, Plugin};
+use crate::paths::{self, IMAGE_EXTENSIONS};
+use crate::{Context, Plugin};
 
 type UrlMapper = Box<dyn Fn(&Path) -> String + Send + Sync>;
 
 /// Rewrites relative image references (`![](img/a.png)`) to URLs the webview can load,
 /// and records each file in [`Context::assets`] so the shell can grant access to it.
+///
+/// Only plain relative paths with an image extension are accepted (see [`paths`]); anything else
+/// is left untouched and simply does not load. A document therefore cannot make the app grant
+/// access to arbitrary files (`![](../../.ssh/id_rsa)`) or reach network shares.
 ///
 /// The URL scheme is platform/shell specific, so it is injected as `to_url`.
 pub struct LocalImages {
@@ -36,10 +41,15 @@ impl Plugin for LocalImages {
                     dest_url,
                     title,
                     id,
-                }) if url::is_local_ref(&dest_url) => {
-                    let file = paths::resolve(&ctx.base_dir, &dest_url);
-                    let dest_url = CowStr::from((self.to_url)(&file));
-                    ctx.assets.push(file);
+                }) => {
+                    let dest_url = match paths::resolve_relative(&ctx.base_dir, &dest_url) {
+                        Some(file) if paths::has_extension(&file, IMAGE_EXTENSIONS) => {
+                            let url = CowStr::from((self.to_url)(&file));
+                            ctx.assets.push(file);
+                            url
+                        }
+                        _ => dest_url,
+                    };
                     Event::Start(Tag::Image {
                         link_type,
                         dest_url,
@@ -70,5 +80,17 @@ mod tests {
         assert_eq!(r.assets, vec![PathBuf::from("/doc/img/a b.png")]);
         assert!(r.html.contains(r#"src="asset:/doc/img/a%20b.png""#));
         assert!(r.html.contains(r#"src="https://x/y.png""#));
+    }
+
+    #[test]
+    fn never_grants_non_images_absolute_paths_or_network_shares() {
+        let r = Renderer::new()
+            .with(LocalImages::new(|p| format!("asset:{}", p.display())))
+            .render(
+                "![](../../.ssh/id_rsa) ![](/etc/a.png) ![](//evil/share/a.png) ![](C:/a.png)",
+                Path::new("/doc"),
+            );
+        assert!(r.assets.is_empty());
+        assert!(!r.html.contains("asset:"));
     }
 }

@@ -1,11 +1,11 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, test } from 'vitest';
 import { App } from '../core/app';
-import { fakeBackend } from '../test/fake-backend';
-import { Shell } from './Shell';
-import view from '../plugins/view';
 import editor from '../plugins/editor';
 import openFile from '../plugins/open-file';
+import view from '../plugins/view';
+import { fakeBackend } from '../test/fake-backend';
+import { Shell } from './Shell';
 
 afterEach(cleanup);
 
@@ -26,7 +26,7 @@ test('shows the document, and the editor when switching modes', async () => {
   const app = setup();
   await act(() => app.open('/a.md'));
   expect(document.querySelector('.markdown')?.innerHTML).toBe('<p>hello</p>');
-  const textarea = document.querySelector('textarea')!;
+  const textarea = screen.getByRole('textbox', { hidden: true }) as HTMLTextAreaElement;
   expect(textarea.hidden).toBe(true);
   expect(textarea.value).toBe('hello');
 

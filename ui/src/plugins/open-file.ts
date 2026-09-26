@@ -21,9 +21,7 @@ const openFile: Plugin = {
         if (await app.confirmDiscard()) await app.reload({ force: true });
       },
     });
-    app.backend.onDrop((paths) => {
-      if (paths[0]) void app.open(paths[0]);
-    });
+    app.backend.onOpenRequest((path) => void app.open(path));
     app.on('app:start', async () => {
       const path = await app.backend.initialPath();
       if (path) await app.open(path);

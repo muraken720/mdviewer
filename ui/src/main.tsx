@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
-import { App, isPluginEnabled } from './core/app';
 import { browserStorage, tauriBackend } from './backend/tauri';
 import { Shell } from './components/Shell';
+import { App, isPluginEnabled } from './core/app';
 import plugins from './plugins';
 import './styles/app.css';
 
@@ -16,5 +16,7 @@ window.addEventListener('keydown', (e) => {
   if (!e.defaultPrevented && app.handleKey(e)) e.preventDefault();
 });
 
-createRoot(document.getElementById('root')!).render(<Shell app={app} />);
+const root = document.getElementById('root');
+if (!root) throw new Error('#root is missing from index.html');
+createRoot(root).render(<Shell app={app} />);
 app.start();

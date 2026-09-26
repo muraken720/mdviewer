@@ -22,7 +22,7 @@ export async function typeset(root: HTMLElement): Promise<void> {
     const target = block ? document.createElement('div') : node;
     const tex = node.textContent ?? '';
     k.render(tex, target, { displayMode: block || node.classList.contains('math-display'), throwOnError: false });
-    if (block) node.parentElement!.replaceWith(target);
+    if (block) node.parentElement?.replaceWith(target);
   }
 }
 

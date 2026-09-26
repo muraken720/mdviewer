@@ -43,6 +43,7 @@ Tauri CLI を使わずに `cargo build` で配布用の exe を作るときは�
 CI と同じ内容です。
 
 ```sh
+npm run lint        # 直すときは npm run format
 npm run typecheck
 npm test
 npm run build
@@ -56,14 +57,19 @@ cargo test --workspace
 - ロジックを追加するときはテストも書く。Rust は同じファイルの `#[cfg(test)]`、UI は同じ場所の `*.test.ts(x)`（Vitest）
 - `src-tauri/src/commands.rs` は薄く保つ。処理は `mdcore` に置く
 - UI の状態とロジックは `ui/src/core` と `ui/src/lib` に置き、React・DOM に依存させない。React の部品には、つなぎ込みと表示だけを書く
-- TypeScript は `strict`。`any` は使わない
+- TypeScript は `strict`。`any` は使わない。整形と Lint は Biome（`npm run format` で自動修正）
+- **セキュリティ**: WebView（画面側）は信頼しない。ファイルのパスを画面側から受け取って読み書きする IPC を追加しない（`src-tauri/src/session.rs` を通す）。文書由来のパスは `mdcore::paths::resolve_relative` で解決する。詳しくは [SECURITY.md](SECURITY.md)
 - スタイルは Tailwind のユーティリティとテーマ色（`text-fg`, `bg-bg` など）で書く。Markdown 本文のスタイルは `ui/src/styles/markdown.css` に書く
-- 実行時の依存（`dependencies`）を追加するときは、exe サイズと起動時間への影響を PR に書き、ライセンスを README に記載する
+- 実行時の依存（`dependencies`）や Rust クレートを追加・更新したときは、`npm run licenses` で `THIRD_PARTY_LICENSES.md` を再生成してコミットする（CI が確認する。[cargo-about](https://github.com/EmbarkStudios/cargo-about) 0.9.2 が必要：`cargo install cargo-about --locked --features cli --version 0.9.2`）。新しいライセンスの種類が出てきたら `about.toml` の `accepted` を見直し、主要な依存なら [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md) にも追記する。exe サイズと起動時間への影響は PR に書く
 - Tauri は、Rust の `tauri` クレートと npm の `@tauri-apps/api` / `@tauri-apps/cli` を同じマイナーバージョンにそろえる（そろっていないと `tauri build` が失敗する）
 - ユーザーに見える変更は `CHANGELOG.md` の `Unreleased` に追記する
 
 ## リリース
 
-1. `Cargo.toml`（`workspace.package.version`）と `src-tauri/tauri.conf.json` のバージョンを上げる
+1. `Cargo.toml`（`workspace.package.version`）・`src-tauri/tauri.conf.json`・`package.json` のバージョンをそろえて上げる
 2. `CHANGELOG.md` を更新する
-3. `vX.Y.Z` タグを push すると、GitHub Actions が Windows 版をビルドしてドラフトリリースを作る
+3. `vX.Y.Z` タグを push すると、GitHub Actions が次を行う
+   - タグと 3 か所のバージョンが一致しているかを確認する
+   - Windows 版（インストーラとポータブル版 zip）をビルドする
+   - ドラフトリリースを作る（内容を確認してから公開する）
+4. タグを付けずに配布物だけを作るときは、Actions の Release ワークフローを手動で実行する（成果物は Artifacts からダウンロードできる）

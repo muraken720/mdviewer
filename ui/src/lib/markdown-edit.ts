@@ -76,7 +76,7 @@ export const enter: EditOperation = ({ text, start, end }) => {
   const before = text.slice(ls, start);
   const restOfLine = text.slice(end, le);
   const newline = (prefix: string): Edit => {
-    const insert = '\n' + prefix;
+    const insert = `\n${prefix}`;
     return { from: start, to: end, insert, select: caret(start, insert) };
   };
 
@@ -87,7 +87,8 @@ export const enter: EditOperation = ({ text, start, end }) => {
     const empty = before.length === item.prefix.length && restOfLine.trim() === '';
     if (!empty) return newline(nextMarker(item));
     // Empty item: outdent one level if nested, otherwise end the list.
-    const insert = item.indent.length > 0 ? item.indent.slice(INDENT.length) + item.prefix.slice(item.indent.length) : '';
+    const insert =
+      item.indent.length > 0 ? item.indent.slice(INDENT.length) + item.prefix.slice(item.indent.length) : '';
     return { from: ls, to: end, insert, select: caret(ls, insert) };
   }
 
