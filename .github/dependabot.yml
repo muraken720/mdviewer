@@ -9,6 +9,11 @@ updates:
     groups:
       tauri: { patterns: ["@tauri-apps/*"] }
       npm-dependencies: { patterns: ["*"] }
+    ignore:
+      # Mermaid 12 re-lays out and recolours existing diagrams, bundles elkjs (EPL-2.0)
+      # and grows the exe. Upgrade deliberately in its own PR; 11.x updates still come.
+      - dependency-name: mermaid
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: cargo
     directory: /
     schedule: { interval: monthly }
