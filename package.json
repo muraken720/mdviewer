@@ -1,0 +1,9 @@
+{
+  "name": "mdviewer",
+  "private": true,
+  "type": "module",
+  "description": "UI tests for mdviewer (no dependencies; Node 22+)",
+  "scripts": {
+    "test": "node --test \"tests/ui/*.test.js\""
+  }
+}

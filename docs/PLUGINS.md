@@ -1,0 +1,119 @@
+# プラグインの作り方
+
+mdviewer の機能は、Rust 側の **Markdown プラグイン** と JS 側の **UI プラグイン** の組み合わせでできています。
+どちらもコンパイル時に組み込む方式で、登録箇所に 1 行足すか消すだけで有効化・無効化できます。
+
+> 新しい機能を足す前に、[スコープ方針](../CONTRIBUTING.md#スコープ方針) を満たすか確認してください。
+
+## Markdown プラグイン（Rust）
+
+`crates/mdcore/src/pipeline.rs` の `Plugin` trait を実装します。
+
+```rust
+pub trait Plugin: Send + Sync {
+    fn name(&self) -> &'static str;
+    /// 必要なパーサ機能（表など）。全プラグインの OR が使われる
+    fn parser_options(&self) -> Options { Options::empty() }
+    /// pulldown-cmark のイベント列を書き換える。登録順に実行される
+    fn transform<'a>(&self, events: Vec<Event<'a>>, ctx: &mut Context) -> Vec<Event<'a>> { events }
+}
+```
+
+`Context` には、文書のあるディレクトリ（`base_dir`）と、WebView に読み込みを許可するローカルファイルの一覧（`assets`）が入っています。
+
+### 例: 外部リンクに `↗` を付ける
+
+`crates/mdcore/src/plugins/external_mark.rs`
+
+```rust
+use pulldown_cmark::{Event, Tag, TagEnd};
+use crate::{url, Context, Plugin};
+
+pub struct ExternalMark;
+
+impl Plugin for ExternalMark {
+    fn name(&self) -> &'static str { "external-mark" }
+
+    fn transform<'a>(&self, events: Vec<Event<'a>>, _: &mut Context) -> Vec<Event<'a>> {
+        let mut out = Vec::with_capacity(events.len());
+        let mut external = Vec::new(); // リンクの入れ子に対応するためスタックで持つ
+        for ev in events {
+            match &ev {
+                Event::Start(Tag::Link { dest_url, .. }) => external.push(url::is_web_url(dest_url)),
+                Event::End(TagEnd::Link) => {
+                    if external.pop() == Some(true) {
+                        out.push(Event::Text(" ↗".into()));
+                    }
+                }
+                _ => {}
+            }
+            out.push(ev);
+        }
+        out
+    }
+}
+```
+
+1. `plugins/mod.rs` に `mod external_mark; pub use external_mark::ExternalMark;` を追加
+2. 同じファイルに `#[cfg(test)]` のテストを書く（`Renderer::new().with(ExternalMark).render(..)` の結果を確かめる）
+3. `src-tauri/src/main.rs` の `renderer()` に `.with(ExternalMark)` を追加
+
+### 指針
+
+- 入出力は `Vec<Event>` だけにし、ファイルシステムや OS に触れない（必要なら `LocalImages` のように関数を注入してもらう）
+- ローカルファイルを参照させるときは `ctx.assets` に追加する（追加しないと WebView から読めない）
+- 生成する HTML に `<script>` を含めない（CSP で実行されない）
+
+## UI プラグイン（JavaScript）
+
+`{ name, setup(app) }` を default export する ES Module を `ui/plugins/` に置き、`ui/plugins/index.js` の配列に加えます。
+
+### App API（`ui/core.js`）
+
+| API | 説明 |
+|---|---|
+| `app.doc` | 表示中の文書 `{ path, name, raw, html, mtime }` または `null` |
+| `app.mode` | `'view'` か `'raw'` |
+| `app.on(event, fn)` | イベントを購読する。戻り値は購読解除関数 |
+| `app.emit(event, ...args)` | イベントを発行する |
+| `app.command(id, fn, keys?)` | コマンドを登録する。`keys` はキー割り当て（例 `['Ctrl+E']`）。ID の重複はエラー |
+| `app.run(id)` | コマンドを実行する |
+| `app.keys()` | 登録済みのキー割り当て一覧 |
+| `app.open(path, base?)` | 文書を開く（`base` を渡すとその文書からの相対パスとして解決） |
+| `app.reload()` | 表示中の文書を再読み込みする（スクロール位置は維持） |
+| `app.setMode(mode)` | 表示モードを切り替える |
+| `app.backend` | ホスト機能（`load`, `mtime`, `pickFile`, `openUrl`, `initialPath`, `onDrop`） |
+| `app.storage` | 永続化用の `get(key)` / `set(key, value)` |
+
+### イベント
+
+| イベント | 引数 | タイミング |
+|---|---|---|
+| `app:start` | — | すべてのプラグインを登録した後 |
+| `doc:loaded` | `doc, { reset }` | 文書を開いた（`reset: true`）／再読み込みした（`reset: false`） |
+| `doc:error` | `error` | 読み込みに失敗した |
+| `mode:changed` | `mode` | 表示と Raw を切り替えた |
+
+### 例: 見出し数をステータス表示する
+
+```js
+// ui/plugins/heading-count.js
+export function countHeadings(raw) {
+  return raw.split('\n').filter((l) => /^#{1,6}\s/.test(l)).length;
+}
+
+export default {
+  name: 'heading-count',
+  setup(app) {
+    app.on('doc:loaded', (doc) => {
+      document.title = `${doc.name} (${countHeadings(doc.raw)} headings)`;
+    });
+  },
+};
+```
+
+### 指針
+
+- **純粋なロジックは名前付きで export し、`tests/ui/` でテストする**（例: `classifyLink`, `clampZoom`, `checkForChange`）。`setup` の中には DOM とのつなぎ込みだけを書く
+- Tauri を直接呼ばず `app.backend` を使う。Tauri の新しいコマンドが必要なら、`Backend` に関数を足し、`backend.js` とテスト用の `tests/ui/fake-backend.js` の両方に実装する
+- キー操作は `keydown` を自分で監視せず、`app.command(id, fn, keys)` で登録する（キーの衝突を見つけやすくするため）
