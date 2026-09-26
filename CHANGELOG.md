@@ -1,23 +1,37 @@
 # Changelog
 
 このファイルの形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に従います。
+各バージョンの節は、そのままリリースノートとして使われます（`.github/workflows/release.yml`）。
 
 ## [Unreleased]
 
-### Added
-- 初回リリース: Markdown の整形表示、Ctrl+ホイールでのズーム、自動再読み込み、ドラッグ＆ドロップ、`.md` の関連付け、ダークモード
-- Rust（`mdcore::Plugin`）と TypeScript（`ui/src/plugins`）のプラグインアーキテクチャ
-- Markdown エディタ: 編集・保存（改行コードと BOM を維持）・ビューアへの反映、リスト／引用の自動継続、インデント維持、Tab でのインデント、太字／斜体、未保存時の確認
-- `settings.json` によるプラグインの有効／無効の切替
-- Mermaid による図の描画（図を含む文書を開いたときだけライブラリを読み込む）
-- 数式の表示（KaTeX）: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`, ```` ```math ````。`$5と$10` のような金額は数式にしない
-- 日本語フォント Noto Sans JP を同梱
-- 絵文字フォントをフォント指定に明記し、OS のフォント補完に頼らずカラー絵文字で表示
-- UI を TypeScript + React + Tailwind CSS（Vite）で実装
+## [0.1.0] - 2026-09-26
 
-### Security
-- 文書由来のパスは、普通の相対パスだけを解決する。UNC パス（NTLM 認証情報の漏えいを防ぐ）・絶対パスは使えない
-- ローカル画像は、相対パスで画像の拡張子を持つファイルだけを読み込み許可の対象にする
-- 開けるファイルと保存先を Rust 側で管理する（ユーザーが選んだファイルと、現在の文書からの相対リンクだけ）
-- 表示前に HTML を DOMPurify で無害化し、CSP を強化し、アプリ以外へのページ移動を禁止する
-- 外部 URL の検証を厳しくし、ブラウザの起動を Tauri の opener プラグインに変更
+最初のリリースです。生成AIが書き出した Markdown を、HTML に変換せずにそのまま読み、必要ならその場で直すための Windows 向けビューア／エディタです。
+
+### 表示
+- CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パスの画像
+- 数式（KaTeX）：`$…$`、`$$…$$`、`\(…\)`、`\[…\]`、```` ```math ````。`$5と$10` のような金額は数式にしない
+- 図（Mermaid）：```` ```mermaid ````
+- 日本語フォント Noto Sans JP を同梱、カラー絵文字、ダークモード（OS に追従）
+- Ctrl+ホイールでの拡大・縮小（倍率は次回も維持）、ファイル更新時の自動再読み込み
+- リンク：`#見出し` は文書内ジャンプ、相対パスの `.md` はビューアで開く、`https://` は既定のブラウザで開く
+
+### 編集
+- Ctrl+E で表示と編集を切り替え、Ctrl+S で保存（元の改行コード CRLF/LF と BOM を維持）
+- リスト・番号付きリスト・タスクリスト・引用の自動継続、インデント維持、Tab / Shift+Tab、Ctrl+B / Ctrl+I
+- 未保存の変更を守る：自動再読み込みで上書きしない。開き直す・閉じるときに確認する
+
+### 安全性
+- 信頼できない文書を開く前提で設計（[SECURITY.md](https://github.com/muraken720/mdviewer/blob/main/SECURITY.md)）
+- スクリプトは実行しない（CSP と DOMPurify）。アプリ以外へのページ移動を禁止する
+- 文書から参照できるのは相対パスのファイルだけ。UNC パス（`\\server\share`）は使えない
+- 開けるファイルと保存先は、ユーザーが選んだファイルと現在の文書に限る
+
+### その他
+- インストーラ（`.md` の関連付け）とポータブル版 zip
+- `settings.json` で機能（プラグイン）ごとに有効／無効を切り替え可能
+- 利用している OSS のライセンス全文（`THIRD_PARTY_LICENSES.md`）を同梱
+
+[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/muraken720/mdviewer/releases/tag/v0.1.0
