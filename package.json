@@ -27,7 +27,7 @@
     "@tauri-apps/api": "~2.11.1",
     "dompurify": "^3.4.16",
     "katex": "^0.18.9",
-    "mermaid": "^11.17.2",
+    "mermaid": "^12.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
