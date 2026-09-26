@@ -100,7 +100,9 @@ Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in
 [Releases](https://github.com/muraken720/mdviewer/releases) から次のいずれかを取得します。
 
 - `mdviewer_x.y.z_x64-setup.exe` — インストーラ。`.md` / `.markdown` の関連付けを登録します
-- `mdviewer.exe` — ポータブル版。任意の場所に置いて使います（関連付けは「プログラムから開く」で手動設定）
+- `mdviewer_x.y.z_x64_portable.zip` — ポータブル版。展開した `mdviewer.exe` を任意の場所に置いて使います（関連付けは「プログラムから開く」で手動設定）
+
+どちらにも、ライセンス（`LICENSE.txt`）と、利用しているオープンソースソフトウェアのライセンス全文（`THIRD_PARTY_LICENSES.md`）が含まれます。
 
 動作環境: Windows 10 / 11（WebView2 ランタイム。Windows 11 には標準で入っています）
 
@@ -137,7 +139,10 @@ Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.a
 
 [MIT](LICENSE)
 
-主な同梱ソフトウェア（いずれも npm パッケージとして取り込み、ライセンスは各パッケージに同梱）:
+mdviewer は多くのオープンソースソフトウェアに支えられています。作者とコントリビュータの皆さんに感謝します。
+主なプロジェクトの紹介は [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md)、配布物に含まれるすべてのソフトウェアのライセンス全文は [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) にあります。
+
+主な同梱ソフトウェア:
 
 | ソフトウェア | ライセンス |
 |---|---|

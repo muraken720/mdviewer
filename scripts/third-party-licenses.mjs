@@ -1,0 +1,131 @@
+// Generates THIRD_PARTY_LICENSES.md: the license texts of every third-party component shipped in
+// mdviewer.exe (Rust crates for the Windows target, and the npm packages bundled into the UI).
+//
+//   npm run licenses           regenerate the file
+//   npm run licenses -- --check  fail if the committed file is out of date (used in CI)
+//
+// Requires cargo-about (`cargo install cargo-about --locked --features cli`).
+import { execFileSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const OUTPUT = 'THIRD_PARTY_LICENSES.md';
+const root = new URL('..', import.meta.url).pathname;
+
+function rustLicenses() {
+  return execFileSync('cargo', ['about', 'generate', 'scripts/about.hbs', '-m', 'src-tauri/Cargo.toml'], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'inherit'],
+    maxBuffer: 64 * 1024 * 1024,
+  }).trim();
+}
+
+/**
+ * Build tools whose code ends up in the output even though they are dev dependencies:
+ * Tailwind's preflight CSS and Vite's module-preload helper.
+ */
+const BUNDLED_DEV_PACKAGES = ['node_modules/tailwindcss', 'node_modules/vite'];
+
+/** Production (non-dev) npm packages from package-lock.json that are installed. */
+function npmPackages() {
+  const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8'));
+  const seen = new Map();
+  for (const [path, entry] of Object.entries(lock.packages)) {
+    const shipped = !entry.dev && !entry.devOptional;
+    if (!path || !(shipped || BUNDLED_DEV_PACKAGES.includes(path)) || !existsSync(join(root, path))) continue;
+    const pkg = JSON.parse(readFileSync(join(root, path, 'package.json'), 'utf8'));
+    const key = `${pkg.name}@${pkg.version}`;
+    const author = typeof pkg.author === 'string' ? pkg.author : pkg.author?.name;
+    if (!seen.has(key))
+      seen.set(key, { name: pkg.name, version: pkg.version, license: licenseOf(pkg), author, dir: path });
+  }
+  return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
+}
+
+function licenseOf(pkg) {
+  if (typeof pkg.license === 'string') return pkg.license;
+  if (pkg.license?.type) return pkg.license.type;
+  if (Array.isArray(pkg.licenses)) return pkg.licenses.map((l) => l.type).join(' OR ');
+  return 'UNKNOWN';
+}
+
+function licenseText(dir) {
+  const file = readdirSync(join(root, dir)).find((f) => /^(licen[cs]e|copying)(\.|$)/i.test(f));
+  return file
+    ? readFileSync(join(root, dir, file), 'utf8')
+        .replace(/\r\n/g, '\n')
+        .trim()
+    : null;
+}
+
+/** Some packages declare MIT but ship no license file: use the standard MIT text. */
+function fallbackText(p) {
+  if (!/\bMIT\b/.test(p.license)) throw new Error(`${p.name}: no license file and not MIT (${p.license})`);
+  const holder = p.author ?? `the ${p.name} authors`;
+  return `(The package declares "${p.license}" but ships no license file; the MIT License applies.)
+
+MIT License
+
+Copyright (c) ${holder}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`;
+}
+
+function npmLicenses() {
+  const packages = npmPackages();
+  const missing = packages.filter((p) => p.license === 'UNKNOWN' && !licenseText(p.dir));
+  if (missing.length) throw new Error(`packages without a license: ${missing.map((p) => p.name).join(', ')}`);
+  return packages
+    .map((p) => {
+      const text = licenseText(p.dir) ?? fallbackText(p);
+      const license = p.license === 'UNKNOWN' ? 'see the license text below' : p.license;
+      return `### ${p.name} ${p.version}\n\nLicense: ${license}\n\n\`\`\`text\n${text}\n\`\`\``;
+    })
+    .join('\n\n');
+}
+
+const content = `# Third-party licenses
+
+mdviewer is built on the work of many open-source projects. Thank you to all of their authors and
+contributors. A short list of the main projects is in [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md).
+
+This file lists every third-party component shipped in \`mdviewer.exe\`, with its license text.
+It is generated by \`npm run licenses\` — do not edit it by hand.
+
+## npm packages (user interface, fonts)
+
+${npmLicenses()}
+
+## Rust crates (application)
+
+${rustLicenses()}
+`;
+
+if (process.argv.includes('--check')) {
+  const current = existsSync(join(root, OUTPUT)) ? readFileSync(join(root, OUTPUT), 'utf8') : '';
+  if (current !== content) {
+    console.error(`${OUTPUT} is out of date. Run \`npm run licenses\` and commit the result.`);
+    process.exit(1);
+  }
+  console.log(`${OUTPUT} is up to date.`);
+} else {
+  writeFileSync(join(root, OUTPUT), content);
+  console.log(`Wrote ${OUTPUT}`);
+}

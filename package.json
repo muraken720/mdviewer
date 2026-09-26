@@ -19,7 +19,8 @@
     "lint": "biome check",
     "format": "biome check --write",
     "test": "vitest run",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "licenses": "node scripts/third-party-licenses.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-jp": "^5.3.0",
