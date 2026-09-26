@@ -1,4 +1,4 @@
-import { keyParts } from './keys';
+import { keyParts } from './format-key';
 
 /** A key binding drawn as keycaps: Ctrl + O. */
 export function Keys({ spec }: { spec: string }) {

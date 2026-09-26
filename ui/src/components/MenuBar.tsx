@@ -2,7 +2,7 @@ import { Fragment, type KeyboardEvent, useCallback, useEffect, useRef, useState 
 import type { App, Menu } from '../core/app';
 import type { Command } from '../core/types';
 import { useAppVersion } from '../core/useApp';
-import { formatKey } from './keys';
+import { formatKey } from './format-key';
 
 /** "ファイル(F)" in Japanese; "File" with the access key underlined in English. */
 function MenuLabel({ text, mnemonic, lang }: { text: string; mnemonic: string; lang: string }) {

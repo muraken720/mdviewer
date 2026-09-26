@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { App } from '../core/app';
 import { useAppVersion } from '../core/useApp';
-import { formatKey } from './keys';
+import { formatKey } from './format-key';
 
 function NavButton({
   label,
