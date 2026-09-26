@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="430" viewBox="0 0 800 430" font-family="'Noto Sans JP', 'Noto Sans CJK JP', 'Yu Gothic UI', Meiryo, 'Hiragino Sans', sans-serif" font-size="13">
+  <title>mdviewer の画面構成</title>
+  <rect width="800" height="430" rx="10" fill="#ffffff"/>
+  <!-- window -->
+  <rect x="20" y="20" width="520" height="390" rx="6" fill="#ffffff" stroke="#9aa4b2" stroke-width="1.5"/>
+  <!-- menu bar -->
+  <rect x="21" y="21" width="518" height="26" fill="#f3f4f6"/>
+  <g fill="#1f2328">
+    <text x="32" y="39">ファイル</text><text x="92" y="39">編集</text><text x="132" y="39">表示</text><text x="172" y="39">移動</text><text x="212" y="39">ヘルプ</text>
+  </g>
+  <!-- tab bar -->
+  <rect x="21" y="47" width="518" height="28" fill="#fafbfc" stroke="#e1e4e8"/>
+  <text x="30" y="66" fill="#57606a">←</text><text x="48" y="66" fill="#57606a">→</text>
+  <rect x="70" y="51" width="120" height="24" rx="4" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="80" y="67" fill="#1f2328">README.md</text><text x="176" y="67" fill="#8c959f">×</text>
+  <text x="206" y="67" fill="#57606a">shortcuts.md</text>
+  <!-- content -->
+  <text x="48" y="112" fill="#1f2328" font-size="20" font-weight="bold">見出し</text>
+  <rect x="48" y="126" width="330" height="8" rx="4" fill="#d8dee4"/>
+  <rect x="48" y="142" width="290" height="8" rx="4" fill="#d8dee4"/>
+  <rect x="48" y="166" width="220" height="70" rx="4" fill="#f6f8fa" stroke="#d0d7de"/>
+  <path d="M70 220 L110 186 L150 204 L190 176 L240 196" fill="none" stroke="#0969da" stroke-width="2"/>
+  <rect x="48" y="252" width="330" height="8" rx="4" fill="#d8dee4"/>
+  <rect x="48" y="268" width="260" height="8" rx="4" fill="#d8dee4"/>
+  <!-- find bar -->
+  <rect x="250" y="84" width="200" height="26" rx="5" fill="#ffffff" stroke="#9aa4b2"/>
+  <text x="260" y="102" fill="#57606a">検索</text><text x="400" y="102" fill="#57606a">1 / 3</text>
+  <!-- mode toggle -->
+  <rect x="468" y="84" width="54" height="24" rx="5" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="482" y="101" fill="#57606a">編集</text>
+  <!-- zoom badge -->
+  <rect x="470" y="368" width="54" height="24" rx="5" fill="#1f2328"/>
+  <text x="481" y="385" fill="#ffffff">120%</text>
+  <!-- callouts -->
+  <g fill="#cf222e" font-weight="bold">
+    <circle cx="276" cy="34" r="10"/><circle cx="330" cy="62" r="10"/><circle cx="36" cy="300" r="10"/>
+    <circle cx="240" cy="97" r="10"/><circle cx="530" cy="122" r="10"/><circle cx="458" cy="380" r="10"/>
+  </g>
+  <g fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">
+    <text x="276" y="38">1</text><text x="330" y="66">2</text><text x="36" y="304">3</text>
+    <text x="240" y="101">4</text><text x="530" y="126">5</text><text x="458" y="384">6</text>
+  </g>
+  <!-- legend -->
+  <g fill="#1f2328">
+    <text x="560" y="50" font-weight="bold">画面の各部</text>
+    <text x="560" y="80">1  メニューバー</text>
+    <text x="560" y="106">2  タブバー（←→ 戻る／進む）</text>
+    <text x="560" y="132">3  本文</text>
+    <text x="560" y="158">4  検索バー（Ctrl+F）</text>
+    <text x="560" y="184">5  表示／編集の切替</text>
+    <text x="560" y="210">6  倍率（拡大・縮小時）</text>
+  </g>
+</svg>

@@ -10,11 +10,26 @@
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
 - **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ
 
+![mdviewer で数式と Mermaid の図を表示しているところ](docs/images/screenshot-math-mermaid.png)
+
+使い方は [操作マニュアル](docs/manual/README.md) を参照してください。マニュアルは、表・図・数式・絵文字などの表示見本を兼ねています（上の画面は、このマニュアルを表示したものです）。
+
+## スクリーンショット
+
+| 表・タスクリスト・アラート | 編集モード（Markdown をそのまま編集） |
+|:---:|:---:|
+| ![表・タスクリスト・アラートの表示](docs/images/screenshot-syntax.png) | ![編集モード](docs/images/screenshot-editor.png) |
+| **ダークモードと検索（絵文字もカラーで表示）** | **メニュー（日本語／English）** |
+| ![ダークモードで検索しているところ](docs/images/screenshot-dark-find.png) | ![表示メニュー](docs/images/screenshot-menu.png) |
+
+スクリーンショットは開発環境（Linux 版のビルド）で撮影しています。Windows では、ウィンドウ枠と絵文字の絵柄（Segoe UI Emoji）が異なります。
+
 ## English
 
 mdviewer is a small, fast Markdown viewer/editor for Windows, made for reading the Markdown that AI tools produce without converting it to HTML first.
 It renders GitHub Flavored Markdown, math (KaTeX: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`) and Mermaid diagrams, has a minimal editor with list continuation, and auto-reloads when the file changes.
-Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in Japanese; issues and pull requests in English are welcome.
+Built with Rust + Tauri 2 (WebView2) and TypeScript + React. See the screenshots below and the [user manual](docs/manual/README.md) (Japanese), which doubles as a rendering sample.
+Documentation is in Japanese; issues and pull requests in English are welcome.
 
 ## 機能
 
@@ -140,6 +155,7 @@ npm run tauri build              # リリースビルド + インストーラ作
 
 Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.app/start/prerequisites/)（`libwebkit2gtk-4.1-dev` など）が必要です。
 
+- 操作マニュアル（表示見本を兼ねる）: [docs/manual/README.md](docs/manual/README.md)
 - 構成と設計: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - プラグインの作り方: [docs/PLUGINS.md](docs/PLUGINS.md)
 - コントリビュート: [CONTRIBUTING.md](CONTRIBUTING.md)
