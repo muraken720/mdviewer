@@ -106,6 +106,10 @@ Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in
 
 動作環境: Windows 10 / 11（WebView2 ランタイム。Windows 11 には標準で入っています）
 
+> [!NOTE]
+> 実行ファイルにはコード署名をしていないため、初回起動時に「Windows によって PC が保護されました」（SmartScreen）と表示されることがあります。
+> 「詳細情報」→「実行」で起動できます。不安な場合は、[Releases](https://github.com/muraken720/mdviewer/releases) のファイルであることを確認してください。
+
 コマンドラインからも開けます:
 
 ```
