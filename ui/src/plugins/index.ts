@@ -12,6 +12,7 @@ import menu from './menu';
 import mermaid from './mermaid';
 import openFile from './open-file';
 import tabs from './tabs';
+import theme from './theme';
 import title from './title';
 import view from './view';
 import zoom from './zoom';
@@ -26,6 +27,7 @@ const plugins: Plugin[] = [
   links,
   zoom,
   find,
+  theme,
   language,
   help,
   autoReload,

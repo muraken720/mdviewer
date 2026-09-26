@@ -19,7 +19,7 @@
 | 表・タスクリスト・アラート | 編集モード（Markdown をそのまま編集） |
 |:---:|:---:|
 | ![表・タスクリスト・アラートの表示](docs/images/screenshot-syntax.png) | ![編集モード](docs/images/screenshot-editor.png) |
-| **ダークモードと検索（絵文字もカラーで表示）** | **メニュー（日本語／English）** |
+| **ダークモードと検索（絵文字もカラーで表示）** | **表示メニュー（テーマと言語を切り替え）** |
 | ![ダークモードで検索しているところ](docs/images/screenshot-dark-find.png) | ![表示メニュー](docs/images/screenshot-menu.png) |
 
 スクリーンショットは開発環境（Linux 版のビルド）で撮影しています。Windows では、ウィンドウ枠と絵文字の絵柄（Segoe UI Emoji）が異なります。
@@ -47,7 +47,7 @@ Documentation is in Japanese; issues and pull requests in English are welcome.
 | 拡大・縮小 | <kbd>Ctrl</kbd>+ホイール / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd>（<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%）。倍率は次回も維持 |
 | 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd>。未保存の編集は上書きしない |
 | リンク | `#見出し` は文書内ジャンプ、`other.md` はビューアで開く、`https://` は既定のブラウザで開く |
-| ダークモード | OS の設定に追従 |
+| テーマ（ダークモード） | 「表示」メニューで 自動（OS の設定に追従）／ライト／ダーク を選べる（選択は次回も維持）。図（Mermaid）の色も切り替わる |
 | 日本語フォント | Noto Sans JP を同梱（PC にインストールされていなくても同じ見た目） |
 | 絵文字 | ✅ ⚠️ 🚀 などをカラーで表示（Windows では Segoe UI Emoji）。国旗の絵文字は Windows の制約で文字（`JP` など）になる。`:rocket:` のようなショートコードは変換しない |
 
@@ -107,7 +107,7 @@ Documentation is in Japanese; issues and pull requests in English are welcome.
 | `math` | 有効 | 数式。KaTeX は数式を含む文書を開いたときだけ読み込む |
 | `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
 | `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
-| `menu`, `tabs`, `view`, `editor`, `find`, `language`, `help`, `zoom`, `links`, `auto-reload`, `title`, `open-file` | 有効 | 各 UI 機能 |
+| `menu`, `tabs`, `view`, `editor`, `find`, `theme`, `language`, `help`, `zoom`, `links`, `auto-reload`, `title`, `open-file` | 有効 | 各 UI 機能 |
 
 設定の変更は次回起動時に反映されます。
 

@@ -4,6 +4,7 @@ import { fakeBackend } from '../test/fake-backend';
 import { checkForChange } from './auto-reload';
 import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
+import theme, { parseTheme, resolveTheme } from './theme';
 import { windowTitle } from './title';
 import { clampZoom, MAX, MIN } from './zoom';
 
@@ -68,4 +69,36 @@ test('typeset renders inline, display and ```math blocks with KaTeX', async () =
   expect(root.querySelectorAll('.katex-display')).toHaveLength(2);
   expect(root.querySelector('pre')).toBeNull();
   expect(root.textContent).toContain('\\badcommand'); // unknown commands are shown (in red), not thrown
+});
+
+test('parseTheme and resolveTheme', () => {
+  expect(parseTheme('dark')).toBe('dark');
+  expect(parseTheme('purple')).toBe('auto');
+  expect(parseTheme(null)).toBe('auto');
+  expect(resolveTheme('auto', true)).toBe('dark');
+  expect(resolveTheme('auto', false)).toBe('light');
+  expect(resolveTheme('light', true)).toBe('light');
+  expect(resolveTheme('dark', false)).toBe('dark');
+});
+
+test('theme: the saved choice is applied at startup, and a new choice is saved', () => {
+  const backend = fakeBackend();
+  const saved = new Map<string, string>([['theme', 'dark']]);
+  const storage = {
+    get: (k: string) => saved.get(k) ?? null,
+    set: (k: string, v: string | number) => void saved.set(k, String(v)),
+  };
+  const app = new App({ backend, storage }).use(theme);
+  expect(document.documentElement.dataset.theme).toBe('dark');
+  expect(backend.calls).toContainEqual(['setTheme', 'dark']);
+  expect(app.getCommand('theme.dark')?.checked?.()).toBe(true);
+
+  app.run('theme.light');
+  expect(document.documentElement.dataset.theme).toBe('light');
+  expect(saved.get('theme')).toBe('light');
+  expect(app.getCommand('theme.light')?.checked?.()).toBe(true);
+
+  app.run('theme.auto');
+  expect(saved.get('theme')).toBe('auto');
+  expect(backend.calls).toContainEqual(['setTheme', null]);
 });

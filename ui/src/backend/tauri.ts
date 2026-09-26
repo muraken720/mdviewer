@@ -21,6 +21,7 @@ export function tauriBackend(): Backend {
     openUrl: (url) => invoke<void>('open_url', { url }),
     initialPath: () => invoke<string | null>('initial_path'),
     setTitle: (title) => win.setTitle(title),
+    setTheme: (theme) => win.setTheme(theme),
     closeWindow: () => win.close(),
     onOpenRequest: (cb) => {
       // Emitted by src-tauri/src/main.rs after the file was allowed (drop, second launch).

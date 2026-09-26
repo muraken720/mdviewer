@@ -51,6 +51,8 @@ export interface Backend {
   openUrl(url: string): Promise<void>;
   initialPath(): Promise<string | null>;
   setTitle(title: string): Promise<void>;
+  /** Theme of the window frame; `null` follows the OS. */
+  setTheme(theme: 'light' | 'dark' | null): Promise<void>;
   /** Close the window (goes through `onCloseRequested`). */
   closeWindow(): Promise<void>;
   /** The user asked to open a file (drop, second launch). */
