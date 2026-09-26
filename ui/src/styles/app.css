@@ -18,9 +18,13 @@
   }
 }
 
+/* Color emoji fonts, listed explicitly (as GitHub does) so emoji do not depend on the OS's
+   automatic font fallback. Windows: Segoe UI Emoji / Symbol; macOS: Apple Color Emoji; Linux: Noto. */
+:root { --font-emoji: "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji"; }
+
 @theme inline {
-  --font-sans: "Noto Sans JP Variable", "Noto Sans JP", system-ui, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, "DejaVu Sans Mono", "Noto Sans Mono", "Noto Sans JP Variable", "Noto Sans JP", monospace;
+  --font-sans: "Noto Sans JP Variable", "Noto Sans JP", system-ui, sans-serif, var(--font-emoji);
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, "DejaVu Sans Mono", "Noto Sans Mono", "Noto Sans JP Variable", "Noto Sans JP", monospace, var(--font-emoji);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-bg: var(--bg);
