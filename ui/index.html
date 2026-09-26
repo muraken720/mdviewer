@@ -1,26 +1,12 @@
 <!doctype html>
 <html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>mdviewer</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<button id="toggle" title="表示 / 編集の切替 (Ctrl+E)" hidden>Edit</button>
-<div id="zoom" hidden></div>
-<main id="view" class="markdown">
-  <div class="empty">
-    <p>Markdown ファイルをドロップ、または <kbd>Ctrl</kbd>+<kbd>O</kbd> で開く</p>
-    <table>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>表示 / 編集 切替</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>保存</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+ホイール</td><td>拡大 / 縮小（<kbd>Ctrl</kbd>+<kbd>0</kbd> で戻す）</td></tr>
-      <tr><td><kbd>F5</kbd></td><td>再読み込み（変更は自動反映）</td></tr>
-    </table>
-  </div>
-</main>
-<textarea id="editor" spellcheck="false" hidden></textarea>
-<script type="module" src="main.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>mdviewer</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

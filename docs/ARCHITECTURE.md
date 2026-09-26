@@ -2,110 +2,141 @@
 
 ## 設計方針
 
-1. **軽量が最優先** — 依存を増やす前に「本当に毎回使うか」を問う。フロントエンドはビルド工程なしの素の ES Modules。
-2. **ロジックは GUI から切り離す** — Markdown 処理は `mdcore`（Tauri 非依存）、UI ロジックは `ui/core.js`（DOM・Tauri 非依存）に置き、どちらも単体でテストできるようにする。
-3. **機能はプラグインとして足し引きする** — 各機能を独立したプラグインにし、登録箇所 1 行で有効化・無効化できるようにする。
-4. **プラグインはコンパイル時に組み込む** — 実行時にコードを読み込む仕組みは持たない（サイズ・起動速度・安全性のため）。有効／無効は `settings.json` で切り替える。
-5. **重い機能は遅延読み込み** — 大きなライブラリ（Mermaid）は、実際に必要になったときだけ読み込む。起動速度を落とさない。
+1. **軽量・高速が最優先** — 依存を増やす前に「本当に毎回使うか」を問う。重いライブラリは必要になるまで読み込まない。
+2. **ロジックは画面から切り離す** — Markdown の処理は `mdcore`（Tauri に依存しない Rust）、UI の状態管理と編集ロジックは `ui/src/core` と `ui/src/lib`（React・DOM・Tauri に依存しない TypeScript）に置く。どちらも単体でテストできるようにする。
+3. **機能はプラグインとして足し引きする** — 各機能を独立したプラグインにし、登録箇所 1 行で追加でき、`settings.json` で無効化できるようにする。
+4. **プラグインはビルド時に組み込む** — 実行時にコードを読み込む仕組みは持たない（サイズ・起動速度・安全性のため）。
+
+## 技術構成
+
+| 層 | 技術 | 理由 |
+|---|---|---|
+| アプリ殻 | Rust + [Tauri 2](https://tauri.app/) | 描画は OS 標準の WebView2 を使うので、ブラウザエンジンを同梱せず小さい |
+| Markdown 変換 | Rust + [pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark) | 高速。UI 側に Markdown パーサを持たない |
+| UI | TypeScript + React 19 | 型で壊れにくくし、コントリビュータが参加しやすい。プラグインが画面部品を差し込める |
+| スタイル | Tailwind CSS v4（アプリの外枠）+ `markdown.css`（本文） | 使ったクラスだけが出力され、実行時コストがない。本文は GitHub の表示に合わせた専用 CSS（Tailwind の `prose` は GitHub と見た目が異なるため） |
+| ビルド | Vite | 数式・図のライブラリを別チャンクに分け、必要なときだけ読み込む |
+| テスト | `cargo test`、Vitest + Testing Library | |
+| フォント | Noto Sans JP（Fontsource の可変ウェイト版） | PC にインストールされていなくても同じ見た目。文字範囲ごとに分割されており、表示に使う分だけ読み込む |
 
 ## 全体像
 
 ```
-┌─────────────────────────── mdviewer.exe ───────────────────────────┐
-│                                                                      │
-│  WebView2 (ui/)                        Rust (src-tauri/)             │
-│  ┌──────────────────────────┐  IPC    ┌───────────────────────────┐ │
-│  │ main.js                  │ ──────▶ │ commands.rs               │ │
-│  │  └ core.js  (App)        │ invoke  │  load / render / save /   │ │
-│  │     ├ plugins/view       │         │  mtime / settings / ask / │ │
-│  │     ├ plugins/editor ─ lib/markdown-edit.js   pick_file / open_url │ │
-│  │     ├ plugins/title      │ ◀────── │ settings.rs (settings.json)│ │
-│  │     ├ plugins/open-file  │   Doc   │ platform.rs (OS 依存)      │ │
-│  │     ├ plugins/links      │         └─────────────┬─────────────┘ │
-│  │     ├ plugins/zoom       │                       │               │
-│  │     ├ plugins/auto-reload│         ┌─────────────▼─────────────┐ │
-│  │     └ plugins/mermaid ─ vendor/mermaid (遅延読込)  crates/mdcore  │ │
-│  │ backend.js (Tauri 呼出)  │         │  Renderer ─ Plugin trait  │ │
-│  └──────────────────────────┘         │  ├ Gfm / HeadingAnchors / │ │
-│                                       │  │ LocalImages            │ │
-│                                       │  └ document / paths / url │ │
-│                                       └───────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────── mdviewer.exe ────────────────────────────────┐
+│                                                                               │
+│  WebView2（ui/ → Vite でビルドした ui/dist を埋め込み）   Rust（src-tauri/）     │
+│  ┌──────────────────────────────────────┐   IPC    ┌────────────────────────┐ │
+│  │ main.tsx                             │ ───────▶ │ commands.rs            │ │
+│  │  ├ core/app.ts   App（状態・イベント・  │  invoke  │  load / render / save /│ │
+│  │  │               コマンド・プラグイン管理）│          │  mtime / settings /    │ │
+│  │  ├ components/Shell.tsx（画面の枠）    │ ◀─────── │  ask / pick_file /     │ │
+│  │  ├ backend/tauri.ts（Tauri 呼び出し）   │   Doc    │  open_url              │ │
+│  │  └ plugins/                           │          │ settings.rs            │ │
+│  │     view · editor · title · open-file │          │ platform.rs（OS 依存）  │ │
+│  │     links · zoom · auto-reload        │          └───────────┬────────────┘ │
+│  │     math（KaTeX, 遅延読込）             │                      │              │
+│  │     mermaid（Mermaid, 遅延読込）        │          ┌───────────▼────────────┐ │
+│  │  lib/markdown-edit.ts（編集操作）       │          │ crates/mdcore          │ │
+│  └──────────────────────────────────────┘          │  Renderer ─ Plugin     │ │
+│                                                    │  Gfm · HeadingAnchors · │ │
+│                                                    │  LocalImages · Math     │ │
+│                                                    │  document · paths · url │ │
+│                                                    └────────────────────────┘ │
+└───────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## ディレクトリ
 
-| パス | 役割 | 依存 |
-|---|---|---|
-| `crates/mdcore/` | Markdown → HTML パイプライン、プラグイン、パス／URL 処理、ファイル読み書き（改行コード・BOM の保持） | pulldown-cmark のみ |
-| `src-tauri/src/main.rs` | 起動、設定の読込、Markdown プラグインの登録（`renderer()`） | tauri |
-| `src-tauri/src/settings.rs` | `settings.json` の読込 | serde_json |
-| `src-tauri/src/commands.rs` | UI から呼ぶ IPC コマンド。薄く保ち、処理は `mdcore` に委譲 | |
-| `src-tauri/src/platform.rs` | OS 依存処理（ブラウザ起動、アセット URL） | |
-| `ui/core.js` | App: 文書と編集の状態、イベントバス、コマンド／キーマップ、プラグインホスト | なし |
-| `ui/lib/markdown-edit.js` | Markdown の編集操作（Enter でのリスト継続、インデントなど）。純粋関数 | なし |
-| `ui/vendor/` | 同梱ライブラリ（Mermaid）。必要になったときだけプラグインから読み込む | |
-| `ui/backend.js` | `Backend` インターフェースの Tauri 実装 | Tauri JS API |
-| `ui/plugins/` | UI 機能。`index.js` が登録一覧 | DOM |
-| `tests/ui/` | UI のテスト（`node --test`、偽 Backend を使用） | Node.js |
+| パス | 役割 |
+|---|---|
+| `crates/mdcore/` | Markdown → HTML パイプライン（`Renderer` / `Plugin`）、組み込みプラグイン、パス・URL 処理、ファイルの読み書き（改行コードと BOM の維持）。依存は pulldown-cmark のみ |
+| `src-tauri/src/main.rs` | 起動、設定の読み込み、Markdown プラグインの登録（`renderer()`） |
+| `src-tauri/src/commands.rs` | UI から呼ぶ IPC コマンド。薄く保ち、処理は `mdcore` に任せる |
+| `src-tauri/src/settings.rs` / `platform.rs` | `settings.json` の読み込み / OS 依存の処理 |
+| `ui/src/core/` | `App`（状態・イベント・コマンドとキーマップ・プラグイン管理）と型定義。React・DOM に依存しない |
+| `ui/src/lib/markdown-edit.ts` | エディタの編集操作。純粋関数 |
+| `ui/src/backend/tauri.ts` | `Backend` インターフェースの Tauri 実装 |
+| `ui/src/components/` | 画面の枠（`Shell`）と共通部品 |
+| `ui/src/plugins/` | UI の機能。`index.ts` が登録一覧 |
+| `ui/src/styles/` | `app.css`（Tailwind・テーマ色・フォント）、`markdown.css`（本文） |
+| `ui/src/test/` | テスト用の偽 Backend |
 
-## 処理の流れ（ファイルを開く）
+テストは対象ファイルと同じ場所に `*.test.ts(x)` として置きます。
 
-1. `open-file` プラグインが起動引数／ドロップ／<kbd>Ctrl</kbd>+<kbd>O</kbd> からパスを得て `app.open(path)` を呼ぶ
-2. `core.js` が `backend.load()` → IPC `load` を呼ぶ
-3. `commands::load` が `Document::read` で読み込み、`Renderer::render` で HTML 化
-4. 描画中に `LocalImages` が参照したローカル画像を `Rendered::assets` に集め、`load` がそのファイルだけをアセットプロトコルで読めるよう許可する
-5. UI に `Doc { path, name, raw, html, mtime }` を返し、`doc:loaded` イベントを発行
-6. `view` プラグインが DOM に反映。`auto-reload` は 1 秒ごとに `mtime` を比較し、変化があれば `app.reload()`
+## UI の仕組み
 
-## 処理の流れ（編集して保存する）
+- **状態は `App` が一元管理する**：開いている文書（`doc`）、モード（`view` / `edit`）、未保存フラグ（`dirty`）、エラー。状態が変わると必ずイベントを発行する
+- **React との接続**：`App.subscribe` / `App.getVersion` を `useSyncExternalStore` に渡し（`useAppVersion`）、イベントごとに再描画する。状態を React 側に複製しない
+- **画面はプラグインが差し込む**：`Shell` は、プラグインが `addPane(mode, Component)` で登録した画面（表示・編集）と、`addOverlay(Component)` で登録した重ね表示（切替ボタン、倍率表示、通知）を並べるだけ
+- **本文の後処理**：`view` プラグインは本文の HTML を差し替えるたびに `view:updated`（本文の要素）を発行する。`links`・`math`・`mermaid` はこれを受けて、リンクのクリック処理・数式の組版・図の描画を行う
+- **エディタは非制御の `<textarea>`**：入力ごとに React で再描画せず、ブラウザ標準の元に戻す（Ctrl+Z）の履歴を保つため。自動編集は `document.execCommand('insertText')` で適用する
+
+## 処理の流れ
+
+### ファイルを開く
+
+1. `open-file` プラグインが、起動引数・ドロップ・<kbd>Ctrl</kbd>+<kbd>O</kbd> のいずれかからパスを受け取り、`app.open(path)` を呼ぶ
+2. `App` が `backend.load()`、つまり IPC の `load` を呼ぶ
+3. `commands::load` が `Document::read` で読み込み、`Renderer::render` で HTML に変換する
+4. 変換中に `LocalImages` が参照しているローカル画像を集める。`load` は、そのファイルだけをアセットプロトコルで読めるよう許可する
+5. `Doc { path, name, raw, html, mtime }` を返す。`App` が `doc:loaded` を発行する
+6. `view` が本文を描画し、`view:updated` を発行する。数式や図があれば、このとき初めて KaTeX / Mermaid を読み込む
+7. `auto-reload` は 1 秒ごとに更新日時（`mtime`）を比べ、変わっていれば `app.reload()` を呼ぶ（未保存の編集がある間は呼ばない）
+
+### 編集して保存する
 
 ```
-editor (textarea) ──input──▶ app.update(text) ──▶ doc:dirty ──▶ title に ●
-      Ctrl+S ──▶ app.save() ──▶ IPC save ──▶ document::save（元の CRLF/BOM で書込）──▶ doc:saved
+editor (textarea) ──input──▶ app.update(text) ──▶ doc:dirty ──▶ タイトルに ●
+      Ctrl+S ──▶ app.save() ──▶ IPC save ──▶ document::save（元の CRLF/BOM で書き込み）──▶ doc:saved
       Ctrl+E ──▶ app.setMode('view') ──▶ app.refresh() ──▶ IPC render ──▶ doc:rendered ──▶ view
 ```
 
-- 状態は `core.js` が一元管理する: `doc.raw`（編集中のテキスト）、保存済みテキスト、最後に描画したテキスト。`app.dirty` は `doc.raw` と保存済みテキストを比べた結果
-- ビューアへの反映は、表示モードに戻ったとき、テキストが前回の描画から変わっている場合だけ行う
-- 未保存の編集は失わない: 自動再読み込みは dirty の間は止まる。開く・F5・ウィンドウを閉じるときは `app.confirmDiscard()` で確認する。保存時にファイルが外部で変更されていれば、上書きしてよいか確認する
-- エディタの自動編集は `document.execCommand('insertText')` で適用し、ブラウザ標準の元に戻す（Ctrl+Z）の履歴に残す
+- 未保存の編集は失わない：
+  - 別ファイルを開く・<kbd>F5</kbd>・ウィンドウを閉じるときは `app.confirmDiscard()` で確認する
+  - 保存時にファイルが外部で変更されていれば、上書きしてよいか確認する
 
-## 設定
+### 数式
 
-`settings.json`（パスは README 参照）を起動時に 1 回読み込みます。
-
-- Rust: `renderer()` が `Renderer::retain` で無効な Markdown プラグインを外す
-- UI: `main.js` が `isPluginEnabled(plugin, settings)` で UI プラグインを選んで登録する。プラグインの既定は `enabledByDefault`（省略時 true）
-
-Rust と UI のプラグインは同じ `plugins` マップで名前指定します。名前は重複させないでください。
+1. Rust の `Math` プラグインが、構文解析の前（`preprocess`）に書き方を揃える
+   - `\(…\)` を `$…$` に、`\[…\]` を `$$…$$` に変換する（コードの中は対象外）
+   - 対にならない `$`（`$5と$10` など）はエスケープし、文字として表示されるようにする
+2. pulldown-cmark が `<span class="math math-inline|math-display">` を出力する
+3. UI の `math` プラグインが KaTeX で組版する。```` ```math ```` ブロックも独立した数式として扱う
 
 ## 2 種類のプラグイン
 
-| | Markdown プラグイン（Rust） | UI プラグイン（JS） |
+| | Markdown プラグイン（Rust） | UI プラグイン（TypeScript） |
 |---|---|---|
-| 目的 | Markdown の解釈・HTML 生成を変える | 操作・表示を変える |
-| 実体 | `mdcore::Plugin` trait の実装 | `{ name, setup(app) }` を default export する ES Module |
-| 登録 | `src-tauri/src/main.rs` の `renderer()` | `ui/plugins/index.js` |
-| 例 | `Gfm`, `HeadingAnchors`, `LocalImages` | `view`, `editor`, `title`, `zoom`, `links`, `auto-reload`, `open-file`, `mermaid` |
-| 既定値 | すべて有効 | `enabledByDefault: false` で既定無効にできる |
+| 目的 | Markdown の解釈・HTML の生成を変える | 操作・表示を変える |
+| 実体 | `mdcore::Plugin` trait の実装（`preprocess` / `parser_options` / `transform`） | `{ name, setup(app) }` を default export するモジュール |
+| 登録 | `src-tauri/src/main.rs` の `renderer()` | `ui/src/plugins/index.ts` |
+| 例 | `gfm`, `heading-anchors`, `local-images`, `math` | `view`, `editor`, `title`, `open-file`, `links`, `zoom`, `auto-reload`, `math`, `mermaid` |
 
-作り方は [PLUGINS.md](PLUGINS.md) を参照。
+`settings.json` の `plugins` は、Rust と UI で共通の名前空間です。同じ名前のプラグインは一緒に切り替わります。たとえば `"math": false` にすると、Rust 側の数式の解釈と UI 側の組版が両方とも無効になります。
+
+作り方は [PLUGINS.md](PLUGINS.md) を参照してください。
 
 ## セキュリティ
 
-Markdown には生の HTML を書けるため、文書を信頼できないものとして扱います。
+Markdown には生の HTML を書けるため、文書は信頼できないものとして扱います。
 
-- **CSP** `script-src 'self'`: 文書内の `<script>` やインライン `onerror=` などは実行されない
-- **アセットスコープ**: 静的な許可は空。開いた文書が参照する画像ファイルだけを個別に許可する
-- **Mermaid**: `securityLevel: 'strict'` で描画する。ライブラリは `eval` を使わないため CSP を緩めていない
-- **外部リンク**: `open_url` は `http(s):` / `mailto:` 以外を拒否する（Rust 側で検証）。`javascript:` や `file:` のリンクは UI 側で無視する
-- 実行時にプラグインを読み込む仕組みは持たない
+- **CSP** `script-src 'self'`：文書内の `<script>` や `onerror=` などのインラインのイベントハンドラは実行されない
+  - Vite の設定で `assetsInlineLimit: 0` とし、`data:` URI を生成しない
+  - KaTeX と Mermaid は `eval` を使わない
+- **Mermaid**：`securityLevel: 'strict'` で描画する
+- **アセットスコープ**：あらかじめ許可しているファイルはない。開いた文書が参照している画像ファイルだけを個別に許可する
+- **外部リンク**：`open_url` は `http(s):` と `mailto:` 以外を拒否する（Rust 側で検証）。`javascript:` や `file:` のリンクは UI 側で無視する
 
-## サイズと速度のために
+## サイズと速度
 
-- リリースプロファイル: `opt-level = "s"`、LTO、`codegen-units = 1`、`panic = "abort"`、`strip`
-- フロントエンドにフレームワーク・バンドラ・npm 依存を使わない
-- シンタックスハイライトなど重い機能は入れない（[スコープ方針](../CONTRIBUTING.md#スコープ方針)）
-- 重い機能（Mermaid）は必要になるまで読み込まない
-- Tauri は埋め込むフロントエンドを Brotli で圧縮するため、Mermaid（3.5 MB）の exe への影響は約 0.9 MB
+| 項目 | 目安 |
+|---|---|
+| exe 全体 | 約 11 MB |
+| うち Noto Sans JP | 約 5.3 MB（woff2 は圧縮済みで、それ以上縮まない） |
+| 起動時に読み込む JS | 約 250 KB（gzip 約 80 KB。React を含む） |
+| KaTeX / Mermaid | 数式・図を含む文書を開いたときだけ読み込む |
+
+- Tauri は埋め込むフロントエンドを Brotli で圧縮する
+- KaTeX のフォントは woff2 だけを同梱する（Vite の設定で woff と ttf を除外）
+- リリースビルドの Rust の設定：`opt-level = "s"`、LTO、`codegen-units = 1`、`panic = "abort"`、`strip`
+- サイズを抑える余地：フォントを同梱せず PC にインストールされたものを使えば、約 5 MB 減らせる

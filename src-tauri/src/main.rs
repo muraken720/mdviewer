@@ -4,7 +4,7 @@ mod commands;
 mod platform;
 mod settings;
 
-use mdcore::plugins::{Gfm, HeadingAnchors, LocalImages};
+use mdcore::plugins::{Gfm, HeadingAnchors, LocalImages, Math};
 use mdcore::Renderer;
 use settings::Settings;
 use tauri::Manager;
@@ -15,6 +15,7 @@ fn renderer(settings: &Settings) -> Renderer {
     Renderer::new()
         .with(Gfm)
         .with(HeadingAnchors)
+        .with(Math)
         .with(LocalImages::new(platform::asset_url))
         .retain(|name| settings.plugin_enabled(name, true))
 }

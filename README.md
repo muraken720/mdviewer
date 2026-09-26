@@ -1,9 +1,9 @@
 # mdviewer
 
-軽量・高速な Windows 向け Markdown ビューア。
-生成AIが書き出した `.md` を、HTML に変換せずそのまま読みやすく表示するためのツールです。
+軽量・高速な Windows 向け Markdown ビューア／エディタ。
+生成AIが書き出した `.md` を、HTML に変換せずそのまま読みやすく表示し、その場で直すためのツールです。
 
-- **軽い**: exe 単体で数 MB（Rust + Tauri 2。描画は OS 標準の WebView2 を使うのでランタイムを同梱しない）
+- **軽い**: exe 単体で約 11 MB、うち約 5 MB は日本語フォント（Noto Sans JP）。描画には OS 標準の WebView2 を使うので、ブラウザエンジンは同梱しない（Rust + Tauri 2）
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
 - **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ
 
@@ -18,9 +18,28 @@
 | 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd>。未保存の編集は上書きしない |
 | リンク | `#見出し` は文書内ジャンプ、`other.md` はビューアで開く、`https://` は既定のブラウザで開く |
 | ダークモード | OS の設定に追従 |
+| 日本語フォント | Noto Sans JP を同梱（PC にインストールされていなくても同じ見た目） |
 
-対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パス画像。
-```` ```mermaid ```` ブロックは図として描画します（Mermaid 11）。
+対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、相対パス画像、数式、図。
+
+### 数式（TeX / LaTeX）
+
+[KaTeX](https://katex.org/) で描画します。次の書き方に対応しています。
+
+| 書き方 | 種類 |
+|---|---|
+| `$E = mc^2$`、`\(E = mc^2\)` | 文中の数式 |
+| `$$ … $$`、`\[ … \]`、```` ```math ```` ブロック | 独立した数式 |
+
+- `\(…\)` と `\[…\]` は ChatGPT などの生成AIがよく出力する LaTeX 形式です
+- `$5と$10` のような金額は数式になりません（Pandoc と同じく、閉じ側の `$` の直前が空白、または直後が数字の場合は数式として扱わない）。確実に `$` を表示したいときは `\$` と書きます
+- `\[1\]` のように、中身が数式らしくない `\[…\]` は、Markdown のエスケープ（角括弧そのもの）として表示します
+- コード（`` ` `` や ```` ``` ````）の中は変換しません
+- `.tex` ファイル（LaTeX 文書全体）の組版には対応していません
+
+### 図（Mermaid）
+
+```` ```mermaid ```` ブロックを図として描画します（[Mermaid](https://mermaid.js.org/) 11）。
 
 ### エディタ
 
@@ -52,7 +71,8 @@
 
 | プラグイン | 既定 | 内容 |
 |---|---|---|
-| `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込むので、起動速度には影響しない |
+| `math` | 有効 | 数式。KaTeX は数式を含む文書を開いたときだけ読み込む |
+| `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
 | `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
 | `editor`, `zoom`, `links`, `auto-reload`, `title`, `open-file`, `view` | 有効 | 各 UI 機能 |
 
@@ -60,7 +80,7 @@
 
 ### やらないこと
 
-シンタックスハイライト、数式、ライブプレビュー（左右分割）、タブ、ファイルツリー、エクスポートなど。
+シンタックスハイライト、ライブプレビュー（左右分割）、タブ、ファイルツリー、エクスポートなど。
 理由と判断基準は [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) を参照してください。
 
 ## インストール
@@ -80,13 +100,17 @@ mdviewer.exe path\to\file.md
 
 ## 開発
 
-必要なもの: Rust (stable)、Node.js 22 以降（UI テストと Tauri CLI の実行に使用。npm 依存パッケージはありません）
+必要なもの: Rust (stable)、Node.js 22 以降
+
+UI は TypeScript + React + Tailwind CSS（Vite でビルド）、Markdown の変換は Rust です。
 
 ```sh
-cargo test --workspace           # Rust テスト
-npm test                         # UI テスト（node --test）
-cargo run -p mdviewer -- a.md    # 開発実行
-npx @tauri-apps/cli@2 build      # リリースビルド + インストーラ作成（Windows 上で実行）
+npm ci                           # 依存パッケージのインストール
+npm run tauri dev                # 開発実行（UI はホットリロード）
+npm test                         # UI テスト（Vitest）
+npm run typecheck                # 型チェック
+cargo test --workspace           # Rust テスト（先に npm run build が必要）
+npm run tauri build              # リリースビルド + インストーラ作成（Windows 上で実行）
 ```
 
 Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.app/start/prerequisites/)（`libwebkit2gtk-4.1-dev` など）が必要です。
@@ -99,4 +123,11 @@ Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.a
 
 [MIT](LICENSE)
 
-同梱しているサードパーティ製ソフトウェア: [Mermaid](https://github.com/mermaid-js/mermaid) 11.17.2（MIT, `ui/vendor/mermaid/LICENSE`）
+主な同梱ソフトウェア（いずれも npm パッケージとして取り込み、ライセンスは各パッケージに同梱）:
+
+| ソフトウェア | ライセンス |
+|---|---|
+| [React](https://react.dev/) | MIT |
+| [KaTeX](https://katex.org/)（フォントを含む） | MIT |
+| [Mermaid](https://mermaid.js.org/) | MIT |
+| [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（[Fontsource](https://fontsource.org/)） | SIL Open Font License 1.1 |

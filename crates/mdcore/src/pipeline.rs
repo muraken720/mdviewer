@@ -1,12 +1,13 @@
 //! Markdown rendering pipeline.
 //!
 //! ```text
-//! markdown ──parse──▶ events ──plugin 1──▶ … ──plugin N──▶ events ──push_html──▶ HTML
+//! markdown ──preprocess──▶ markdown ──parse──▶ events ──plugin 1──▶ … ──plugin N──▶ events ──push_html──▶ HTML
 //! ```
 //!
 //! Parser options are the union of what each plugin requests, so removing a plugin
 //! removes its feature entirely.
 
+use std::borrow::Cow;
 use std::path::{Path, PathBuf};
 
 use pulldown_cmark::{Event, Options, Parser};
@@ -21,6 +22,12 @@ pub trait Plugin: Send + Sync {
     /// Parser features this plugin needs (e.g. tables).
     fn parser_options(&self) -> Options {
         Options::empty()
+    }
+
+    /// Rewrite the Markdown source before it is parsed (e.g. to normalise syntax the parser
+    /// does not understand). The default implementation returns it unchanged.
+    fn preprocess<'a>(&self, markdown: Cow<'a, str>) -> Cow<'a, str> {
+        markdown
     }
 
     /// Rewrite the event stream. The default implementation passes events through.
@@ -83,7 +90,11 @@ impl Renderer {
             assets: Vec::new(),
         };
 
-        let mut events: Vec<Event> = Parser::new_ext(markdown, options).collect();
+        let source = self
+            .plugins
+            .iter()
+            .fold(Cow::Borrowed(markdown), |src, p| p.preprocess(src));
+        let mut events: Vec<Event> = Parser::new_ext(&source, options).collect();
         for plugin in &self.plugins {
             events = plugin.transform(events, &mut ctx);
         }
