@@ -102,6 +102,7 @@ export class App {
   #panes = new Map<Mode, Pane>();
   #bars: Bar[] = [];
   #overlays: Overlay[] = [];
+  #statusItems: { item: Overlay; order: number }[] = [];
   #menus = new Map<string, MenuDef>();
   #menuItems: MenuItemDef[] = [];
 
@@ -239,6 +240,13 @@ export class App {
   }
   bars(): Bar[] {
     return [...this.#bars];
+  }
+  /** A small component in the status bar at the bottom, placed left to right by `order`. */
+  addStatusItem(item: Overlay, order = 0): void {
+    this.#statusItems.push({ item, order });
+  }
+  statusItems(): Overlay[] {
+    return [...this.#statusItems].sort((a, b) => a.order - b.order).map((s) => s.item);
   }
   /** A component drawn on top of everything (buttons, badges, dialogs, toasts). */
   addOverlay(overlay: Overlay): void {

@@ -31,8 +31,8 @@ mdviewer is a small Windows tool for **reading Markdown (`.md`) comfortably and 
 | 2 | Tab bar | The open files. The ← → buttons at the left go back and forward |
 | 3 | Document | The formatted Markdown. <kbd>Ctrl</kbd>+wheel zooms in and out |
 | 4 | Find bar | Shown with <kbd>Ctrl</kbd>+<kbd>F</kbd>. Matches are highlighted |
-| 5 | View / Edit switch | Shows the current mode (shaded). Click the other side to switch between the formatted view and the Markdown text |
-| 6 | Zoom level | Shown briefly when you zoom |
+| 5 | Zoom level | In the status bar at the bottom. Click it to go back to 100% |
+| 6 | View / Edit switch | At the bottom right. Shows the current mode (shaded); click the other side to switch between the formatted view and the Markdown text. Tabs being edited are marked with a pencil |
 
 ## Opening files
 
@@ -71,7 +71,7 @@ Going back also restores the scroll position.
 
 ## Editing and saving
 
-<kbd>Ctrl</kbd>+<kbd>E</kbd> (or the **Edit** button at the top right) switches to edit mode.
+<kbd>Ctrl</kbd>+<kbd>E</kbd> (or **Edit** in the switch at the bottom right) switches to edit mode.
 Press it again to see your edits formatted. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves.
 
 When you write a list, <kbd>Enter</kbd> continues it for you:
@@ -98,7 +98,7 @@ When you write a list, <kbd>Enter</kbd> continues it for you:
 ## Find, zoom, theme and language
 
 - 🔍 **Find**: <kbd>Ctrl</kbd>+<kbd>F</kbd>. <kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd> (or <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>) for the next / previous match. <kbd>Esc</kbd> closes
-- 🔎 **Zoom**: <kbd>Ctrl</kbd>+wheel, <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd>, and <kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%. The zoom level is remembered
+- 🔎 **Zoom**: <kbd>Ctrl</kbd>+wheel, <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd>, and <kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%. The zoom level is shown in the status bar and remembered
 - 🌐 **Language**: the menus are in Japanese and English, chosen from your system language. Change it in **View → Language**
 - ❓ **Help**: <kbd>F1</kbd> shows the keyboard shortcuts. **Help → About mdviewer** shows the version
 - 🌙 **Theme (dark mode)**: switch between Light and Dark in the **View** menu. On the first launch mdviewer picks the one that matches your Windows setting. Your choice is remembered

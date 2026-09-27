@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+### Changed
+- The View / Edit switch moved to a new status bar at the bottom right, so nothing sits over the document or follows the scroll. The zoom level is shown there all the time (click for 100%) instead of a badge over the document. Tabs in edit mode are marked with a pencil
+- 表示／編集の切替スイッチを、下端に新設したステータスバーの右端に移した（本文に重ならず、スクロールにも追随しない）。倍率もステータスバーに常に表示し（クリックで 100%）、本文の上に出ていた倍率表示はなくした。編集中のタブには鉛筆の印を付ける
+- The README opens with an animated demo (GIF) of the main screens; the screenshots show the new status bar
+- README の冒頭に主な画面のデモ（アニメーション GIF）を載せた。スクリーンショットもステータスバー付きの画面に撮り直した
+
 ## [0.2.0] - 2026-09-27
 
 Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme and a clearer View / Edit switch. The README and a new user guide (which doubles as a rendering sample) are now in English, with Japanese versions alongside.

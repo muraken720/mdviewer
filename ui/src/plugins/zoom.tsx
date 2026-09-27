@@ -1,8 +1,8 @@
 // Zoom with Ctrl+wheel and Ctrl +/-/0. The level is remembered between sessions.
 // Panes read it from the CSS variable --zoom.
-import { useEffect, useState } from 'react';
 import type { App } from '../core/app';
 import type { Plugin } from '../core/types';
+import { useAppVersion } from '../core/useApp';
 
 export const MIN = 0.5;
 export const MAX = 3;
@@ -12,25 +12,20 @@ export function clampZoom(z: number): number {
   return Math.min(MAX, Math.max(MIN, Math.round(z * 10) / 10));
 }
 
-function ZoomBadge({ app }: { app: App }) {
-  const [label, setLabel] = useState<string | null>(null);
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    const off = app.on('plugin:zoom', (z) => {
-      setLabel(`${Math.round((z as number) * 100)}%`);
-      clearTimeout(timer);
-      timer = setTimeout(() => setLabel(null), 800);
-    });
-    return () => {
-      off();
-      clearTimeout(timer);
-    };
-  }, [app]);
-  if (!label) return null;
+let current = 1;
+
+/** The zoom level in the status bar. Click to go back to 100%. */
+function ZoomStatus({ app }: { app: App }) {
+  useAppVersion(app);
   return (
-    <div className="pointer-events-none absolute right-5 bottom-4 z-10 rounded-md bg-fg px-2.5 py-1 text-xs text-bg">
-      {label}
-    </div>
+    <button
+      type="button"
+      title={`${app.t('cmd.zoom.reset')} (Ctrl+0)`}
+      onClick={() => app.run('zoom.reset')}
+      className="rounded px-1.5 tabular-nums leading-5 hover:bg-line/60 focus-visible:outline-2 focus-visible:outline-link"
+    >
+      {Math.round(current * 100)}%
+    </button>
   );
 }
 
@@ -38,7 +33,10 @@ const zoom: Plugin = {
   name: 'zoom',
   setup(app) {
     let level = clampZoom(Number(app.storage.get('zoom')) || 1);
-    const apply = () => document.documentElement.style.setProperty('--zoom', String(level));
+    const apply = () => {
+      current = level;
+      document.documentElement.style.setProperty('--zoom', String(level));
+    };
     const set = (z: number) => {
       level = clampZoom(z);
       apply();
@@ -47,7 +45,7 @@ const zoom: Plugin = {
     };
     apply();
 
-    app.addOverlay(ZoomBadge);
+    app.addStatusItem(ZoomStatus, 50);
     app.command({
       id: 'zoom.in',
       title: 'cmd.zoom.in',

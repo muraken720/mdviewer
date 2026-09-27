@@ -2,7 +2,8 @@ import type { App } from '../core/app';
 import { useAppVersion } from '../core/useApp';
 
 /**
- * Window layout: bars (menu, tabs) on top, then one panel per tab holding that tab's panes.
+ * Window layout: bars (menu, tabs) on top, then one panel per tab holding that tab's panes, then
+ * the status bar (zoom level, View | Edit switch) at the bottom.
  * Panels stay mounted while hidden, so each tab keeps its editor undo history and rendered
  * diagrams; only the active tab's pane for its mode is shown. Overlays are positioned over the
  * content area.
@@ -38,6 +39,14 @@ export function Shell({ app }: { app: App }) {
           <Overlay key={i} app={app} />
         ))}
       </div>
+      {app.statusItems().length > 0 && (
+        <footer className="flex h-8 shrink-0 items-center justify-end gap-3 border-line border-t bg-code px-2 text-muted text-xs print:hidden">
+          {app.statusItems().map((Item, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: status items are registered once at startup and never reordered
+            <Item key={i} app={app} />
+          ))}
+        </footer>
+      )}
     </div>
   );
 }
