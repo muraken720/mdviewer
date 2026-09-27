@@ -6,11 +6,11 @@
 **English** | [日本語](README.ja.md)
 
 A small, fast Markdown viewer and editor for Windows.
-It shows the `.md` files that AI tools write as nicely formatted pages, without converting them to HTML first, and lets you fix them on the spot.
+Your AI writes and rewrites the Markdown; mdviewer shows it as a nicely formatted page, without converting it to HTML first, and lets you make small fixes on the spot.
 
-- **Small**: a single exe of about 11 MB, about 5 MB of which is a Japanese font (Noto Sans JP). It uses the WebView2 that comes with Windows, so no browser engine is bundled (Rust + Tauri 2)
+- **Small**: a single exe of about 11 MB. It uses the WebView2 that comes with Windows, so no browser engine is bundled (Rust + Tauri 2)
 - **Fast**: Markdown is converted in Rust ([pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark))
-- **Nothing extra**: only what you use every time you read a file or make a quick fix
+- **Nothing extra**: only what you use every time you read a file or make a quick fix. Want to edit a table or a Mermaid diagram with ease, or translate a document into your language? Your LLM does all of that well, so mdviewer deliberately adds no such editing features
 
 ![mdviewer showing math and a Mermaid diagram](docs/images/screenshot-math-mermaid.png)
 
@@ -108,7 +108,7 @@ Changes take effect the next time mdviewer starts.
 
 ### Out of scope
 
-Syntax highlighting, live preview (side by side), a file tree, session restore, export and so on.
+Syntax highlighting, live preview (side by side), a file tree, session restore, export, table or diagram editors, translation and so on. Heavy editing is what your LLM is for.
 The reasons and the criteria are in [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) (Japanese).
 
 ## Install
