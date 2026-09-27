@@ -76,6 +76,17 @@ fn main() {
             app.manage(settings);
             app.manage(session);
             app.manage(InitialPath(initial));
+            // The window starts hidden and the UI shows it after its first paint (no white flash
+            // in the dark theme). Fallback, in case the UI failed to start: show it anyway.
+            let handle = app.handle().clone();
+            std::thread::spawn(move || {
+                std::thread::sleep(std::time::Duration::from_secs(3));
+                if let Some(window) = handle.get_webview_window("main") {
+                    if !window.is_visible().unwrap_or(true) {
+                        let _ = window.show();
+                    }
+                }
+            });
             Ok(())
         })
         .on_window_event(|window, event| {

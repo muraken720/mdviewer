@@ -28,7 +28,7 @@
 
 mdviewer is a small, fast Markdown viewer/editor for Windows, made for reading the Markdown that AI tools produce without converting it to HTML first.
 It renders GitHub Flavored Markdown, math (KaTeX: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`) and Mermaid diagrams, has a minimal editor with list continuation, and auto-reloads when the file changes.
-Built with Rust + Tauri 2 (WebView2) and TypeScript + React. See the screenshots below and the [user manual](docs/manual/README.md) (Japanese), which doubles as a rendering sample.
+Built with Rust + Tauri 2 (WebView2) and TypeScript + React. See the screenshots below and the [user guide](docs/manual/en/README.md), which doubles as a rendering sample.
 Documentation is in Japanese; issues and pull requests in English are welcome.
 
 ## 機能
@@ -155,7 +155,7 @@ npm run tauri build              # リリースビルド + インストーラ作
 
 Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.app/start/prerequisites/)（`libwebkit2gtk-4.1-dev` など）が必要です。
 
-- 操作マニュアル（表示見本を兼ねる）: [docs/manual/README.md](docs/manual/README.md)
+- 操作マニュアル（表示見本を兼ねる）: [docs/manual/README.md](docs/manual/README.md)（英語版: [docs/manual/en/README.md](docs/manual/en/README.md)）
 - 構成と設計: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - プラグインの作り方: [docs/PLUGINS.md](docs/PLUGINS.md)
 - コントリビュート: [CONTRIBUTING.md](CONTRIBUTING.md)

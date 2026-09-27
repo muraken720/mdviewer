@@ -114,7 +114,7 @@ export default myPlugin;
 | `app.update(text, tab?)` / `app.refresh(tab?)` / `app.save(tab?)` | テキストの更新 / 変更があれば再描画 / 保存（外部で変更されていれば確認する） |
 | `app.confirmDiscard(tab?)` / `app.confirmExit()` | 未保存の変更を破棄してよいか確認する（変更がなければすぐに true を返す）/ 終了前に、未保存のタブがあれば1回だけ確認する |
 | `app.setMode(mode, tab?)` | 表示と編集を切り替える。`'view'` に切り替えるときは `refresh()` も行う |
-| `app.backend` | ホスト機能（`Backend` 型）。文書は `open` / `openLink` が返す文書 ID（`doc.id`）で指定する：`reload(id)`、`render(id, text)`、`save(id, text)`、`mtime(id)`、`closeDoc(id)`。ほかに `appInfo`、`pickFile`、`ask`、`openUrl`、`initialPath`、`setTitle`、`setTheme`、`closeWindow`、`onOpenRequest`、`onCloseRequested` |
+| `app.backend` | ホスト機能（`Backend` 型）。文書は `open` / `openLink` が返す文書 ID（`doc.id`）で指定する：`reload(id)`、`render(id, text)`、`save(id, text)`、`mtime(id)`、`closeDoc(id)`。ほかに `appInfo`、`pickFile`、`ask`、`openUrl`、`initialPath`、`setTitle`、`setTheme`、`showWindow`、`closeWindow`、`onOpenRequest`、`onCloseRequested` |
 
 画面部品の中で `app` の変化に追随して再描画したいときは、`useAppVersion(app)`（`core/useApp.ts`）を呼びます。
 

@@ -76,6 +76,9 @@ export function fakeBackend(files: Record<string, string> = {}, { answer = true 
     async setTheme(theme) {
       calls.push(['setTheme', theme]);
     },
+    async showWindow() {
+      calls.push(['showWindow']);
+    },
     async closeWindow() {
       calls.push(['closeWindow']);
     },

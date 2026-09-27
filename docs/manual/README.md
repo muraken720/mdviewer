@@ -2,6 +2,8 @@
 
 mdviewer は、Markdown（`.md`）を **読みやすく表示し、その場で直す** ための Windows 向けの小さなツールです。このマニュアル自体も、mdviewer で表示できる記法（表・図・数式・絵文字など）の見本を兼ねています。mdviewer で開いて、表示を確かめてください。
 
+[English version](en/README.md)
+
 > [!TIP]
 > このファイルを mdviewer で開いている場合は、[ショートカット一覧](shortcuts.md) を開いてから <kbd>Alt</kbd>+<kbd>←</kbd> を押すと、ここに戻れます。
 

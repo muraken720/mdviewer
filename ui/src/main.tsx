@@ -22,3 +22,7 @@ const root = document.getElementById('root');
 if (!root) throw new Error('#root is missing from index.html');
 createRoot(root).render(<Shell app={app} />);
 app.start();
+// The window is created hidden (tauri.conf.json) and shown once the UI has rendered in the saved
+// theme, so it never flashes white. (Not requestAnimationFrame: it does not fire while hidden.)
+// Rust shows the window anyway if this never runs.
+setTimeout(() => void backend.showWindow(), 0);
