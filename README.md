@@ -12,7 +12,7 @@ Your AI writes and rewrites the Markdown; mdviewer shows it as a nicely formatte
 - **Fast**: Markdown is converted in Rust ([pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark))
 - **Nothing extra**: only what you use every time you read a file or make a quick fix. Want to edit a table or a Mermaid diagram with ease, or translate a document into your language? Your LLM does all of that well, so mdviewer deliberately adds no such editing features
 
-![mdviewer showing math and a Mermaid diagram](docs/images/screenshot-math-mermaid.png)
+![mdviewer: math and diagrams, tables, edit mode, dark theme and find, the View menu](docs/images/demo.gif)
 
 See the [user guide](docs/manual/README.md) for how to use it. The guide doubles as a sample of what mdviewer can display: tables, diagrams, math, emoji and more (the screen above shows the guide itself).
 
@@ -37,9 +37,9 @@ The screenshots were taken with the Linux build used for development. On Windows
 | Menus | File, Edit, View, Go and Help. <kbd>Alt</kbd> or <kbd>F10</kbd> moves to the menu bar, <kbd>Alt</kbd>+<kbd>F</kbd> etc. opens a menu directly |
 | Language | Menus in English and Japanese, chosen from your system language and switchable in the **View** menu (remembered) |
 | Help | <kbd>F1</kbd> shows the keyboard shortcuts. **Help → About mdviewer** shows the version, author and license |
-| Edit mode | <kbd>Ctrl</kbd>+<kbd>E</kbd> or the button at the top right (press again to see your edits formatted) |
+| Edit mode | <kbd>Ctrl</kbd>+<kbd>E</kbd> or the View \| Edit switch at the bottom right, in the status bar (switch back to see your edits formatted). Tabs being edited are marked with a pencil |
 | Save | <kbd>Ctrl</kbd>+<kbd>S</kbd> (keeps the file's line endings, CRLF / LF, and BOM). The title shows `●` while there are unsaved changes |
-| Zoom | <kbd>Ctrl</kbd>+wheel / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd> (<kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%). Remembered |
+| Zoom | <kbd>Ctrl</kbd>+wheel / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd> (<kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%). The level is shown in the status bar (click it for 100%) and remembered |
 | Auto reload | Updates the view when the file changes (keeping the scroll position). <kbd>F5</kbd> reloads manually. Unsaved edits are never overwritten |
 | Links | `#heading` jumps within the document, `other.md` opens in mdviewer, `https://` opens in your default browser |
 | Theme (dark mode) | Switch between Light and Dark in the **View** menu (remembered). On the first launch mdviewer picks the one that matches your Windows setting. Diagram (Mermaid) colors follow the theme |

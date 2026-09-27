@@ -23,24 +23,23 @@
   <rect x="48" y="252" width="330" height="8" rx="4" fill="#d8dee4"/>
   <rect x="48" y="268" width="260" height="8" rx="4" fill="#d8dee4"/>
   <!-- find bar -->
-  <rect x="206" y="84" width="170" height="26" rx="5" fill="#ffffff" stroke="#9aa4b2"/>
-  <text x="216" y="102" fill="#57606a">Find</text><text x="330" y="102" fill="#57606a">1 of 3</text>
-  <!-- view / edit switch (current mode shaded) -->
-  <rect x="386" y="82" width="140" height="30" rx="6" fill="#ffffff" stroke="#d0d7de"/>
-  <rect x="389" y="85" width="66" height="24" rx="4" fill="#d1d9e0"/>
-  <text x="422" y="102" fill="#1f2328" text-anchor="middle" font-weight="bold">View</text>
-  <text x="491" y="102" fill="#1f2328" text-anchor="middle">Edit</text>
-  <!-- zoom badge -->
-  <rect x="470" y="368" width="54" height="24" rx="5" fill="#1f2328"/>
-  <text x="481" y="385" fill="#ffffff">120%</text>
+  <rect x="330" y="84" width="196" height="26" rx="5" fill="#ffffff" stroke="#9aa4b2"/>
+  <text x="340" y="102" fill="#57606a">Find</text><text x="478" y="102" fill="#57606a">1 of 3</text>
+  <!-- status bar: zoom level and the view / edit switch (current mode shaded) -->
+  <rect x="21" y="382" width="518" height="27" fill="#f3f4f6" stroke="#e1e4e8"/>
+  <text x="392" y="400" fill="#57606a" font-size="12">100%</text>
+  <rect x="430" y="385" width="104" height="21" rx="4" fill="#ffffff" stroke="#d0d7de"/>
+  <rect x="432" y="387" width="50" height="17" rx="3" fill="#d1d9e0"/>
+  <text x="457" y="400" fill="#1f2328" font-size="12" text-anchor="middle" font-weight="bold">View</text>
+  <text x="508" y="400" fill="#1f2328" font-size="12" text-anchor="middle">Edit</text>
   <!-- callouts -->
   <g fill="#cf222e" font-weight="bold">
     <circle cx="276" cy="34" r="10"/><circle cx="330" cy="62" r="10"/><circle cx="36" cy="300" r="10"/>
-    <circle cx="194" cy="97" r="10"/><circle cx="526" cy="124" r="10"/><circle cx="458" cy="380" r="10"/>
+    <circle cx="318" cy="97" r="10"/><circle cx="378" cy="370" r="10"/><circle cx="522" cy="370" r="10"/>
   </g>
   <g fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">
     <text x="276" y="38">1</text><text x="330" y="66">2</text><text x="36" y="304">3</text>
-    <text x="194" y="101">4</text><text x="526" y="128">5</text><text x="458" y="384">6</text>
+    <text x="318" y="101">4</text><text x="378" y="374">5</text><text x="522" y="374">6</text>
   </g>
   <!-- legend -->
   <g fill="#1f2328">
@@ -49,7 +48,7 @@
     <text x="560" y="106">2  Tab bar (← → back / forward)</text>
     <text x="560" y="132">3  Document</text>
     <text x="560" y="158">4  Find bar (Ctrl+F)</text>
-    <text x="560" y="184">5  View / Edit switch</text>
-    <text x="560" y="210">6  Zoom level (when zooming)</text>
+    <text x="560" y="184">5  Zoom level (status bar)</text>
+    <text x="560" y="210">6  View / Edit switch</text>
   </g>
 </svg>

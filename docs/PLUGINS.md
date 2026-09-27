@@ -106,7 +106,8 @@ export default myPlugin;
 | `app.addMenu({ id, label, mnemonic, order })` / `app.addMenuItem({ menu, command, group, order? })` | メニューの追加（`menu` プラグインが「ファイル」「編集」「表示」「移動」「ヘルプ」を登録済み）/ コマンドをメニューに置く。`group` が変わる所に区切り線が入る |
 | `app.addBar(Component)` | 画面の上部に並べるバーを登録する（メニューバー、タブバー） |
 | `app.addPane(mode, Component)` | そのモードで表示する画面を登録する。画面はタブごとに作られ、`{ app, tab, active }` を受け取る。タブやモードが変わってもマウントされたままで、`active` で表示・非表示を切り替える |
-| `app.addOverlay(Component)` | 画面の上に重ねる部品を登録する（ボタン、検索バー、ダイアログ、通知など） |
+| `app.addStatusItem(Component, order?)` | 下端のステータスバーに部品を置く（倍率、表示／編集の切替など）。`order` の小さい順に左から並ぶ |
+| `app.addOverlay(Component)` | 本文の上に重ねる部品を登録する（検索バー、ダイアログ、通知など）。読む邪魔になるので、常に表示するものはステータスバーに置く |
 | `app.open(path)` | ユーザーが選んだファイルを開く。開いていればそのタブへ、そうでなければ空のタブか新しいタブに開く |
 | `app.openLink(href)` | 文書からの相対リンクを同じタブに開き、戻る履歴に積む |
 | `app.back()` / `app.forward()` / `app.canGoBack()` / `app.canGoForward()` | タブ内の履歴を戻る / 進む |
@@ -181,10 +182,11 @@ import { useAppVersion } from '../core/useApp';
 function WordCount({ app }: { app: App }) {
   useAppVersion(app);
   if (!app.doc) return null;
-  return <div className="absolute bottom-4 left-4 text-xs text-muted">{app.doc.raw.length} 文字</div>;
+  return <span>{app.doc.raw.length} 文字</span>;
 }
 
-const wordCount: Plugin = { name: 'word-count', setup: (app) => app.addOverlay(WordCount) };
+// ステータスバーの左端（order の小さい方）に置く
+const wordCount: Plugin = { name: 'word-count', setup: (app) => app.addStatusItem(WordCount, 10) };
 export default wordCount;
 ```
 
