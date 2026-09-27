@@ -40,7 +40,7 @@ export function Shell({ app }: { app: App }) {
         ))}
       </div>
       {app.statusItems().length > 0 && (
-        <footer className="flex h-7 shrink-0 items-center justify-end gap-3 border-line border-t bg-code px-2 text-muted text-xs print:hidden">
+        <footer className="flex h-8 shrink-0 items-center justify-end gap-3 border-line border-t bg-code px-2 text-muted text-xs print:hidden">
           {app.statusItems().map((Item, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: status items are registered once at startup and never reordered
             <Item key={i} app={app} />
