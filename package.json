@@ -1,6 +1,6 @@
 {
   "name": "mdviewer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Lightweight Markdown viewer/editor for Windows (Tauri + React)",
   "license": "MIT",
   "repository": {
