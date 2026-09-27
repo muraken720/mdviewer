@@ -9,9 +9,32 @@
 
 Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme and a clearer View / Edit switch. The README and a new user guide (which doubles as a rendering sample) are now in English, with Japanese versions alongside.
 
+### Added
+- Menu bar (File, Edit, View, Go, Help). <kbd>Alt</kbd> / <kbd>F10</kbd> moves to the menu bar, <kbd>Alt</kbd>+<kbd>F</kbd> etc. opens a menu directly
+- Tabs: other files open in new tabs. Double-clicking another `.md` while mdviewer is running opens it as a tab in the same window
+- Back / forward: links in a document open in the same tab; go back and forward with <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd>, the tab bar buttons, the mouse back / forward buttons or the Go menu (the scroll position comes back too)
+- Find (<kbd>Ctrl</kbd>+<kbd>F</kbd>): highlights matches and shows the count
+- Help: keyboard shortcuts (<kbd>F1</kbd>) and About mdviewer (version, author, license)
+- Menus in Japanese and English, chosen from the system language and switchable in the View menu
+- Theme (View menu: Light / Dark). The first launch picks the one matching the system setting; after that your choice is kept. Diagram (Mermaid) colors and the window frame follow the theme
+- User guide (English `docs/manual/`, Japanese `docs/manual/ja/`), which doubles as a sample of tables, diagrams, math, Mermaid and emoji. Screenshots in the README
+- The README is split into English (`README.md`, shown first on GitHub) and Japanese (`README.ja.md`). It now states up front that heavy editing (tables, diagrams, translation and so on) is left to your LLM, so mdviewer adds no such features
+- Layout that works when the window is small or maximized (spacing, a scrolling tab bar, a minimum size)
+
+### Changed
+- Rust issues an ID for each open document, and the UI reads and writes by ID only (to handle documents in tabs safely)
+- IPC errors are returned as codes (such as `not-allowed`) and translated in the UI
+- The window is created hidden and shown once the UI is ready, so starting in the dark theme no longer flashes white
+- Edit mode uses the same text size as the body text in view mode (16px)
+- The View / Edit button is now a "View | Edit" switch: larger, with icons, the current mode shaded gray, and easy to see in the dark theme. Documents have more space at the top so the switch does not cover the first line
+
+---
+
+**日本語**
+
 メニュー、タブ、戻る／進む、検索、日本語／英語の UI、ライト／ダークのテーマ、分かりやすくした表示／編集の切替を追加しました。README と操作マニュアル（表示見本を兼ねる）は英語を標準にし、日本語版を併設しています。
 
-### Added
+**追加**
 - メニューバー（ファイル・編集・表示・移動・ヘルプ）。Alt / F10 でメニューへ移動、Alt+F などで直接開く
 - タブ：別のファイルは新しいタブで開く。起動中に別の `.md` をダブルクリックしても同じウィンドウのタブで開く
 - 戻る・進む：文書内のリンクは同じタブで開き、Alt+← / Alt+→、タブバーのボタン、マウスの戻る／進むボタン、メニューで行き来できる（スクロール位置も戻る）
@@ -23,7 +46,7 @@ Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme
 - README を英語（`README.md`）と日本語（`README.ja.md`）に分け、GitHub で最初に表示される README を英語にした。冒頭で「大がかりな編集（表・図の編集、翻訳など）は LLM に任せ、mdviewer はそうした機能を追加しない」方針を示した
 - ウィンドウを小さくしたとき・最大化したときのレイアウト調整（余白、タブバーの横スクロール、最小サイズ）
 
-### Changed
+**変更**
 - Rust 側は開いた文書ごとに ID を発行し、画面側は ID で読み書きする（タブごとの文書を安全に扱うため）
 - IPC のエラーはコード（`not-allowed` など）で返し、画面側で翻訳して表示する
 - ウィンドウは非表示で作成し、画面の準備ができてから表示する（ダークテーマで起動したときに白く表示されないように）
