@@ -64,12 +64,12 @@ cargo test --workspace
 - スタイルは Tailwind のユーティリティとテーマ色（`text-fg`, `bg-bg` など）で書く。Markdown 本文のスタイルは `ui/src/styles/markdown.css` に書く
 - 実行時の依存（`dependencies`）や Rust クレートを追加・更新したときは、`npm run licenses` で `THIRD_PARTY_LICENSES.md` を再生成してコミットする（CI が確認する。[cargo-about](https://github.com/EmbarkStudios/cargo-about) 0.9.2 が必要：`cargo install cargo-about --locked --features cli --version 0.9.2`）。新しいライセンスの種類が出てきたら `about.toml` の `accepted` を見直し、主要な依存なら [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md) にも追記する。exe サイズと起動時間への影響は PR に書く
 - Tauri は、Rust の `tauri` クレートと npm の `@tauri-apps/api` / `@tauri-apps/cli` を同じマイナーバージョンにそろえる（そろっていないと `tauri build` が失敗する）
-- ユーザーに見える変更は `CHANGELOG.md` の `Unreleased` に追記する
+- ユーザーに見える変更は `CHANGELOG.md` の `Unreleased` に追記する（英語の項目と、`---` の下の日本語の項目の両方。書き方は `CHANGELOG.md` の冒頭を参照）
 
 ## リリース
 
 1. `Cargo.toml`（`workspace.package.version`）・`src-tauri/tauri.conf.json`・`package.json` のバージョンをそろえて上げる
-2. `CHANGELOG.md` を更新する
+2. `CHANGELOG.md` の `Unreleased` を `[X.Y.Z] - 日付` にし、英語・日本語それぞれの冒頭に短い要約を書く（この節がそのままリリースノートになる）
 3. `vX.Y.Z` タグを push すると、GitHub Actions が次を行う
    - タグと 3 か所のバージョンが一致しているかを確認する
    - Windows 版（インストーラとポータブル版 zip）をビルドする

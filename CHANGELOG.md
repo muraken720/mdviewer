@@ -3,18 +3,32 @@
 このファイルの形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に従います。
 各バージョンの節は、そのままリリースノートとして使われます（`.github/workflows/release.yml`）。
 
+各バージョンの節は、英語を先に、日本語を後に書きます（0.2.0 から）。
+
+1. 英語：1〜2 文の要約、`### Added` / `### Changed` / `### Fixed` などの見出しと項目
+2. `---` で区切り、`**日本語**` の見出し
+3. 日本語：要約、`**追加**` / `**変更**` / `**修正**` などの太字見出しと項目（英語と同じ順）
+
+`Unreleased` にも同じ形で追記します。
+
 ## [Unreleased]
 
 ## [0.2.1] - 2026-09-27
 
 The View / Edit switch and the zoom level move to a status bar at the bottom, out of the way of the document. The README now opens with an animated demo.
 
-表示／編集の切替スイッチと倍率を、本文の邪魔にならない下端のステータスバーに移した。README の冒頭にデモ（アニメーション GIF）を載せた。
-
 ### Changed
 - The View / Edit switch moved to a new status bar at the bottom right, so nothing sits over the document or follows the scroll. The zoom level is shown there all the time (click for 100%) instead of a badge over the document. Tabs in edit mode are marked with a pencil
-- 表示／編集の切替スイッチを、下端に新設したステータスバーの右端に移した（本文に重ならず、スクロールにも追随しない）。倍率もステータスバーに常に表示し（クリックで 100%）、本文の上に出ていた倍率表示はなくした。編集中のタブには鉛筆の印を付ける
 - The README opens with an animated demo (GIF) of the main screens; the screenshots show the new status bar
+
+---
+
+**日本語**
+
+表示／編集の切替スイッチと倍率を、本文の邪魔にならない下端のステータスバーに移しました。README の冒頭にデモ（アニメーション GIF）を載せました。
+
+**変更**
+- 表示／編集の切替スイッチを、下端に新設したステータスバーの右端に移した（本文に重ならず、スクロールにも追随しない）。倍率もステータスバーに常に表示し（クリックで 100%）、本文の上に出ていた倍率表示はなくした。編集中のタブには鉛筆の印を付ける
 - README の冒頭に主な画面のデモ（アニメーション GIF）を載せた。スクリーンショットもステータスバー付きの画面に撮り直した
 
 ## [0.2.0] - 2026-09-27
