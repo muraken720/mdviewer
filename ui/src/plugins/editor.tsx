@@ -68,7 +68,7 @@ function Editor({ app, tab, active }: PaneProps) {
       aria-label={tab.doc?.name}
       onKeyDown={onKeyDown}
       onInput={(e) => app.update(e.currentTarget.value, tab)}
-      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(14px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
+      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(16px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
     />
   );
 }
