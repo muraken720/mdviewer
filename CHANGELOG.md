@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-27
+
+The View / Edit switch and the zoom level move to a status bar at the bottom, out of the way of the document. The README now opens with an animated demo.
+
+表示／編集の切替スイッチと倍率を、本文の邪魔にならない下端のステータスバーに移した。README の冒頭にデモ（アニメーション GIF）を載せた。
+
 ### Changed
 - The View / Edit switch moved to a new status bar at the bottom right, so nothing sits over the document or follows the scroll. The zoom level is shown there all the time (click for 100%) instead of a badge over the document. Tabs in edit mode are marked with a pencil
 - 表示／編集の切替スイッチを、下端に新設したステータスバーの右端に移した（本文に重ならず、スクロールにも追随しない）。倍率もステータスバーに常に表示し（クリックで 100%）、本文の上に出ていた倍率表示はなくした。編集中のタブには鉛筆の印を付ける
@@ -87,6 +93,7 @@ Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme
 - `settings.json` で機能（プラグイン）ごとに有効／無効を切り替え可能
 - 利用している OSS のライセンス全文（`THIRD_PARTY_LICENSES.md`）を同梱
 
-[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/muraken720/mdviewer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/muraken720/mdviewer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/muraken720/mdviewer/releases/tag/v0.1.0
