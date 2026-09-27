@@ -84,10 +84,10 @@ const ICON = {
   strokeLinejoin: 'round',
 } as const;
 
-const EyeIcon = () => (
+const BookIcon = () => (
   <svg {...ICON} aria-hidden="true">
-    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-    <circle cx="12" cy="12" r="3" />
+    <path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z" />
+    <path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z" />
   </svg>
 );
 
@@ -97,7 +97,7 @@ const PencilIcon = () => (
   </svg>
 );
 
-/** View | Edit switch at the top right. The current mode is filled, so it reads as a state. */
+/** View | Edit switch at the top right. The current mode is shaded gray (pressed), so it reads as a state; blue is kept for links. */
 function ModeToggle({ app }: { app: App }) {
   useAppVersion(app);
   if (!app.doc) return null;
@@ -109,7 +109,7 @@ function ModeToggle({ app }: { app: App }) {
         aria-pressed={active}
         onClick={() => void app.setMode(mode)}
         className={`flex items-center gap-1.5 rounded px-3 py-1 font-medium text-sm focus-visible:outline-2 focus-visible:outline-link ${
-          active ? 'bg-link text-bg' : 'cursor-pointer text-fg hover:bg-code'
+          active ? 'bg-line text-fg' : 'cursor-pointer text-fg hover:bg-code'
         }`}
       >
         <Icon />
@@ -123,7 +123,7 @@ function ModeToggle({ app }: { app: App }) {
       title={`${app.t('cmd.view.toggleEdit')} (Ctrl+E)`}
       className="absolute top-2 right-5 z-10 flex gap-0.5 rounded-md border border-line bg-bg p-0.5 shadow-md print:hidden"
     >
-      {segment('view', EyeIcon)}
+      {segment('view', BookIcon)}
       {segment('edit', PencilIcon)}
     </fieldset>
   );
