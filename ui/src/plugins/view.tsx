@@ -34,7 +34,7 @@ function Viewer({ app, tab, active }: PaneProps) {
       }}
       className="h-full overflow-auto print:overflow-visible"
     >
-      <main className="mx-auto max-w-[900px] px-4 pt-6 pb-16 sm:px-8 sm:pt-8 lg:px-10 [zoom:var(--zoom,1)]">
+      <main className="mx-auto max-w-[900px] px-4 pt-14 pb-16 sm:px-8 lg:px-10 [zoom:var(--zoom,1)]">
         {tab.doc ? (
           // Rendered by Rust, sanitised by lib/sanitize.ts, and scripts are blocked by the CSP in
           // src-tauri/tauri.conf.json. Plugins post-process it on `view:updated`.
