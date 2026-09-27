@@ -1,49 +1,49 @@
-# ⚡ ショートカット一覧
+# ⚡ Keyboard Shortcuts
 
-[← 操作マニュアルに戻る](README.md)（<kbd>Alt</kbd>+<kbd>←</kbd> でも戻れます）
+[← Back to the user guide](README.md) (or press <kbd>Alt</kbd>+<kbd>←</kbd>)
 
-## ファイル
+## File
 
-| 操作 | キー |
+| Action | Keys |
 |---|---|
-| ファイルを開く | <kbd>Ctrl</kbd>+<kbd>O</kbd> |
-| 保存 | <kbd>Ctrl</kbd>+<kbd>S</kbd> |
-| 再読み込み | <kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>R</kbd> |
-| 終了 | <kbd>Alt</kbd>+<kbd>F4</kbd> |
+| Open a file | <kbd>Ctrl</kbd>+<kbd>O</kbd> |
+| Save | <kbd>Ctrl</kbd>+<kbd>S</kbd> |
+| Reload | <kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>R</kbd> |
+| Exit | <kbd>Alt</kbd>+<kbd>F4</kbd> |
 
-## 編集
+## Edit
 
-| 操作 | キー |
+| Action | Keys |
 |---|---|
-| 表示／編集の切替 | <kbd>Ctrl</kbd>+<kbd>E</kbd> |
-| 検索 | <kbd>Ctrl</kbd>+<kbd>F</kbd> |
-| 次を検索／前を検索 | <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd> |
-| 太字／斜体（編集モード） | <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> |
-| 元に戻す／やり直し（編集モード） | <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> |
+| Toggle view / edit | <kbd>Ctrl</kbd>+<kbd>E</kbd> |
+| Find | <kbd>Ctrl</kbd>+<kbd>F</kbd> |
+| Next / previous match | <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd> |
+| Bold / italic (edit mode) | <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> |
+| Undo / redo (edit mode) | <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> |
 
-## 表示
+## View
 
-| 操作 | キー |
+| Action | Keys |
 |---|---|
-| 拡大 | <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+ホイール上 |
-| 縮小 | <kbd>Ctrl</kbd>+<kbd>-</kbd> / <kbd>Ctrl</kbd>+ホイール下 |
-| 100% 表示 | <kbd>Ctrl</kbd>+<kbd>0</kbd> |
+| Zoom in | <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+wheel up |
+| Zoom out | <kbd>Ctrl</kbd>+<kbd>-</kbd> / <kbd>Ctrl</kbd>+wheel down |
+| Actual size | <kbd>Ctrl</kbd>+<kbd>0</kbd> |
 
-## 移動
+## Go
 
-| 操作 | キー |
+| Action | Keys |
 |---|---|
-| 戻る／進む | <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd> |
-| 次のタブ／前のタブ | <kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> |
-| タブを閉じる | <kbd>Ctrl</kbd>+<kbd>W</kbd> |
+| Back / forward | <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd> |
+| Next / previous tab | <kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> |
+| Close tab | <kbd>Ctrl</kbd>+<kbd>W</kbd> |
 
-## メニューとヘルプ
+## Menus and help
 
-| 操作 | キー |
+| Action | Keys |
 |---|---|
-| メニューに移動 | <kbd>Alt</kbd> / <kbd>F10</kbd> |
-| メニューを直接開く | <kbd>Alt</kbd>+<kbd>F</kbd>（ファイル）、<kbd>E</kbd>（編集）、<kbd>V</kbd>（表示）、<kbd>G</kbd>（移動）、<kbd>H</kbd>（ヘルプ） |
-| ショートカット一覧 | <kbd>F1</kbd> |
+| Move to the menu bar | <kbd>Alt</kbd> / <kbd>F10</kbd> |
+| Open a menu directly | <kbd>Alt</kbd>+<kbd>F</kbd> (File), <kbd>E</kbd> (Edit), <kbd>V</kbd> (View), <kbd>G</kbd> (Go), <kbd>H</kbd> (Help) |
+| Keyboard shortcuts | <kbd>F1</kbd> |
 
 > [!TIP]
-> アプリの中では、<kbd>F1</kbd> でいつでもこの一覧を表示できます 💡
+> In the app, <kbd>F1</kbd> shows this list at any time 💡

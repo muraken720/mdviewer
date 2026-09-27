@@ -1,146 +1,146 @@
-# 📘 mdviewer 操作マニュアル
+# 📘 mdviewer User Guide
 
-mdviewer は、Markdown（`.md`）を **読みやすく表示し、その場で直す** ための Windows 向けの小さなツールです。このマニュアル自体も、mdviewer で表示できる記法（表・図・数式・絵文字など）の見本を兼ねています。mdviewer で開いて、表示を確かめてください。
+mdviewer is a small Windows tool for **reading Markdown (`.md`) comfortably and fixing it on the spot**. This guide also doubles as a sample of what mdviewer can display (tables, diagrams, math, emoji and more). Open it in mdviewer to see how it renders.
 
-[English version](en/README.md)
+[日本語版はこちら](ja/README.md)
 
 > [!TIP]
-> このファイルを mdviewer で開いている場合は、[ショートカット一覧](shortcuts.md) を開いてから <kbd>Alt</kbd>+<kbd>←</kbd> を押すと、ここに戻れます。
+> If you are viewing this file in mdviewer, open the [keyboard shortcuts](shortcuts.md) and then press <kbd>Alt</kbd>+<kbd>←</kbd> to come back here.
 
-## 目次
+## Contents
 
-1. [画面の見かた](#画面の見かた)
-2. [ファイルを開く](#ファイルを開く)
-3. [タブと、戻る／進む](#タブと戻る進む)
-4. [編集と保存](#編集と保存)
-5. [検索・拡大・テーマ・言語](#検索拡大テーマ言語)
-6. [表示できる記法](#表示できる記法)
-7. [数式](#数式)
-8. [図（Mermaid）](#図mermaid)
-9. [困ったときは](#困ったときは)
+1. [The window](#the-window)
+2. [Opening files](#opening-files)
+3. [Tabs, back and forward](#tabs-back-and-forward)
+4. [Editing and saving](#editing-and-saving)
+5. [Find, zoom, theme and language](#find-zoom-theme-and-language)
+6. [Supported syntax](#supported-syntax)
+7. [Math](#math)
+8. [Diagrams (Mermaid)](#diagrams-mermaid)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
-## 画面の見かた
+## The window
 
-![mdviewer の画面構成](images/layout.svg)
+![The mdviewer window](images/layout.svg)
 
-| 番号 | 名前 | できること |
+| No. | Part | What it does |
 |:---:|---|---|
-| 1 | メニューバー | すべての操作をメニューから選べます。<kbd>Alt</kbd> または <kbd>F10</kbd> でキーボード操作 |
-| 2 | タブバー | 開いているファイルの一覧。左端の ← → は、戻る／進む |
-| 3 | 本文 | Markdown を整形して表示します。<kbd>Ctrl</kbd>+ホイールで拡大・縮小 |
-| 4 | 検索バー | <kbd>Ctrl</kbd>+<kbd>F</kbd> で表示。一致した箇所をハイライト |
-| 5 | 表示／編集の切替 | 押すたびに、表示と編集（Markdown のテキスト）を切り替えます |
-| 6 | 倍率 | 拡大・縮小したときに、少しの間だけ表示されます |
+| 1 | Menu bar | Every command is in the menus. Press <kbd>Alt</kbd> or <kbd>F10</kbd> to use it from the keyboard |
+| 2 | Tab bar | The open files. The ← → buttons at the left go back and forward |
+| 3 | Document | The formatted Markdown. <kbd>Ctrl</kbd>+wheel zooms in and out |
+| 4 | Find bar | Shown with <kbd>Ctrl</kbd>+<kbd>F</kbd>. Matches are highlighted |
+| 5 | View / Edit toggle | Switches between the formatted view and the Markdown text |
+| 6 | Zoom level | Shown briefly when you zoom |
 
-## ファイルを開く
+## Opening files
 
-次のどの方法でも開けます。
+Any of these works:
 
-- 📂 `.md` ファイルをダブルクリックする（インストーラで関連付けた場合）
-- 🖱️ ファイルをウィンドウにドラッグ＆ドロップする（複数可）
-- ⌨️ <kbd>Ctrl</kbd>+<kbd>O</kbd>、または「ファイル → ファイルを開く…」
-- 💻 コマンドラインから `mdviewer.exe path\to\file.md`
+- 📂 Double-click a `.md` file (when associated by the installer)
+- 🖱️ Drag and drop files onto the window (several at once is fine)
+- ⌨️ <kbd>Ctrl</kbd>+<kbd>O</kbd>, or **File → Open…**
+- 💻 From the command line: `mdviewer.exe path\to\file.md`
 
-ファイルが外部で書き換えられると、表示が**自動で更新**されます（スクロール位置はそのまま）。
-生成 AI やエディタが書き出している `.md` を、横で開きっぱなしにしておく使い方に向いています。
+When the file is changed by another program, the view **updates automatically** (keeping the scroll position).
+This makes mdviewer a good companion for a `.md` file that an AI tool or an editor is writing.
 
-## タブと、戻る／進む
+## Tabs, back and forward
 
-別のファイルを開くと、新しいタブに開きます。すでに開いているファイルなら、そのタブに切り替わります。
-mdviewer の起動中に、エクスプローラーで別の `.md` をダブルクリックしても、同じウィンドウのタブに開きます。
+Another file opens in a new tab. If the file is already open, mdviewer switches to its tab.
+Double-clicking another `.md` in Explorer while mdviewer is running also opens it as a tab in the same window.
 
-文書の中の `other.md` のようなリンクは、**同じタブ**に開きます。ブラウザと同じように、前の文書に戻れます。
+Links in a document, such as `other.md`, open **in the same tab**. As in a web browser, you can go back to the previous document.
 
 ```mermaid
 flowchart LR
-    A["README.md"] -- リンクをクリック --> B["shortcuts.md"]
-    B -- "Alt+← / マウスの戻るボタン" --> A
+    A["README.md"] -- click a link --> B["shortcuts.md"]
+    B -- "Alt+← / mouse back button" --> A
     A -- "Alt+→" --> B
 ```
 
-| 操作 | キー | マウス |
+| Action | Keyboard | Mouse |
 |---|---|---|
-| 戻る | <kbd>Alt</kbd>+<kbd>←</kbd> | 戻るボタン、タブバーの ← |
-| 進む | <kbd>Alt</kbd>+<kbd>→</kbd> | 進むボタン、タブバーの → |
-| 次／前のタブ | <kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | タブをクリック |
-| タブを閉じる | <kbd>Ctrl</kbd>+<kbd>W</kbd> | × ボタン、タブの中クリック |
+| Back | <kbd>Alt</kbd>+<kbd>←</kbd> | Back button, ← in the tab bar |
+| Forward | <kbd>Alt</kbd>+<kbd>→</kbd> | Forward button, → in the tab bar |
+| Next / previous tab | <kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | Click the tab |
+| Close tab | <kbd>Ctrl</kbd>+<kbd>W</kbd> | × button, middle-click the tab |
 
-戻ったときは、スクロール位置も元に戻ります。
+Going back also restores the scroll position.
 
-## 編集と保存
+## Editing and saving
 
-<kbd>Ctrl</kbd>+<kbd>E</kbd>（または右上の「編集」ボタン）で編集モードになります。
-もう一度押すと、編集した内容で表示し直します。<kbd>Ctrl</kbd>+<kbd>S</kbd> で保存します。
+<kbd>Ctrl</kbd>+<kbd>E</kbd> (or the **Edit** button at the top right) switches to edit mode.
+Press it again to see your edits formatted. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves.
 
-リストを書くときは、<kbd>Enter</kbd> で次の項目が自動で続きます。
+When you write a list, <kbd>Enter</kbd> continues it for you:
 
 ```markdown
-- [ ] 買い物        ← ここで Enter を押すと
-- [ ]               ← 次の行が自動でできる（何も書かずに Enter でリストを抜ける）
+- [ ] Groceries     ← press Enter here
+- [ ]               ← the next item appears (Enter on an empty item ends the list)
 
-1. 手順その1
-2.                  ← 番号も自動で +1
+1. First step
+2.                  ← numbers go up by one
 ```
 
-| キー | 動作 |
+| Key | Action |
 |---|---|
-| <kbd>Enter</kbd> | インデントを保ったまま改行。リスト・引用を継続 |
-| <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | リストの字下げ／字上げ |
-| <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> | **太字** / *斜体* |
-| <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> | 元に戻す／やり直し |
+| <kbd>Enter</kbd> | New line, keeping the indentation. Continues lists and quotes |
+| <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | Indent / outdent list items |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> | **Bold** / *italic* |
+| <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> | Undo / redo |
 
 > [!NOTE]
-> 保存しても、元のファイルの改行コード（CRLF / LF）と BOM はそのまま保たれます。
-> 保存していない変更があるときは、タイトルに `●` が付きます。閉じるときには確認が出ます。
+> Saving keeps the file's original line endings (CRLF / LF) and BOM.
+> While there are unsaved changes, the title shows `●`, and mdviewer asks before closing.
 
-## 検索・拡大・テーマ・言語
+## Find, zoom, theme and language
 
-- 🔍 **検索**：<kbd>Ctrl</kbd>+<kbd>F</kbd>。<kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd>（または <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>）で次／前へ。<kbd>Esc</kbd> で閉じる
-- 🔎 **拡大・縮小**：<kbd>Ctrl</kbd>+ホイール、<kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd>、<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%。倍率は次回も保たれます
-- 🌐 **言語**：メニューは日本語と英語。OS の設定に合わせて自動で選びます。「表示 → 言語」で切り替えられます
-- ❓ **ヘルプ**：<kbd>F1</kbd> でショートカット一覧。「ヘルプ → mdviewer について」でバージョンを確認できます
-- 🌙 **テーマ（ダークモード）**：「表示」メニューで、ライトとダークを切り替えられます。初めて起動したときは、Windows の設定（ライト／ダーク）に合わせて自動で選びます。選んだテーマは次回も保たれます
+- 🔍 **Find**: <kbd>Ctrl</kbd>+<kbd>F</kbd>. <kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd> (or <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>) for the next / previous match. <kbd>Esc</kbd> closes
+- 🔎 **Zoom**: <kbd>Ctrl</kbd>+wheel, <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd>, and <kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%. The zoom level is remembered
+- 🌐 **Language**: the menus are in Japanese and English, chosen from your system language. Change it in **View → Language**
+- ❓ **Help**: <kbd>F1</kbd> shows the keyboard shortcuts. **Help → About mdviewer** shows the version
+- 🌙 **Theme (dark mode)**: switch between Light and Dark in the **View** menu. On the first launch mdviewer picks the one that matches your Windows setting. Your choice is remembered
 
-## 表示できる記法
+## Supported syntax
 
-CommonMark と GitHub Flavored Markdown（GFM）に対応しています。
+CommonMark and GitHub Flavored Markdown (GFM).
 
-### 文字の装飾
+### Text styles
 
-**太字**、*斜体*、~~取り消し線~~、`インラインコード`、[リンク](https://github.com/muraken720/mdviewer)、脚注[^1]。
+**Bold**, *italic*, ~~strikethrough~~, `inline code`, [links](https://github.com/muraken720/mdviewer) and footnotes[^1].
 
-### 表
+### Tables
 
-列ごとに、左寄せ・中央寄せ・右寄せを指定できます。
+Each column can be aligned left, center or right.
 
-| 形式 | 拡張子 | 対応 | サイズの目安 |
+| Format | Extension | Supported | Typical size |
 |:---|:---:|:---:|---:|
 | Markdown | `.md` / `.markdown` | ✅ | 1 KB |
-| PNG 画像 | `.png` | ✅（文書から参照） | 120 KB |
-| SVG 画像 | `.svg` | ✅（文書から参照） | 8 KB |
-| LaTeX 文書 | `.tex` | ❌ | — |
+| PNG image | `.png` | ✅ (referenced from a document) | 120 KB |
+| SVG image | `.svg` | ✅ (referenced from a document) | 8 KB |
+| LaTeX document | `.tex` | ❌ | — |
 
-### タスクリスト
+### Task lists
 
-- [x] Markdown を整形して表示する
-- [x] 表・数式・図を表示する
-- [ ] このマニュアルを最後まで読む 😉
+- [x] Show Markdown nicely formatted
+- [x] Show tables, math and diagrams
+- [ ] Read this guide to the end 😉
 
-### 引用とアラート
+### Quotes and alerts
 
-> 引用は、左に線が付いて表示されます。
+> A quote is shown with a line on the left.
 >
-> > 入れ子にもできます。
+> > Quotes can be nested.
 
 > [!IMPORTANT]
-> `> [!NOTE]`、`> [!TIP]`、`> [!IMPORTANT]`、`> [!WARNING]`、`> [!CAUTION]` の5種類のアラートを、色付きで表示します。
+> The five kinds of alerts, `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]` and `> [!CAUTION]`, are shown in color.
 
 > [!WARNING]
-> 安全のため、絶対パス（`C:\...`）やネットワーク共有（`\\server\...`）の画像とリンクは開きません。
+> For safety, images and links with absolute paths (`C:\...`) or network shares (`\\server\...`) are not opened.
 
-### コード
+### Code
 
 ```rust
 fn main() {
@@ -148,117 +148,117 @@ fn main() {
 }
 ```
 
-### 絵文字
+### Emoji
 
-絵文字はカラーで表示されます。
+Emoji are shown in color.
 
-| 分類 | 例 |
+| Group | Examples |
 |---|---|
-| 顔 | 😀 😂 🥹 🤔 😎 |
-| 手 | 👍 👏 🙌 🙏 ✌️ |
-| 記号 | ✅ ❌ ⚠️ 💡 🔥 ⭐ |
-| もの | 📘 📝 🖥️ ⌨️ 🚀 🎉 |
-| 季節 | 🌸 🎐 🍁 ⛄ |
+| Faces | 😀 😂 🥹 🤔 😎 |
+| Hands | 👍 👏 🙌 🙏 ✌️ |
+| Symbols | ✅ ❌ ⚠️ 💡 🔥 ⭐ |
+| Objects | 📘 📝 🖥️ ⌨️ 🚀 🎉 |
+| Seasons | 🌸 🎐 🍁 ⛄ |
 
 > [!NOTE]
-> `:rocket:` のようなショートコードは、絵文字に変換しません。国旗の絵文字は、Windows の制約で `JP` のような文字になります。
+> Shortcodes such as `:rocket:` are not converted to emoji. Flag emoji show as letters (such as `JP`) because of a Windows limitation.
 
-## 数式
+## Math
 
-[KaTeX](https://katex.org/) で数式を表示します。文中の数式は `$...$` または `\(...\)`、独立した数式は `$$...$$` または `\[...\]` で書きます。
+Math is typeset with [KaTeX](https://katex.org/). Write inline math as `$...$` or `\(...\)`, and display math as `$$...$$` or `\[...\]`.
 
 > [!NOTE]
-> 以下の例のうち、`\(...\)` と `\[...\]` で書いた数式と、金額の `$` は、GitHub の画面では mdviewer と表示が異なります（GitHub はこれらの書き方に対応していません）。
+> In the examples below, math written with `\(...\)` and `\[...\]`, and the dollar amounts, look different on GitHub than in mdviewer (GitHub does not support these forms).
 
-文中の数式の例：質量とエネルギーの関係は $E = mc^2$、円の面積は \(S = \pi r^2\) です。なお、「$5 と $10」のような金額は数式になりません。
+Inline examples: mass–energy equivalence is $E = mc^2$, and the area of a circle is \(S = \pi r^2\). Amounts such as "$5 and $10" are not treated as math.
 
-二次方程式 $ax^2 + bx + c = 0$ の解：
+The solutions of the quadratic equation $ax^2 + bx + c = 0$:
 
 $$
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
 
-正規分布の確率密度関数：
+The probability density of the normal distribution:
 
 \[
 f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right)
 \]
 
-行列と総和：
+A matrix and a sum:
 
 ```math
 A = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}, \qquad
 \sum_{k=1}^{n} k = \frac{n(n+1)}{2}
 ```
 
-## 図（Mermaid）
+## Diagrams (Mermaid)
 
-```` ```mermaid ```` ブロックは、図として表示されます。
+A ```` ```mermaid ```` block is drawn as a diagram.
 
-### フローチャート：ファイルを開いてから保存するまで
+### Flowchart: from opening a file to saving it
 
 ```mermaid
 flowchart LR
-    A([📂 ファイルを開く]) --> B[整形して表示]
-    B --> C{直したい？}
-    C -- いいえ --> D([👀 読むだけ])
-    C -- はい --> E["編集モード（Ctrl+E）"]
-    E --> F["保存（Ctrl+S）"]
+    A([📂 Open a file]) --> B[Formatted view]
+    B --> C{Need a fix?}
+    C -- No --> D([👀 Just read])
+    C -- Yes --> E["Edit mode (Ctrl+E)"]
+    E --> F["Save (Ctrl+S)"]
     F --> B
 ```
 
-### シーケンス図：生成 AI と一緒に使う
+### Sequence diagram: working with an AI tool
 
 ```mermaid
 sequenceDiagram
-    actor U as あなた
-    participant AI as 生成 AI
+    actor U as You
+    participant AI as AI tool
     participant F as report.md
     participant V as mdviewer
-    U->>AI: 「レポートを書いて」
-    AI->>F: 書き出す
-    F-->>V: 変更を検知して自動更新
-    V->>U: 整形して表示
-    U->>V: 気になる所を直して保存
+    U->>AI: "Write a report"
+    AI->>F: Writes the file
+    F-->>V: Change detected, view updated
+    V->>U: Shows it formatted
+    U->>V: Fixes a few things and saves
 ```
 
-### 状態遷移図：表示と編集
+### State diagram: view and edit
 
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> 表示: ファイルを開く
-    表示 --> 編集: Ctrl+E
-    編集 --> 表示: Ctrl+E（編集内容を反映）
-    編集 --> 編集: Ctrl+S で保存
+    [*] --> View: Open a file
+    View --> Edit: Ctrl+E
+    Edit --> View: Ctrl+E (shows your edits)
+    Edit --> Edit: Ctrl+S saves
 ```
 
-## 困ったときは
+## Troubleshooting
 
 <details>
-<summary>「Windows によって PC が保護されました」と表示される</summary>
+<summary>"Windows protected your PC" appears</summary>
 
-実行ファイルにコード署名をしていないため、初回の起動時に SmartScreen の画面が出ることがあります。
-「詳細情報」→「実行」で起動できます。
+The executable is not code-signed, so SmartScreen may show this screen on the first launch.
+Click **More info → Run anyway** to start mdviewer.
 
 </details>
 
 <details>
-<summary>図や数式が表示されない</summary>
+<summary>Diagrams or math are not shown</summary>
 
-設定ファイル（`%APPDATA%\io.github.muraken720.mdviewer\settings.json`）で `mermaid` や `math` を無効にしていないか確認してください。
+Check that `mermaid` or `math` is not turned off in the settings file (`%APPDATA%\io.github.muraken720.mdviewer\settings.json`).
 
 </details>
 
 <details>
-<summary>画像が表示されない</summary>
+<summary>Images are not shown</summary>
 
-表示できるのは、文書からの相対パス（`images/a.png` など）と `https://` の画像です。絶対パスやネットワーク共有の画像は、安全のため表示しません。
+mdviewer shows images with a path relative to the document (such as `images/a.png`) and `https://` images. Images with absolute paths or on network shares are not shown, for safety.
 
 </details>
 
 ---
 
-😊 不具合の報告や要望は [GitHub の Issues](https://github.com/muraken720/mdviewer/issues) へどうぞ。
+😊 Bug reports and ideas are welcome in [GitHub Issues](https://github.com/muraken720/mdviewer/issues).
 
-[^1]: 脚注の本文です。定義を書いた位置（この文書では末尾）に表示されます。
+[^1]: This is the footnote text. It is shown where it is defined (at the end of this document).
