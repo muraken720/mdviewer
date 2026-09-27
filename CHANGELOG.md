@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-27
+
+Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme and a clearer View / Edit switch. The README and a new user guide (which doubles as a rendering sample) are now in English, with Japanese versions alongside.
+
+メニュー、タブ、戻る／進む、検索、日本語／英語の UI、ライト／ダークのテーマ、分かりやすくした表示／編集の切替を追加しました。README と操作マニュアル（表示見本を兼ねる）は英語を標準にし、日本語版を併設しています。
+
 ### Added
 - メニューバー（ファイル・編集・表示・移動・ヘルプ）。Alt / F10 でメニューへ移動、Alt+F などで直接開く
 - タブ：別のファイルは新しいタブで開く。起動中に別の `.md` をダブルクリックしても同じウィンドウのタブで開く
@@ -52,5 +58,6 @@
 - `settings.json` で機能（プラグイン）ごとに有効／無効を切り替え可能
 - 利用している OSS のライセンス全文（`THIRD_PARTY_LICENSES.md`）を同梱
 
-[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/muraken720/mdviewer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/muraken720/mdviewer/releases/tag/v0.1.0

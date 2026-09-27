@@ -2024,14 +2024,14 @@ dependencies = [
 
 [[package]]
 name = "mdcore"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "pulldown-cmark",
 ]
 
 [[package]]
 name = "mdviewer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "mdcore",
  "serde",
