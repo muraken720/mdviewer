@@ -31,7 +31,7 @@ mdviewer is a small Windows tool for **reading Markdown (`.md`) comfortably and 
 | 2 | Tab bar | The open files. The ← → buttons at the left go back and forward |
 | 3 | Document | The formatted Markdown. <kbd>Ctrl</kbd>+wheel zooms in and out |
 | 4 | Find bar | Shown with <kbd>Ctrl</kbd>+<kbd>F</kbd>. Matches are highlighted |
-| 5 | View / Edit toggle | Switches between the formatted view and the Markdown text |
+| 5 | View / Edit switch | Shows the current mode (shaded). Click the other side to switch between the formatted view and the Markdown text |
 | 6 | Zoom level | Shown briefly when you zoom |
 
 ## Opening files
