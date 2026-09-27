@@ -4,6 +4,7 @@ import { fakeBackend } from '../test/fake-backend';
 import { checkForChange } from './auto-reload';
 import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
+import theme, { initialTheme, parseTheme } from './theme';
 import { windowTitle } from './title';
 import { clampZoom, MAX, MIN } from './zoom';
 
@@ -68,4 +69,43 @@ test('typeset renders inline, display and ```math blocks with KaTeX', async () =
   expect(root.querySelectorAll('.katex-display')).toHaveLength(2);
   expect(root.querySelector('pre')).toBeNull();
   expect(root.textContent).toContain('\\badcommand'); // unknown commands are shown (in red), not thrown
+});
+
+test('parseTheme and initialTheme', () => {
+  expect(parseTheme('dark')).toBe('dark');
+  expect(parseTheme('auto')).toBeNull(); // value from an earlier build
+  expect(parseTheme(null)).toBeNull();
+  expect(initialTheme(null, true)).toBe('dark');
+  expect(initialTheme(null, false)).toBe('light');
+  expect(initialTheme('light', true)).toBe('light');
+  expect(initialTheme('dark', false)).toBe('dark');
+});
+
+function memory(initial: Record<string, string> = {}) {
+  const saved = new Map(Object.entries(initial));
+  return {
+    saved,
+    get: (k: string) => saved.get(k) ?? null,
+    set: (k: string, v: string | number) => void saved.set(k, String(v)),
+  };
+}
+
+test('theme: first launch saves the detected theme; later launches keep the saved one', () => {
+  const first = memory();
+  new App({ backend: fakeBackend(), storage: first }).use(theme);
+  expect(first.saved.get('theme')).toMatch(/^(light|dark)$/); // jsdom has no matchMedia: light
+
+  const storage = memory({ theme: 'dark' });
+  const backend = fakeBackend();
+  const app = new App({ backend, storage }).use(theme);
+  expect(document.documentElement.dataset.theme).toBe('dark');
+  expect(backend.calls).toContainEqual(['setTheme', 'dark']);
+  expect(app.getCommand('theme.dark')?.checked?.()).toBe(true);
+
+  app.run('theme.light');
+  expect(document.documentElement.dataset.theme).toBe('light');
+  expect(storage.saved.get('theme')).toBe('light');
+  expect(backend.calls).toContainEqual(['setTheme', 'light']);
+  expect(app.getCommand('theme.light')?.checked?.()).toBe(true);
+  expect(app.getCommand('theme.auto')).toBeUndefined();
 });

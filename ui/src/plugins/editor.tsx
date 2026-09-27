@@ -1,5 +1,5 @@
 // Markdown editor pane (one per tab): a <textarea> with list continuation, indentation and save.
-import { type KeyboardEvent, useEffect, useRef } from 'react';
+import { type KeyboardEvent, type ReactElement, useEffect, useRef } from 'react';
 import type { App } from '../core/app';
 import type { PaneProps, Plugin } from '../core/types';
 import { useAppVersion } from '../core/useApp';
@@ -68,24 +68,64 @@ function Editor({ app, tab, active }: PaneProps) {
       aria-label={tab.doc?.name}
       onKeyDown={onKeyDown}
       onInput={(e) => app.update(e.currentTarget.value, tab)}
-      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(14px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
+      className="block h-full w-full resize-none bg-bg px-4 pt-14 pb-16 font-mono text-[calc(16px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))]"
     />
   );
 }
 
+const ICON = {
+  width: 16,
+  height: 16,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const;
+
+const BookIcon = () => (
+  <svg {...ICON} aria-hidden="true">
+    <path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z" />
+    <path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z" />
+  </svg>
+);
+
+const PencilIcon = () => (
+  <svg {...ICON} aria-hidden="true">
+    <path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+  </svg>
+);
+
+/** View | Edit switch at the top right. The current mode is shaded gray (pressed), so it reads as a state; blue is kept for links. */
 function ModeToggle({ app }: { app: App }) {
   useAppVersion(app);
   if (!app.doc) return null;
-  const editing = app.mode === 'edit';
+  const segment = (mode: 'view' | 'edit', Icon: () => ReactElement) => {
+    const active = app.mode === mode;
+    return (
+      <button
+        type="button"
+        aria-pressed={active}
+        onClick={() => void app.setMode(mode)}
+        className={`flex items-center gap-1.5 rounded px-3 py-1 font-medium text-sm focus-visible:outline-2 focus-visible:outline-link ${
+          active ? 'bg-line text-fg' : 'cursor-pointer text-fg hover:bg-code'
+        }`}
+      >
+        <Icon />
+        {app.t(mode === 'view' ? 'mode.view' : 'mode.edit')}
+      </button>
+    );
+  };
   return (
-    <button
-      type="button"
+    <fieldset
+      aria-label={app.t('cmd.view.toggleEdit')}
       title={`${app.t('cmd.view.toggleEdit')} (Ctrl+E)`}
-      onClick={() => app.run('view.toggleEdit')}
-      className="absolute top-2 right-5 z-10 cursor-pointer rounded-md border border-line bg-bg px-2.5 py-1 text-muted text-xs opacity-70 hover:opacity-100 print:hidden"
+      className="absolute top-2 right-5 z-10 flex gap-0.5 rounded-md border border-line bg-bg p-0.5 shadow-md print:hidden"
     >
-      {app.t(editing ? 'mode.view' : 'mode.edit')}
-    </button>
+      {segment('view', BookIcon)}
+      {segment('edit', PencilIcon)}
+    </fieldset>
   );
 }
 

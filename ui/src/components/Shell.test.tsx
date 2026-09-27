@@ -67,3 +67,20 @@ test('help dialog lists shortcuts and closes with Escape', async () => {
   await act(async () => fireEvent.keyDown(window, { key: 'Escape' }));
   expect(screen.queryByRole('dialog')).toBeNull();
 });
+
+test('the view / edit switch shows the current mode and switches it', async () => {
+  const app = setup();
+  await act(() => app.open('/d/a.md'));
+  const group = screen.getByRole('group', { name: '表示 / 編集の切替' });
+  const viewButton = within(group).getByRole('button', { name: '表示' });
+  const editButton = within(group).getByRole('button', { name: '編集' });
+  expect(viewButton.getAttribute('aria-pressed')).toBe('true');
+  expect(editButton.getAttribute('aria-pressed')).toBe('false');
+
+  await act(async () => fireEvent.click(editButton));
+  expect(app.mode).toBe('edit');
+  expect(editButton.getAttribute('aria-pressed')).toBe('true');
+
+  await act(async () => fireEvent.click(viewButton));
+  expect(app.mode).toBe('view');
+});

@@ -3,77 +3,87 @@
 [![CI](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-軽量・高速な Windows 向け Markdown ビューア／エディタ。
-生成AIが書き出した `.md` を、HTML に変換せずそのまま読みやすく表示し、その場で直すためのツールです。
+**English** | [日本語](README.ja.md)
 
-- **軽い**: exe 単体で約 11 MB、うち約 5 MB は日本語フォント（Noto Sans JP）。描画には OS 標準の WebView2 を使うので、ブラウザエンジンは同梱しない（Rust + Tauri 2）
-- **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
-- **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ
+A small, fast Markdown viewer and editor for Windows.
+Your AI writes and rewrites the Markdown; mdviewer shows it as a nicely formatted page, without converting it to HTML first, and lets you make small fixes on the spot.
 
-## English
+- **Small**: a single exe of about 11 MB. It uses the WebView2 that comes with Windows, so no browser engine is bundled (Rust + Tauri 2)
+- **Fast**: Markdown is converted in Rust ([pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark))
+- **Nothing extra**: only what you use every time you read a file or make a quick fix. Want to edit a table or a Mermaid diagram with ease, or translate a document into your language? Your LLM does all of that well, so mdviewer deliberately adds no such editing features
 
-mdviewer is a small, fast Markdown viewer/editor for Windows, made for reading the Markdown that AI tools produce without converting it to HTML first.
-It renders GitHub Flavored Markdown, math (KaTeX: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`) and Mermaid diagrams, has a minimal editor with list continuation, and auto-reloads when the file changes.
-Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in Japanese; issues and pull requests in English are welcome.
+![mdviewer showing math and a Mermaid diagram](docs/images/screenshot-math-mermaid.png)
 
-## 機能
+See the [user guide](docs/manual/README.md) for how to use it. The guide doubles as a sample of what mdviewer can display: tables, diagrams, math, emoji and more (the screen above shows the guide itself).
 
-| 機能 | 操作 |
+## Screenshots
+
+| Tables, task lists and alerts | Edit mode (edit the Markdown directly) |
+|:---:|:---:|
+| ![Tables, task lists and alerts](docs/images/screenshot-syntax.png) | ![Edit mode](docs/images/screenshot-editor.png) |
+| **Dark theme and find (emoji in color)** | **View menu (theme and language)** |
+| ![Finding text in the dark theme](docs/images/screenshot-dark-find.png) | ![The View menu](docs/images/screenshot-menu.png) |
+
+The screenshots were taken with the Linux build used for development. On Windows, the window frame and the emoji artwork (Segoe UI Emoji) look different.
+
+## Features
+
+| Feature | How |
 |---|---|
-| Markdown を整形表示 | `.md` をダブルクリック / ウィンドウにドロップ / <kbd>Ctrl</kbd>+<kbd>O</kbd> |
-| タブ | 別のファイルは新しいタブで開く（起動中に別の `.md` をダブルクリックしても同じウィンドウのタブに開く）。<kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> で切替、<kbd>Ctrl</kbd>+<kbd>W</kbd> で閉じる |
-| 戻る・進む | 文書内のリンクで開いた文書は同じタブに開き、<kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd>、タブバー左のボタン、マウスの戻る／進むボタン、「移動」メニューで行き来できる（スクロール位置も戻る） |
-| 検索 | <kbd>Ctrl</kbd>+<kbd>F</kbd>。一致箇所をハイライトし件数を表示。<kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd>（または <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>）で次／前へ |
-| メニュー | ファイル・編集・表示・移動・ヘルプ。<kbd>Alt</kbd> または <kbd>F10</kbd> でメニューへ移動、<kbd>Alt</kbd>+<kbd>F</kbd> などで直接開く |
-| 言語 | メニューは日本語と英語。OS の言語設定に合わせて自動で選び、「表示」メニューで切り替えられる（選択は次回も維持） |
-| ヘルプ | <kbd>F1</kbd> でショートカット一覧。「ヘルプ → mdviewer について」でバージョン・作者・ライセンス |
-| 編集モードに切替 | <kbd>Ctrl</kbd>+<kbd>E</kbd> または右上のボタン（もう一度押すと、編集内容をビューアに反映して表示） |
-| 保存 | <kbd>Ctrl</kbd>+<kbd>S</kbd>（元ファイルの改行コード CRLF/LF と BOM を維持）。未保存の間はタイトルに `●` |
-| 拡大・縮小 | <kbd>Ctrl</kbd>+ホイール / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd>（<kbd>Ctrl</kbd>+<kbd>0</kbd> で 100%）。倍率は次回も維持 |
-| 自動再読み込み | ファイルが更新されると表示を自動更新（スクロール位置は維持）。手動は <kbd>F5</kbd>。未保存の編集は上書きしない |
-| リンク | `#見出し` は文書内ジャンプ、`other.md` はビューアで開く、`https://` は既定のブラウザで開く |
-| ダークモード | OS の設定に追従 |
-| 日本語フォント | Noto Sans JP を同梱（PC にインストールされていなくても同じ見た目） |
-| 絵文字 | ✅ ⚠️ 🚀 などをカラーで表示（Windows では Segoe UI Emoji）。国旗の絵文字は Windows の制約で文字（`JP` など）になる。`:rocket:` のようなショートコードは変換しない |
+| Formatted Markdown | Double-click a `.md` file / drop it on the window / <kbd>Ctrl</kbd>+<kbd>O</kbd> |
+| Tabs | Other files open in new tabs (double-clicking another `.md` while mdviewer is running opens it as a tab in the same window). <kbd>Ctrl</kbd>+<kbd>Tab</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> to switch, <kbd>Ctrl</kbd>+<kbd>W</kbd> to close |
+| Back and forward | Links in a document open in the same tab. Go back and forward with <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd>, the buttons at the left of the tab bar, the mouse back / forward buttons, or the **Go** menu (the scroll position comes back too) |
+| Find | <kbd>Ctrl</kbd>+<kbd>F</kbd>. Highlights matches and shows the count. <kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd> (or <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>) for the next / previous match |
+| Menus | File, Edit, View, Go and Help. <kbd>Alt</kbd> or <kbd>F10</kbd> moves to the menu bar, <kbd>Alt</kbd>+<kbd>F</kbd> etc. opens a menu directly |
+| Language | Menus in English and Japanese, chosen from your system language and switchable in the **View** menu (remembered) |
+| Help | <kbd>F1</kbd> shows the keyboard shortcuts. **Help → About mdviewer** shows the version, author and license |
+| Edit mode | <kbd>Ctrl</kbd>+<kbd>E</kbd> or the button at the top right (press again to see your edits formatted) |
+| Save | <kbd>Ctrl</kbd>+<kbd>S</kbd> (keeps the file's line endings, CRLF / LF, and BOM). The title shows `●` while there are unsaved changes |
+| Zoom | <kbd>Ctrl</kbd>+wheel / <kbd>Ctrl</kbd>+<kbd>+</kbd> <kbd>-</kbd> (<kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%). Remembered |
+| Auto reload | Updates the view when the file changes (keeping the scroll position). <kbd>F5</kbd> reloads manually. Unsaved edits are never overwritten |
+| Links | `#heading` jumps within the document, `other.md` opens in mdviewer, `https://` opens in your default browser |
+| Theme (dark mode) | Switch between Light and Dark in the **View** menu (remembered). On the first launch mdviewer picks the one that matches your Windows setting. Diagram (Mermaid) colors follow the theme |
+| Japanese font | Noto Sans JP is bundled, so Japanese text looks the same even if the font is not installed |
+| Emoji | Shows ✅ ⚠️ 🚀 and others in color (Segoe UI Emoji on Windows). Flag emoji show as letters (such as `JP`) because of a Windows limitation. Shortcodes such as `:rocket:` are not converted |
 
-対応記法: CommonMark + GFM（表、タスクリスト、取り消し線、脚注、`> [!NOTE]` 形式のアラート）、画像、数式、図。
+Supported syntax: CommonMark + GFM (tables, task lists, strikethrough, footnotes, `> [!NOTE]` alerts), images, math and diagrams.
 
-画像は、文書からの相対パス（`![](img/a.png)` など）と https の URL を表示します。安全のため、絶対パス（`C:\...`）やネットワーク共有（`\\server\...`）の画像、リンク先は開きません（[SECURITY.md](SECURITY.md)）。
+Images are shown for paths relative to the document (such as `![](img/a.png)`) and for https URLs. For safety, images and links with absolute paths (`C:\...`) or on network shares (`\\server\...`) are not opened ([SECURITY.md](SECURITY.md)).
 
-### 数式（TeX / LaTeX）
+### Math (TeX / LaTeX)
 
-[KaTeX](https://katex.org/) で描画します。次の書き方に対応しています。
+Typeset with [KaTeX](https://katex.org/). These forms are supported:
 
-| 書き方 | 種類 |
+| Syntax | Kind |
 |---|---|
-| `$E = mc^2$`、`\(E = mc^2\)` | 文中の数式 |
-| `$$ … $$`、`\[ … \]`、```` ```math ```` ブロック | 独立した数式 |
+| `$E = mc^2$`, `\(E = mc^2\)` | Inline math |
+| `$$ … $$`, `\[ … \]`, ```` ```math ```` blocks | Display math |
 
-- `\(…\)` と `\[…\]` は ChatGPT などの生成AIがよく出力する LaTeX 形式です
-- `$5と$10` のような金額は数式になりません（Pandoc と同じく、閉じ側の `$` の直前が空白、または直後が数字の場合は数式として扱わない）。確実に `$` を表示したいときは `\$` と書きます
-- `\[1\]` のように、中身が数式らしくない `\[…\]` は、Markdown のエスケープ（角括弧そのもの）として表示します
-- コード（`` ` `` や ```` ``` ````）の中は変換しません
-- `.tex` ファイル（LaTeX 文書全体）の組版には対応していません
+- `\(…\)` and `\[…\]` are the LaTeX forms that AI tools such as ChatGPT often write
+- Amounts such as `$5 and $10` are not treated as math (as in Pandoc, a closing `$` right after a space or right before a digit does not close math). Write `\$` to always show a dollar sign
+- `\[…\]` whose content does not look like math, such as `\[1\]`, is shown as a Markdown escape (the brackets themselves)
+- Nothing inside code (`` ` `` or ```` ``` ````) is converted
+- Typesetting `.tex` files (whole LaTeX documents) is not supported
 
-### 図（Mermaid）
+### Diagrams (Mermaid)
 
-```` ```mermaid ```` ブロックを図として描画します（[Mermaid](https://mermaid.js.org/) 11）。
+```` ```mermaid ```` blocks are drawn as diagrams ([Mermaid](https://mermaid.js.org/) 11).
 
-### エディタ
+### Editor
 
-| 操作 | 動作 |
+| Key | Action |
 |---|---|
-| <kbd>Enter</kbd> | インデントを維持。箇条書き・番号付きリスト（番号は自動で +1）・タスクリスト・引用を継続。空の項目で押すとリストを抜ける（ネストしていれば 1 段戻る） |
-| <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | リスト項目や選択行をインデント／アウトデント |
-| <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> | 太字／斜体の切替 |
-| <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> | 元に戻す／やり直し（上記の自動編集も含む） |
+| <kbd>Enter</kbd> | Keeps the indentation. Continues bullet lists, numbered lists (the number goes up by one), task lists and quotes. On an empty item it ends the list (or goes up one level when nested) |
+| <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> | Indent / outdent list items or the selected lines |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd> / <kbd>Ctrl</kbd>+<kbd>I</kbd> | Toggle bold / italic |
+| <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> | Undo / redo (including the automatic edits above) |
 
-コードブロック（```` ``` ````）の中ではリストの自動継続は行わず、インデントだけを維持します。日本語入力の変換確定の <kbd>Enter</kbd> には反応しません。
-未保存のまま閉じる・別ファイルを開く・<kbd>F5</kbd> を押したときは確認します。
+Inside code blocks (```` ``` ````) lists are not continued; only the indentation is kept. The <kbd>Enter</kbd> that confirms IME input (for example, Japanese) is ignored.
+mdviewer asks before closing, opening another file or reloading with <kbd>F5</kbd> when there are unsaved changes.
 
-## 設定
+## Settings
 
-設定ファイルで、プラグインごとに有効／無効を切り替えられます。ファイルがなければすべて既定値です。
+Each plugin can be turned on or off in a settings file. Without the file, everything uses the defaults.
 
 - Windows: `%APPDATA%\io.github.muraken720.mdviewer\settings.json`
 - Linux: `~/.config/io.github.muraken720.mdviewer/settings.json`
@@ -87,77 +97,80 @@ Built with Rust + Tauri 2 (WebView2) and TypeScript + React. Documentation is in
 }
 ```
 
-| プラグイン | 既定 | 内容 |
+| Plugin | Default | What it does |
 |---|---|---|
-| `math` | 有効 | 数式。KaTeX は数式を含む文書を開いたときだけ読み込む |
-| `mermaid` | 有効 | ```` ```mermaid ```` ブロックを図として描画。ライブラリは図を含む文書を開いたときだけ読み込む |
-| `gfm`, `heading-anchors`, `local-images` | 有効 | Markdown の拡張記法、見出しアンカー、相対パス画像 |
-| `menu`, `tabs`, `view`, `editor`, `find`, `language`, `help`, `zoom`, `links`, `auto-reload`, `title`, `open-file` | 有効 | 各 UI 機能 |
+| `math` | On | Math. KaTeX is loaded only when a document contains math |
+| `mermaid` | On | Draws ```` ```mermaid ```` blocks as diagrams. The library is loaded only when a document contains a diagram |
+| `gfm`, `heading-anchors`, `local-images` | On | Markdown extensions, heading anchors, images with relative paths |
+| `menu`, `tabs`, `view`, `editor`, `find`, `theme`, `language`, `help`, `zoom`, `links`, `auto-reload`, `title`, `open-file` | On | UI features |
 
-設定の変更は次回起動時に反映されます。
+Changes take effect the next time mdviewer starts.
 
-### やらないこと
+### Out of scope
 
-シンタックスハイライト、ライブプレビュー（左右分割）、ファイルツリー、セッションの復元、エクスポートなど。
-理由と判断基準は [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) を参照してください。
+Syntax highlighting, live preview (side by side), a file tree, session restore, export, table or diagram editors, translation and so on. Heavy editing is what your LLM is for.
+The reasons and the criteria are in [CONTRIBUTING.md](CONTRIBUTING.md#スコープ方針) (Japanese).
 
-## インストール
+## Install
 
-[Releases](https://github.com/muraken720/mdviewer/releases) から次のいずれかを取得します。
+Get one of these from [Releases](https://github.com/muraken720/mdviewer/releases):
 
-- `mdviewer_x.y.z_x64-setup.exe` — インストーラ。`.md` / `.markdown` の関連付けを登録します
-- `mdviewer_x.y.z_x64_portable.zip` — ポータブル版。展開した `mdviewer.exe` を任意の場所に置いて使います（関連付けは「プログラムから開く」で手動設定）
+- `mdviewer_x.y.z_x64-setup.exe`: the installer. It associates `.md` / `.markdown` files with mdviewer
+- `mdviewer_x.y.z_x64_portable.zip`: the portable version. Put the extracted `mdviewer.exe` anywhere (associate files yourself with **Open with**)
 
-どちらにも、ライセンス（`LICENSE.txt`）と、利用しているオープンソースソフトウェアのライセンス全文（`THIRD_PARTY_LICENSES.md`）が含まれます。
+Both include the license (`LICENSE.txt`) and the full license texts of the open source software used (`THIRD_PARTY_LICENSES.md`).
 
-動作環境: Windows 10 / 11（WebView2 ランタイム。Windows 11 には標準で入っています）
+Requirements: Windows 10 / 11 (WebView2 Runtime, included in Windows 11)
 
 > [!NOTE]
-> 実行ファイルにはコード署名をしていないため、初回起動時に「Windows によって PC が保護されました」（SmartScreen）と表示されることがあります。
-> 「詳細情報」→「実行」で起動できます。不安な場合は、[Releases](https://github.com/muraken720/mdviewer/releases) のファイルであることを確認してください。
+> The executable is not code-signed, so SmartScreen may show "Windows protected your PC" on the first launch.
+> Click **More info → Run anyway** to start it. If in doubt, check that the file came from [Releases](https://github.com/muraken720/mdviewer/releases).
 
-コマンドラインからも開けます:
+You can also open a file from the command line:
 
 ```
 mdviewer.exe path\to\file.md
 ```
 
-## 開発
+## Development
 
-必要なもの: Rust (stable)、Node.js 22 以降
+Requirements: Rust (stable), Node.js 22 or later
 
-UI は TypeScript + React + Tailwind CSS（Vite でビルド）、Markdown の変換は Rust です。
+The UI is TypeScript + React + Tailwind CSS (built with Vite); Markdown is converted in Rust.
 
 ```sh
-npm ci                           # 依存パッケージのインストール
-npm run tauri dev                # 開発実行（UI はホットリロード）
-npm test                         # UI テスト（Vitest）
-npm run lint                     # Lint + フォーマット確認（Biome）
-npm run typecheck                # 型チェック
-cargo test --workspace           # Rust テスト（先に npm run build が必要）
-npm run tauri build              # リリースビルド + インストーラ作成（Windows 上で実行）
+npm ci                           # install dependencies
+npm run tauri dev                # run in development (UI hot reload)
+npm test                         # UI tests (Vitest)
+npm run lint                     # lint + format check (Biome)
+npm run typecheck                # type check
+cargo test --workspace           # Rust tests (run npm run build first)
+npm run tauri build              # release build + installer (on Windows)
 ```
 
-Linux で開発する場合は Tauri の [前提パッケージ](https://tauri.app/start/prerequisites/)（`libwebkit2gtk-4.1-dev` など）が必要です。
+To develop on Linux you need Tauri's [prerequisites](https://tauri.app/start/prerequisites/) (such as `libwebkit2gtk-4.1-dev`).
 
-- 構成と設計: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- プラグインの作り方: [docs/PLUGINS.md](docs/PLUGINS.md)
-- コントリビュート: [CONTRIBUTING.md](CONTRIBUTING.md)
-- セキュリティ: [SECURITY.md](SECURITY.md)
+- User guide (doubles as a rendering sample): [docs/manual/README.md](docs/manual/README.md) ([Japanese](docs/manual/ja/README.md))
+- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Writing plugins: [docs/PLUGINS.md](docs/PLUGINS.md)
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Security: [SECURITY.md](SECURITY.md)
 
-## ライセンス
+The developer documents are in Japanese. Issues and pull requests in English are welcome.
+
+## License
 
 [MIT](LICENSE)
 
-mdviewer は多くのオープンソースソフトウェアに支えられています。作者とコントリビュータの皆さんに感謝します。
-主なプロジェクトの紹介は [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md)、配布物に含まれるすべてのソフトウェアのライセンス全文は [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) にあります。
+mdviewer stands on the shoulders of many open source projects. Thank you to their authors and contributors.
+The main projects are introduced in [docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md), and the full license texts of all software included in the release are in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
-主な同梱ソフトウェア:
+Main bundled software:
 
-| ソフトウェア | ライセンス |
+| Software | License |
 |---|---|
 | [React](https://react.dev/) | MIT |
-| [KaTeX](https://katex.org/)（フォントを含む） | MIT |
-| [DOMPurify](https://github.com/cure53/DOMPurify) | Apache-2.0 または MPL-2.0 |
+| [KaTeX](https://katex.org/) (including its fonts) | MIT |
+| [DOMPurify](https://github.com/cure53/DOMPurify) | Apache-2.0 or MPL-2.0 |
 | [Mermaid](https://mermaid.js.org/) | MIT |
-| [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（[Fontsource](https://fontsource.org/)） | SIL Open Font License 1.1 |
+| [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP) ([Fontsource](https://fontsource.org/)) | SIL Open Font License 1.1 |

@@ -131,7 +131,7 @@ editor (textarea) ──input──▶ app.update(text) ──▶ doc:dirty ─�
 | 目的 | Markdown の解釈・HTML の生成を変える | 操作・表示を変える |
 | 実体 | `mdcore::Plugin` trait の実装（`preprocess` / `parser_options` / `transform`） | `{ name, setup(app) }` を default export するモジュール |
 | 登録 | `src-tauri/src/main.rs` の `renderer()` | `ui/src/plugins/index.ts` |
-| 例 | `gfm`, `heading-anchors`, `local-images`, `math` | `menu`, `tabs`, `view`, `editor`, `find`, `help`, `language`, `title`, `open-file`, `links`, `zoom`, `auto-reload`, `math`, `mermaid` |
+| 例 | `gfm`, `heading-anchors`, `local-images`, `math` | `menu`, `tabs`, `view`, `editor`, `find`, `help`, `theme`, `language`, `title`, `open-file`, `links`, `zoom`, `auto-reload`, `math`, `mermaid` |
 
 `settings.json` の `plugins` は、Rust と UI で共通の名前空間です。同じ名前のプラグインは一緒に切り替わります。たとえば `"math": false` にすると、Rust 側の数式の解釈と UI 側の組版が両方とも無効になります。
 

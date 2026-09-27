@@ -17,6 +17,8 @@ export const ja = {
   'cmd.zoom.in': '拡大',
   'cmd.zoom.out': '縮小',
   'cmd.zoom.reset': '100% 表示',
+  'cmd.theme.light': 'テーマ: ライト',
+  'cmd.theme.dark': 'テーマ: ダーク',
   'cmd.lang.auto': '言語: 自動（OS の設定）',
   'cmd.lang.ja': '言語: 日本語',
   'cmd.lang.en': '言語: English',

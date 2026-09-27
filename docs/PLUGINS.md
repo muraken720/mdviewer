@@ -1,7 +1,7 @@
 # プラグインの作り方
 
 mdviewer の機能は、Rust 側の **Markdown プラグイン** と TypeScript 側の **UI プラグイン** の組み合わせでできています。
-どちらもビルド時に組み込む方式です。登録箇所に 1 行足せば追加でき、利用者は `settings.json` でプラグインごとに有効／無効を切り替えられます（[README](../README.md#設定)）。
+どちらもビルド時に組み込む方式です。登録箇所に 1 行足せば追加でき、利用者は `settings.json` でプラグインごとに有効／無効を切り替えられます（[README](../README.ja.md#設定)）。
 
 > 新しい機能を足す前に、[スコープ方針](../CONTRIBUTING.md#スコープ方針) を満たすか確認してください。
 
@@ -114,7 +114,7 @@ export default myPlugin;
 | `app.update(text, tab?)` / `app.refresh(tab?)` / `app.save(tab?)` | テキストの更新 / 変更があれば再描画 / 保存（外部で変更されていれば確認する） |
 | `app.confirmDiscard(tab?)` / `app.confirmExit()` | 未保存の変更を破棄してよいか確認する（変更がなければすぐに true を返す）/ 終了前に、未保存のタブがあれば1回だけ確認する |
 | `app.setMode(mode, tab?)` | 表示と編集を切り替える。`'view'` に切り替えるときは `refresh()` も行う |
-| `app.backend` | ホスト機能（`Backend` 型）。文書は `open` / `openLink` が返す文書 ID（`doc.id`）で指定する：`reload(id)`、`render(id, text)`、`save(id, text)`、`mtime(id)`、`closeDoc(id)`。ほかに `appInfo`、`pickFile`、`ask`、`openUrl`、`initialPath`、`setTitle`、`closeWindow`、`onOpenRequest`、`onCloseRequested` |
+| `app.backend` | ホスト機能（`Backend` 型）。文書は `open` / `openLink` が返す文書 ID（`doc.id`）で指定する：`reload(id)`、`render(id, text)`、`save(id, text)`、`mtime(id)`、`closeDoc(id)`。ほかに `appInfo`、`pickFile`、`ask`、`openUrl`、`initialPath`、`setTitle`、`setTheme`、`showWindow`、`closeWindow`、`onOpenRequest`、`onCloseRequested` |
 
 画面部品の中で `app` の変化に追随して再描画したいときは、`useAppVersion(app)`（`core/useApp.ts`）を呼びます。
 
@@ -188,7 +188,7 @@ const wordCount: Plugin = { name: 'word-count', setup: (app) => app.addOverlay(W
 export default wordCount;
 ```
 
-スタイルは Tailwind のユーティリティで書きます。テーマ色（`text-fg`, `bg-bg`, `border-line`, `text-muted`, `text-link`, `bg-caution`）を使えば、ダークモードにも自動で対応します。
+スタイルは Tailwind のユーティリティで書きます。テーマ色（`text-fg`, `bg-bg`, `border-line`, `text-muted`, `text-link`, `bg-caution`）を使えば、ダークモードにも自動で対応します。テーマは `<html data-theme="light|dark">` に反映され、変わると `plugin:theme` イベントが発行されます（独自に色を持つ部品は、`mermaid.ts` のようにこれを購読して描き直します）。
 
 ### 指針
 

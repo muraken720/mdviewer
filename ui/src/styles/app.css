@@ -2,20 +2,29 @@
 @import "@fontsource-variable/noto-sans-jp";
 @import "./markdown.css";
 
-/* Colors are CSS variables so light/dark follow the OS; Tailwind utilities map onto them
-   (text-fg, bg-bg, border-line, text-muted, bg-caution, ...). */
+/* Colors are CSS variables; Tailwind utilities map onto them (text-fg, bg-bg, border-line,
+   text-muted, bg-caution, ...). The theme plugin sets <html data-theme="light|dark"> (View menu;
+   the OS setting on first launch); without it (plugin turned off) the OS setting decides. */
 :root {
   --fg: #1f2328; --muted: #59636e; --bg: #ffffff; --line: #d1d9e0;
   --code-bg: #f6f8fa; --link: #0969da;
   --note: #0969da; --tip: #1a7f37; --important: #8250df; --warning: #9a6700; --caution: #d1242f;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --fg: #e6edf3; --muted: #9198a1; --bg: #0d1117; --line: #3d444d;
     --code-bg: #151b23; --link: #4493f8;
     --note: #4493f8; --tip: #3fb950; --important: #ab7df8; --warning: #d29922; --caution: #f85149;
+    color-scheme: dark;
   }
+}
+/* Same values as the block above (a selector list cannot mix the media query and the attribute). */
+:root[data-theme="dark"] {
+  --fg: #e6edf3; --muted: #9198a1; --bg: #0d1117; --line: #3d444d;
+  --code-bg: #151b23; --link: #4493f8;
+  --note: #4493f8; --tip: #3fb950; --important: #ab7df8; --warning: #d29922; --caution: #f85149;
+  color-scheme: dark;
 }
 
 /* Color emoji fonts, listed explicitly (as GitHub does) so emoji do not depend on the OS's
