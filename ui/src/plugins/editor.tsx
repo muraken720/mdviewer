@@ -68,7 +68,7 @@ function Editor({ app, tab, active }: PaneProps) {
       aria-label={tab.doc?.name}
       onKeyDown={onKeyDown}
       onInput={(e) => app.update(e.currentTarget.value, tab)}
-      className="block h-full w-full resize-none bg-bg px-4 pt-14 pb-16 font-mono text-[calc(16px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))]"
+      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(16px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
     />
   );
 }
@@ -97,23 +97,28 @@ const PencilIcon = () => (
   </svg>
 );
 
-/** View | Edit switch at the top right. The current mode is shaded gray (pressed), so it reads as a state; blue is kept for links. */
+/**
+ * View | Edit switch at the right end of the status bar. The current mode is shaded gray (pressed),
+ * so it reads as a state; blue is kept for links.
+ */
 function ModeToggle({ app }: { app: App }) {
   useAppVersion(app);
   if (!app.doc) return null;
   const segment = (mode: 'view' | 'edit', Icon: () => ReactElement) => {
     const active = app.mode === mode;
+    const label = app.t(mode === 'view' ? 'mode.view' : 'mode.edit');
     return (
       <button
         type="button"
         aria-pressed={active}
+        aria-label={label}
         onClick={() => void app.setMode(mode)}
-        className={`flex items-center gap-1.5 rounded px-3 py-1 font-medium text-sm focus-visible:outline-2 focus-visible:outline-link ${
+        className={`flex items-center gap-1.5 rounded px-2 font-medium text-fg leading-5 focus-visible:outline-2 focus-visible:outline-link ${
           active ? 'bg-line text-fg' : 'cursor-pointer text-fg hover:bg-code'
         }`}
       >
         <Icon />
-        {app.t(mode === 'view' ? 'mode.view' : 'mode.edit')}
+        {label}
       </button>
     );
   };
@@ -121,7 +126,7 @@ function ModeToggle({ app }: { app: App }) {
     <fieldset
       aria-label={app.t('cmd.view.toggleEdit')}
       title={`${app.t('cmd.view.toggleEdit')} (Ctrl+E)`}
-      className="absolute top-2 right-5 z-10 flex gap-0.5 rounded-md border border-line bg-bg p-0.5 shadow-md print:hidden"
+      className="flex shrink-0 gap-0.5 rounded-md border border-line bg-bg p-px"
     >
       {segment('view', BookIcon)}
       {segment('edit', PencilIcon)}
@@ -133,7 +138,7 @@ const editor: Plugin = {
   name: 'editor',
   setup(app) {
     app.addPane('edit', Editor);
-    app.addOverlay(ModeToggle);
+    app.addStatusItem(ModeToggle, 100);
     const hasDoc = () => !!app.doc;
     app.command({
       id: 'view.toggleEdit',

@@ -8,6 +8,7 @@ import menu from '../plugins/menu';
 import openFile from '../plugins/open-file';
 import tabs from '../plugins/tabs';
 import view from '../plugins/view';
+import zoom from '../plugins/zoom';
 import { fakeBackend } from '../test/fake-backend';
 import { Shell } from './Shell';
 
@@ -83,4 +84,22 @@ test('the view / edit switch shows the current mode and switches it', async () =
 
   await act(async () => fireEvent.click(viewButton));
   expect(app.mode).toBe('view');
+});
+
+test('the status bar shows the zoom level and the switch; edited tabs are marked', async () => {
+  const app = new App({ backend: fakeBackend({ '/d/a.md': 'hello' }), languages: ['ja-JP'] });
+  for (const p of [menu, tabs, view, editor, zoom]) app.use(p);
+  render(<Shell app={app} />);
+  await act(() => app.open('/d/a.md'));
+  const status = screen.getByRole('contentinfo');
+  const zoomButton = within(status).getByRole('button', { name: '100%' });
+  within(status).getByRole('group', { name: '表示 / 編集の切替' });
+
+  await act(async () => app.run('zoom.in'));
+  expect(zoomButton.textContent).toBe('110%');
+  await act(async () => fireEvent.click(zoomButton));
+  expect(zoomButton.textContent).toBe('100%');
+
+  await act(async () => app.setMode('edit'));
+  expect(screen.getByRole('tab', { name: /a\.md.*\(編集\)/ })).toBeTruthy();
 });

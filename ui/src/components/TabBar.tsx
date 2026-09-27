@@ -90,7 +90,18 @@ export function TabBar({ app }: { app: App }) {
                 className="min-w-0 flex-1 truncate py-1 pr-1 pl-3 text-left focus-visible:outline-2 focus-visible:outline-link"
               >
                 {tab.dirty && <span aria-hidden="true">● </span>}
+                {tab.mode === 'edit' && (
+                  // Marks the tabs being edited (the View | Edit switch shows only the active one).
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="mr-1 inline h-3.5 w-3.5 fill-none stroke-2 stroke-current align-[-2px] [stroke-linecap:round] [stroke-linejoin:round]"
+                  >
+                    <path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                  </svg>
+                )}
                 {name}
+                {tab.mode === 'edit' && <span className="sr-only"> ({app.t('mode.edit')})</span>}
               </button>
               <button
                 type="button"

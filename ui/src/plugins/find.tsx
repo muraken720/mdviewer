@@ -89,7 +89,7 @@ function FindBar({ app }: { app: App }) {
   };
   const btn = 'h-7 w-7 shrink-0 rounded hover:bg-line/60 focus-visible:outline-2 focus-visible:outline-link';
   return (
-    <search className="absolute top-12 right-5 left-4 z-20 flex sm:top-2 sm:right-48 sm:left-auto sm:w-[min(24rem,calc(100%-13rem))] items-center gap-1 rounded-md border border-line bg-bg p-1 shadow-md print:hidden">
+    <search className="absolute top-2 right-5 z-20 flex w-[min(24rem,calc(100%-2.5rem))] items-center gap-1 rounded-md border border-line bg-bg p-1 shadow-md print:hidden">
       <input
         ref={input}
         type="search"
