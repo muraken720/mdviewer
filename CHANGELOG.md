@@ -13,23 +13,29 @@
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-09-29
+
+The installer is now also available as a zip, the installer names its publisher, and the README states the code signing policy and privacy.
+
 ### Added
 - Releases also include the installer as a zip (`mdviewer_x.y.z_x64-setup.zip`), for browsers and networks that warn about or block downloading an `.exe`
 
 ### Changed
 - The installer registers "Kenichiro Murata" as the publisher (shown in Apps & features)
-- The README describes the code signing policy (applying to SignPath Foundation) and privacy (no telemetry; network access only for `https://` images in the document)
+- The README describes the code signing policy (applying to SignPath Foundation) and privacy (no telemetry; network access only for `https://` images in the document). Release notes end with a note on code signing
 
 ---
 
 **日本語**
+
+インストーラを zip でも配布し、インストーラが発行元を登録するようにしました。README にコード署名の方針とプライバシーを記載しました。
 
 **追加**
 - インストーラを zip にしたもの（`mdviewer_x.y.z_x64-setup.zip`）もリリースに含める（ブラウザやネットワークで `.exe` のダウンロードが警告・禁止される場合のため）
 
 **変更**
 - インストーラが発行元として「Kenichiro Murata」を登録する（「アプリと機能」に表示される）
-- README にコード署名の方針（SignPath Foundation に申請中）とプライバシー（利用状況の送信なし。ネットワークを使うのは文書中の `https://` の画像だけ）を記載
+- README にコード署名の方針（SignPath Foundation に申請中）とプライバシー（利用状況の送信なし。ネットワークを使うのは文書中の `https://` の画像だけ）を記載。リリースノートの末尾にコード署名についての一文を入れる
 
 ## [0.2.1] - 2026-09-27
 
@@ -125,7 +131,8 @@ Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme
 - `settings.json` で機能（プラグイン）ごとに有効／無効を切り替え可能
 - 利用している OSS のライセンス全文（`THIRD_PARTY_LICENSES.md`）を同梱
 
-[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/muraken720/mdviewer/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/muraken720/mdviewer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/muraken720/mdviewer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/muraken720/mdviewer/releases/tag/v0.1.0
