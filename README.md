@@ -116,14 +116,15 @@ The reasons and the criteria are in [CONTRIBUTING.md](CONTRIBUTING.md#スコー�
 Get one of these from [Releases](https://github.com/muraken720/mdviewer/releases):
 
 - `mdviewer_x.y.z_x64-setup.exe`: the installer. It associates `.md` / `.markdown` files with mdviewer
+- `mdviewer_x.y.z_x64-setup.zip`: the same installer in a zip, for when your browser or network warns about or blocks downloading an `.exe`. Extract it and run `mdviewer_x.y.z_x64-setup.exe`
 - `mdviewer_x.y.z_x64_portable.zip`: the portable version. Put the extracted `mdviewer.exe` anywhere (associate files yourself with **Open with**)
 
-Both include the license (`LICENSE.txt`) and the full license texts of the open source software used (`THIRD_PARTY_LICENSES.md`).
+Each includes the license (`LICENSE.txt`) and the full license texts of the open source software used (`THIRD_PARTY_LICENSES.md`).
 
 Requirements: Windows 10 / 11 (WebView2 Runtime, included in Windows 11)
 
 > [!NOTE]
-> The executable is not code-signed, so SmartScreen may show "Windows protected your PC" on the first launch.
+> The executables are not code-signed yet (see [Code signing policy](#code-signing-policy)), so SmartScreen may show "Windows protected your PC" on the first launch, and the publisher is shown as unknown.
 > Click **More info → Run anyway** to start it. If in doubt, check that the file came from [Releases](https://github.com/muraken720/mdviewer/releases).
 
 You can also open a file from the command line:
@@ -131,6 +132,19 @@ You can also open a file from the command line:
 ```
 mdviewer.exe path\to\file.md
 ```
+
+### Code signing policy
+
+We are applying for free code signing for the Windows releases: code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). Releases up to and including v0.2.1 are not signed.
+
+- Committers and reviewers: [Kenichiro Murata](https://github.com/muraken720)
+- Approvers: [Kenichiro Murata](https://github.com/muraken720)
+
+Release files are built only by GitHub Actions from this repository ([release.yml](.github/workflows/release.yml)), and each signing request is approved by hand.
+
+### Privacy
+
+mdviewer does not send any information to other networked systems unless you ask it to. It has no telemetry and no automatic update check. The only network access is for `https://` images in the document you open, and a clicked `https://` link opens in your default browser.
 
 ## Development
 

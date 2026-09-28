@@ -13,6 +13,24 @@
 
 ## [Unreleased]
 
+### Added
+- Releases also include the installer as a zip (`mdviewer_x.y.z_x64-setup.zip`), for browsers and networks that warn about or block downloading an `.exe`
+
+### Changed
+- The installer registers "Kenichiro Murata" as the publisher (shown in Apps & features)
+- The README describes the code signing policy (applying to SignPath Foundation) and privacy (no telemetry; network access only for `https://` images in the document)
+
+---
+
+**日本語**
+
+**追加**
+- インストーラを zip にしたもの（`mdviewer_x.y.z_x64-setup.zip`）もリリースに含める（ブラウザやネットワークで `.exe` のダウンロードが警告・禁止される場合のため）
+
+**変更**
+- インストーラが発行元として「Kenichiro Murata」を登録する（「アプリと機能」に表示される）
+- README にコード署名の方針（SignPath Foundation に申請中）とプライバシー（利用状況の送信なし。ネットワークを使うのは文書中の `https://` の画像だけ）を記載
+
 ## [0.2.1] - 2026-09-27
 
 The View / Edit switch and the zoom level move to a status bar at the bottom, out of the way of the document. The README now opens with an animated demo.
