@@ -116,14 +116,15 @@ Markdown を書いたり書き直したりするのは生成AIの仕事。mdview
 [Releases](https://github.com/muraken720/mdviewer/releases) から次のいずれかを取得します。
 
 - `mdviewer_x.y.z_x64-setup.exe` — インストーラ。`.md` / `.markdown` の関連付けを登録します
+- `mdviewer_x.y.z_x64-setup.zip` — 同じインストーラを zip にしたもの。ブラウザやネットワークで `.exe` のダウンロードが警告・禁止される場合に使います。展開して `mdviewer_x.y.z_x64-setup.exe` を実行します
 - `mdviewer_x.y.z_x64_portable.zip` — ポータブル版。展開した `mdviewer.exe` を任意の場所に置いて使います（関連付けは「プログラムから開く」で手動設定）
 
-どちらにも、ライセンス（`LICENSE.txt`）と、利用しているオープンソースソフトウェアのライセンス全文（`THIRD_PARTY_LICENSES.md`）が含まれます。
+いずれにも、ライセンス（`LICENSE.txt`）と、利用しているオープンソースソフトウェアのライセンス全文（`THIRD_PARTY_LICENSES.md`）が含まれます。
 
 動作環境: Windows 10 / 11（WebView2 ランタイム。Windows 11 には標準で入っています）
 
 > [!NOTE]
-> 実行ファイルにはコード署名をしていないため、初回起動時に「Windows によって PC が保護されました」（SmartScreen）と表示されることがあります。
+> 実行ファイルにはまだコード署名をしていないため（[コード署名の方針](#コード署名の方針)）、初回起動時に「Windows によって PC が保護されました」（SmartScreen）と表示され、発行元が「不明」になることがあります。
 > 「詳細情報」→「実行」で起動できます。不安な場合は、[Releases](https://github.com/muraken720/mdviewer/releases) のファイルであることを確認してください。
 
 コマンドラインからも開けます:
@@ -131,6 +132,19 @@ Markdown を書いたり書き直したりするのは生成AIの仕事。mdview
 ```
 mdviewer.exe path\to\file.md
 ```
+
+### コード署名の方針
+
+Windows 版の無償のコード署名を申請中です（コード署名は [SignPath.io](https://about.signpath.io/)、証明書は [SignPath Foundation](https://signpath.org/) による）。v0.2.1 までのリリースは署名していません。
+
+- コミット・レビュー: [Kenichiro Murata](https://github.com/muraken720)
+- 署名の承認: [Kenichiro Murata](https://github.com/muraken720)
+
+配布ファイルは、このリポジトリの GitHub Actions（[release.yml](.github/workflows/release.yml)）だけでビルドし、署名のたびに手動で承認します。
+
+### プライバシー
+
+mdviewer は、利用者が求めない限り、ほかのネットワーク上のシステムに情報を送りません。利用状況の送信や、自動のアップデート確認もありません。ネットワークを使うのは、開いた文書にある `https://` の画像を表示するときだけです。クリックした `https://` のリンクは既定のブラウザで開きます。
 
 ## 開発
 
