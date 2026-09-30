@@ -13,6 +13,10 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-01
+
+A table of contents for wide windows, an edit mode that looks like ruled paper, and switching between view and edit that keeps your place.
+
 ### Added
 - Table of contents at the right of the document in wide windows (1280 px or more): the document title (click to go back to the top), then the level 2 and 3 headings, with the section being read highlighted; click to jump. On by default; View menu → Table of Contents turns it off (remembered). The document itself does not move
 - While editing, the status bar shows the cursor line and column
@@ -24,6 +28,8 @@
 ---
 
 **日本語**
+
+幅の広いウィンドウでの目次、罫線入りの紙のような編集モード、表示と編集を切り替えても位置を保つ機能を追加しました。
 
 **追加**
 - ウィンドウの幅が広いとき（1280px 以上）、文書の右に目次を表示する。先頭は文書のタイトル（クリックで先頭へ戻る）、続けて見出し（2・3 段目）を並べ、読んでいる節を強調し、クリックで移動する。最初から表示し、「表示 → 目次を表示」で消せる（選択は次回も維持）。本文の位置と幅は変わらない
@@ -151,7 +157,8 @@ Menus, tabs, back / forward, find, a Japanese / English UI, a light / dark theme
 - `settings.json` で機能（プラグイン）ごとに有効／無効を切り替え可能
 - 利用している OSS のライセンス全文（`THIRD_PARTY_LICENSES.md`）を同梱
 
-[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/muraken720/mdviewer/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/muraken720/mdviewer/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/muraken720/mdviewer/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/muraken720/mdviewer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/muraken720/mdviewer/compare/v0.1.0...v0.2.0
