@@ -73,6 +73,7 @@ Going back also restores the scroll position.
 
 <kbd>Ctrl</kbd>+<kbd>E</kbd> (or **Edit** in the switch at the bottom right) switches to edit mode.
 Press it again to see your edits formatted. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves.
+While editing, the page is light gray with faint ruled lines, and the status bar shows the line and column of the cursor.
 
 When you write a list, <kbd>Enter</kbd> continues it for you:
 
@@ -99,6 +100,7 @@ When you write a list, <kbd>Enter</kbd> continues it for you:
 
 - 🔍 **Find**: <kbd>Ctrl</kbd>+<kbd>F</kbd>. <kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd> (or <kbd>F3</kbd> / <kbd>Shift</kbd>+<kbd>F3</kbd>) for the next / previous match. <kbd>Esc</kbd> closes
 - 🔎 **Zoom**: <kbd>Ctrl</kbd>+wheel, <kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd>, and <kbd>Ctrl</kbd>+<kbd>0</kbd> for 100%. The zoom level is shown in the status bar and remembered
+- 📑 **Table of contents**: in a wide window (1280 px or more), the headings are listed at the right. The section you are reading is highlighted; click a heading to jump to it. Turn it on or off in **View → Table of Contents** (remembered)
 - 🌐 **Language**: the menus are in Japanese and English, chosen from your system language. Change it in **View → Language**
 - ❓ **Help**: <kbd>F1</kbd> shows the keyboard shortcuts. **Help → About mdviewer** shows the version
 - 🌙 **Theme (dark mode)**: switch between Light and Dark in the **View** menu. On the first launch mdviewer picks the one that matches your Windows setting. Your choice is remembered
