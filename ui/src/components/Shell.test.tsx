@@ -7,6 +7,7 @@ import language from '../plugins/language';
 import menu from '../plugins/menu';
 import openFile from '../plugins/open-file';
 import tabs from '../plugins/tabs';
+import toc from '../plugins/toc';
 import view from '../plugins/view';
 import zoom from '../plugins/zoom';
 import { fakeBackend } from '../test/fake-backend';
@@ -102,4 +103,51 @@ test('the status bar shows the zoom level and the switch; edited tabs are marked
 
   await act(async () => app.setMode('edit'));
   expect(screen.getByRole('tab', { name: /a\.md.*\(編集\)/ })).toBeTruthy();
+});
+
+test('the status bar shows the cursor line and column while editing', async () => {
+  const app = new App({ backend: fakeBackend({ '/d/a.md': 'one\ntwo' }), languages: ['ja-JP'] });
+  for (const p of [menu, tabs, view, editor]) app.use(p);
+  render(<Shell app={app} />);
+  await act(() => app.open('/d/a.md'));
+  const status = screen.getByRole('contentinfo');
+  expect(within(status).queryByText(/^行/)).toBeNull();
+
+  await act(async () => app.setMode('edit'));
+  const ta = document.querySelector('textarea') as HTMLTextAreaElement;
+  ta.setSelectionRange(6, 6);
+  await act(async () => fireEvent.select(ta));
+  expect(within(status).getByText('行 2, 列 3')).toBeTruthy();
+});
+
+test('wide windows show a table of contents in view mode; the View menu turns it off', async () => {
+  const doc = '<h2 id="intro">Intro</h2><h3 id="setup">Setup</h3><h2 id="usage">Usage</h2>';
+  const app = new App({ backend: fakeBackend({ '/d/a.md': doc, '/d/b.md': 'short' }), languages: ['ja-JP'] });
+  for (const p of [menu, tabs, view, editor, toc]) app.use(p);
+  const width = window.innerWidth;
+  window.innerWidth = 1440;
+  try {
+    render(<Shell app={app} />);
+    await act(() => app.open('/d/a.md'));
+    const nav = screen.getByRole('navigation', { name: '目次' });
+    expect(
+      within(nav)
+        .getAllByRole('link')
+        .map((a) => a.textContent),
+    ).toEqual(['a.md', 'Intro', 'Setup', 'Usage']); // first: the title (the file name here), back to the top
+
+    await act(async () => app.setMode('edit'));
+    expect(screen.queryByRole('navigation', { name: '目次' })).toBeNull();
+    await act(async () => app.setMode('view'));
+    expect(screen.getByRole('navigation', { name: '目次' })).toBeTruthy();
+
+    await act(async () => app.run('view.toc'));
+    expect(screen.queryByRole('navigation', { name: '目次' })).toBeNull();
+    await act(async () => app.run('view.toc'));
+
+    await act(() => app.open('/d/b.md')); // too few headings
+    expect(screen.queryByRole('navigation', { name: '目次' })).toBeNull();
+  } finally {
+    window.innerWidth = width;
+  }
 });

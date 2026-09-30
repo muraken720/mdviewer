@@ -13,6 +13,26 @@
 
 ## [Unreleased]
 
+### Added
+- Table of contents at the right of the document in wide windows (1280 px or more): the document title (click to go back to the top), then the level 2 and 3 headings, with the section being read highlighted; click to jump. On by default; View menu → Table of Contents turns it off (remembered). The document itself does not move
+- While editing, the status bar shows the cursor line and column
+- Switching between view and edit keeps roughly the same place in the document (matched by headings), and the cursor starts at the first line shown
+
+### Changed
+- Edit mode looks different from the view: the text column becomes a light gray sheet with faint ruled lines, while the side margins keep the page color (in both themes). The text column widens with the zoom, as in the view
+
+---
+
+**日本語**
+
+**追加**
+- ウィンドウの幅が広いとき（1280px 以上）、文書の右に目次を表示する。先頭は文書のタイトル（クリックで先頭へ戻る）、続けて見出し（2・3 段目）を並べ、読んでいる節を強調し、クリックで移動する。最初から表示し、「表示 → 目次を表示」で消せる（選択は次回も維持）。本文の位置と幅は変わらない
+- 編集中は、ステータスバーにカーソルの行・列を表示する
+- 表示と編集を切り替えても、文書のほぼ同じ位置を表示する（見出しを目印に合わせる）。編集に切り替えたときは、見えている先頭の行にカーソルを置く
+
+**変更**
+- 編集モードを表示モードと見分けやすくした。本文の幅の部分を薄いグレーの罫線入りの紙のようにし、左右の余白は表示モードと同じ色のままにする（ライト・ダークとも）。拡大・縮小すると、表示モードと同じく本文の幅も変わる
+
 ## [0.2.2] - 2026-09-29
 
 The installer is now also available as a zip, the installer names its publisher, and the README states the code signing policy and privacy.
