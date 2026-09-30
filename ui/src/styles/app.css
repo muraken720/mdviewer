@@ -50,7 +50,8 @@ body { overflow: hidden; }
 
 /* Edit mode: a sheet of ruled paper under the text column (the side margins keep the page color of
    the view), so it is clearly not the formatted view. The sheet is the text column plus 1.25rem on
-   each side (the textarea's side padding is max(2rem, (100% - 820px) / 2)); the lines start at the
+   each side (the textarea's side padding is max(2rem, (100% - 820px × zoom) / 2), so the column
+   widens with the zoom like the view); the lines start at the
    first text line (--pt), are drawn once per line (--lh) and scroll with the text (local). */
 .editor-paper {
   --lh: calc(16px * var(--zoom, 1) * 1.625);
@@ -66,7 +67,7 @@ body { overflow: hidden; }
     var(--bg);
 }
 @media (min-width: 640px) {
-  .editor-paper { --pt: 2rem; --sheet: calc(min(100% - 4rem, 820px) + 2.5rem); }
+  .editor-paper { --pt: 2rem; --sheet: calc(min(100% - 4rem, 820px * var(--zoom, 1)) + 2.5rem); }
 }
 
 /* Find in page (CSS Custom Highlight API). */

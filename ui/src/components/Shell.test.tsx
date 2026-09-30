@@ -134,7 +134,7 @@ test('wide windows show a table of contents in view mode; the View menu turns it
       within(nav)
         .getAllByRole('link')
         .map((a) => a.textContent),
-    ).toEqual(['Intro', 'Setup', 'Usage']);
+    ).toEqual(['a.md', 'Intro', 'Setup', 'Usage']); // first: the title (the file name here), back to the top
 
     await act(async () => app.setMode('edit'));
     expect(screen.queryByRole('navigation', { name: '目次' })).toBeNull();

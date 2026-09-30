@@ -1,5 +1,6 @@
 // Markdown editor pane (one per tab): a <textarea> with list continuation, indentation and save.
-// The status bar shows the cursor position (line, column) while editing.
+// The status bar shows the cursor position (line, column) while editing. Switching between view and
+// edit keeps roughly the same place in the document (see lib/scroll-sync.ts).
 import {
   type KeyboardEvent,
   type ReactElement,
@@ -9,9 +10,11 @@ import {
   useSyncExternalStore,
 } from 'react';
 import type { App } from '../core/app';
+import type { Tab } from '../core/tab';
 import type { PaneProps, Plugin } from '../core/types';
 import { useAppVersion } from '../core/useApp';
 import { type Edit, type EditOperation, enter, indent, outdent, toggleWrap } from '../lib/markdown-edit';
+import { headingLines, interpolate } from '../lib/scroll-sync';
 
 const KEYS: Record<string, EditOperation> = {
   Enter: enter,
@@ -58,7 +61,9 @@ export function cursorPosition(text: string, pos: number): { line: number; col: 
 let cursor = { line: 1, col: 1 };
 const cursorListeners = new Set<() => void>();
 function trackCursor(e: SyntheticEvent<HTMLTextAreaElement>) {
-  const ta = e.currentTarget;
+  updateCursor(e.currentTarget);
+}
+function updateCursor(ta: HTMLTextAreaElement) {
   const next = cursorPosition(ta.value, ta.selectionEnd);
   if (next.line === cursor.line && next.col === cursor.col) return;
   cursor = next;
@@ -106,7 +111,7 @@ function Editor({ app, tab, active }: PaneProps) {
       onKeyUp={trackCursor}
       onClick={trackCursor}
       onFocus={trackCursor}
-      className="editor-paper block h-full w-full resize-none px-4 pb-16 font-mono text-fg outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))]"
+      className="editor-paper block h-full w-full resize-none px-4 pb-16 font-mono text-fg outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px*var(--zoom,1))/2))]"
     />
   );
 }
@@ -180,12 +185,120 @@ function ModeToggle({ app }: { app: App }) {
   );
 }
 
+// ---- keeping the place between view and edit ----
+
+const viewerOf = (tab: Tab) => document.querySelector<HTMLElement>(`[data-viewer="${tab.id}"]`);
+const editorOf = (tab: Tab) => document.querySelector<HTMLTextAreaElement>(`[data-editor="${tab.id}"]`);
+const range = (n: number) => Array.from({ length: n }, (_, i) => i);
+
+/** Pixel positions in the viewer paired with Markdown line numbers: top, each heading, bottom. */
+function viewAnchors(scroller: HTMLElement, text: string): { px: number[]; lines: number[] } {
+  const px = [0];
+  const lines = [0];
+  const els = scroller.querySelectorAll('article h1, article h2, article h3, article h4, article h5, article h6');
+  const src = headingLines(text);
+  if (els.length === src.length) {
+    const top = scroller.getBoundingClientRect().top - scroller.scrollTop;
+    els.forEach((el, i) => {
+      px.push(el.getBoundingClientRect().top - top);
+      lines.push(src[i] as number);
+    });
+  }
+  px.push(scroller.scrollHeight);
+  lines.push(text.split('\n').length);
+  return { px, lines };
+}
+
+/** Top of each line of the textarea's text in its scroll area (wrapped lines are taller), plus the end. */
+function lineTops(ta: HTMLTextAreaElement): number[] {
+  const cs = getComputedStyle(ta);
+  const mirror = document.createElement('div');
+  for (const p of [
+    'font',
+    'letterSpacing',
+    'wordSpacing',
+    'lineHeight',
+    'tabSize',
+    'overflowWrap',
+    'wordBreak',
+  ] as const)
+    mirror.style[p] = cs[p];
+  mirror.style.cssText += `;position:absolute;visibility:hidden;left:-99999px;top:0;box-sizing:border-box;white-space:pre-wrap;width:${ta.clientWidth}px;padding:${cs.padding}`;
+  for (const line of ta.value.split('\n')) {
+    const row = document.createElement('div');
+    row.textContent = line || '\u200b';
+    mirror.append(row);
+  }
+  document.body.append(mirror);
+  const tops = [...mirror.children].map((row) => (row as HTMLElement).offsetTop);
+  tops.push(mirror.scrollHeight - Number.parseFloat(cs.paddingBottom));
+  mirror.remove();
+  return tops;
+}
+
+/** The (fractional) Markdown line at the top of the tab's visible pane, if it is shown. */
+function topLine(tab: Tab): number | undefined {
+  const text = tab.doc?.raw;
+  if (text === undefined) return;
+  if (tab.mode === 'view') {
+    const scroller = viewerOf(tab);
+    if (!scroller || scroller.hidden) return;
+    const { px, lines } = viewAnchors(scroller, text);
+    return interpolate(scroller.scrollTop, px, lines);
+  }
+  const ta = editorOf(tab);
+  if (!ta || ta.hidden) return;
+  const tops = lineTops(ta);
+  return interpolate(ta.scrollTop + Number.parseFloat(getComputedStyle(ta).paddingTop), tops, range(tops.length));
+}
+
+/** Scroll the tab's visible pane so that Markdown line `line` is at the top. */
+function scrollToLine(tab: Tab, line: number) {
+  const text = tab.doc?.raw;
+  if (text === undefined) return;
+  if (tab.mode === 'view') {
+    const scroller = viewerOf(tab);
+    if (!scroller || scroller.hidden) return;
+    const { px, lines } = viewAnchors(scroller, text);
+    scroller.scrollTop = tab.scroll = interpolate(line, lines, px);
+    return;
+  }
+  const ta = editorOf(tab);
+  if (!ta || ta.hidden) return;
+  // Put the cursor at the start of the first line shown, where an edit most likely begins.
+  const first = Math.min(Math.ceil(line - 0.01), text.split('\n').length - 1);
+  let offset = 0;
+  for (let i = 0; i < first; i++) offset = text.indexOf('\n', offset) + 1;
+  ta.setSelectionRange(offset, offset);
+  updateCursor(ta);
+  const tops = lineTops(ta);
+  ta.scrollTop = interpolate(line, range(tops.length), tops) - Number.parseFloat(getComputedStyle(ta).paddingTop);
+}
+
+/** Run `fn` once the switched-to pane has been laid out. */
+function afterLayout(fn: () => void) {
+  const raf = window.requestAnimationFrame?.bind(window) ?? ((f: () => void) => setTimeout(f, 16));
+  raf(() => raf(fn));
+}
+
 const editor: Plugin = {
   name: 'editor',
   setup(app) {
     app.addPane('edit', Editor);
     app.addStatusItem(CursorStatus, 10);
     app.addStatusItem(ModeToggle, 100);
+
+    const place = new WeakMap<Tab, number>();
+    app.on('mode:changing', (_mode, tab) => {
+      const line = topLine(tab);
+      if (line !== undefined) place.set(tab, line);
+    });
+    app.on('mode:changed', (_mode, tab) => {
+      const line = place.get(tab);
+      place.delete(tab);
+      if (line !== undefined) afterLayout(() => scrollToLine(tab, line));
+    });
+
     const hasDoc = () => !!app.doc;
     app.command({
       id: 'view.toggleEdit',

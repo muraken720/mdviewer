@@ -132,6 +132,8 @@ export interface AppEvents {
   'doc:rendered': [doc: Doc, tab: Tab];
   'doc:dirty': [dirty: boolean, tab: Tab];
   'doc:saved': [doc: Doc, tab: Tab];
+  /** About to switch `tab` to `mode`; the current pane is still shown (read its scroll position here). */
+  'mode:changing': [mode: Mode, tab: Tab];
   'mode:changed': [mode: Mode, tab: Tab];
   /** A tab was opened, closed or activated. */
   'tabs:changed': [];

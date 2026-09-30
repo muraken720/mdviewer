@@ -130,6 +130,7 @@ export default myPlugin;
 | `doc:rendered` | `doc, tab` | 編集中のテキストを再描画した（`doc.html` が更新された） |
 | `doc:dirty` | `dirty, tab` | 未保存状態が変わった |
 | `doc:saved` | `doc, tab` | 保存した |
+| `mode:changing` | `mode, tab` | 表示と編集を切り替える直前（まだ元の画面が表示されているので、スクロール位置などを読める） |
 | `mode:changed` | `mode, tab` | 表示と編集を切り替えた |
 | `tabs:changed` | — | タブを開いた・閉じた・切り替えた |
 | `lang:changed` | — | 表示言語が変わった |

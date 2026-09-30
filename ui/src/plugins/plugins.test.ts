@@ -7,7 +7,7 @@ import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
 import theme, { initialTheme, parseTheme } from './theme';
 import { windowTitle } from './title';
-import { collectHeadings, tocWidth } from './toc';
+import { collectHeadings, documentTitle, tocWidth } from './toc';
 import { clampZoom, MAX, MIN } from './zoom';
 
 test('classifyLink', () => {
@@ -134,4 +134,12 @@ test('tocWidth: only when the margin right of the document is wide enough', () =
   expect(tocWidth(1280, 1)).toBe(182);
   expect(tocWidth(1920, 1)).toBe(260);
   expect(tocWidth(1440, 1.5)).toBe(0); // zoomed in: the document fills the window
+});
+
+test('documentTitle is the first level 1 heading, else the fallback', () => {
+  const root = document.createElement('div');
+  root.innerHTML = '<h2>A</h2><h1> Guide </h1><h1>Other</h1>';
+  expect(documentTitle(root, 'a.md')).toBe('Guide');
+  root.innerHTML = '<h2>A</h2>';
+  expect(documentTitle(root, 'a.md')).toBe('a.md');
 });

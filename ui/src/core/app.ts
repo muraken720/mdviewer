@@ -436,6 +436,7 @@ export class App {
 
   async setMode(mode: Mode, tab: Tab = this.active): Promise<void> {
     if (mode === tab.mode || !this.#panes.has(mode) || !tab.doc) return;
+    this.emit('mode:changing', mode, tab);
     tab.mode = mode;
     if (mode === 'view') await this.refresh(tab);
     this.emit('mode:changed', mode, tab);
