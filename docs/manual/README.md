@@ -73,7 +73,7 @@ Going back also restores the scroll position.
 
 <kbd>Ctrl</kbd>+<kbd>E</kbd> (or **Edit** in the switch at the bottom right) switches to edit mode.
 Press it again to see your edits formatted. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves.
-While editing, the page is light gray with faint ruled lines, and the status bar shows the line and column of the cursor.
+While editing, the text column is a light gray sheet with faint ruled lines, and the status bar shows the line and column of the cursor.
 
 When you write a list, <kbd>Enter</kbd> continues it for you:
 

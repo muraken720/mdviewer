@@ -18,7 +18,7 @@
 - While editing, the status bar shows the cursor line and column
 
 ### Changed
-- Edit mode looks different from the view: a light gray page with faint ruled lines (in both themes)
+- Edit mode looks different from the view: the text column becomes a light gray sheet with faint ruled lines, while the side margins keep the page color (in both themes)
 
 ---
 
@@ -29,7 +29,7 @@
 - 編集中は、ステータスバーにカーソルの行・列を表示する
 
 **変更**
-- 編集モードを表示モードと見分けやすくした。背景を薄いグレーにし、薄い罫線を入れる（ライト・ダークとも）
+- 編集モードを表示モードと見分けやすくした。本文の幅の部分を薄いグレーの罫線入りの紙のようにし、左右の余白は表示モードと同じ色のままにする（ライト・ダークとも）
 
 ## [0.2.2] - 2026-09-29
 
