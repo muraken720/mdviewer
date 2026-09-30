@@ -2,10 +2,12 @@ import { expect, test } from 'vitest';
 import { App } from '../core/app';
 import { fakeBackend } from '../test/fake-backend';
 import { checkForChange } from './auto-reload';
+import { cursorPosition } from './editor';
 import { anchorId, classifyLink } from './links';
 import { typeset } from './math';
 import theme, { initialTheme, parseTheme } from './theme';
 import { windowTitle } from './title';
+import { collectHeadings, tocWidth } from './toc';
 import { clampZoom, MAX, MIN } from './zoom';
 
 test('classifyLink', () => {
@@ -108,4 +110,28 @@ test('theme: first launch saves the detected theme; later launches keep the save
   expect(backend.calls).toContainEqual(['setTheme', 'light']);
   expect(app.getCommand('theme.light')?.checked?.()).toBe(true);
   expect(app.getCommand('theme.auto')).toBeUndefined();
+});
+
+test('cursorPosition counts lines and columns from 1', () => {
+  expect(cursorPosition('', 0)).toEqual({ line: 1, col: 1 });
+  expect(cursorPosition('ab\ncd', 2)).toEqual({ line: 1, col: 3 });
+  expect(cursorPosition('ab\ncd', 3)).toEqual({ line: 2, col: 1 });
+  expect(cursorPosition('ab\n\ncd', 6)).toEqual({ line: 3, col: 3 });
+});
+
+test('collectHeadings takes levels 2 and 3 with an id and text', () => {
+  const root = document.createElement('div');
+  root.innerHTML =
+    '<h1 id="t">T</h1><h2 id="a">A <code>x</code></h2><h3 id="b">B</h3><h4 id="c">C</h4><h2>no id</h2><h2 id="e"> </h2>';
+  expect(collectHeadings(root)).toEqual([
+    { id: 'a', text: 'A x', level: 2 },
+    { id: 'b', text: 'B', level: 3 },
+  ]);
+});
+
+test('tocWidth: only when the margin right of the document is wide enough', () => {
+  expect(tocWidth(1279, 1)).toBe(0);
+  expect(tocWidth(1280, 1)).toBe(182);
+  expect(tocWidth(1920, 1)).toBe(260);
+  expect(tocWidth(1440, 1.5)).toBe(0); // zoomed in: the document fills the window
 });

@@ -14,6 +14,7 @@ import openFile from './open-file';
 import tabs from './tabs';
 import theme from './theme';
 import title from './title';
+import toc from './toc';
 import view from './view';
 import zoom from './zoom';
 
@@ -22,6 +23,7 @@ const plugins: Plugin[] = [
   tabs,
   view,
   editor,
+  toc,
   title,
   openFile,
   links,

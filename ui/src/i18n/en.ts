@@ -14,6 +14,7 @@ export const en: Messages = {
   'cmd.tab.close': 'Close Tab',
   'cmd.app.exit': 'Exit',
   'cmd.view.toggleEdit': 'Toggle View / Edit',
+  'cmd.view.toc': 'Table of Contents',
   'cmd.find.open': 'Find…',
   'cmd.zoom.in': 'Zoom In',
   'cmd.zoom.out': 'Zoom Out',
@@ -37,6 +38,8 @@ export const en: Messages = {
   'tab.close': 'Close',
   'mode.edit': 'Edit',
   'mode.view': 'View',
+  'toc.title': 'Contents',
+  'status.cursor': 'Ln {line}, Col {col}',
 
   'confirm.discard': 'You have unsaved changes. Discard them?',
   'confirm.overwrite': 'The file was changed by another program. Overwrite it?',

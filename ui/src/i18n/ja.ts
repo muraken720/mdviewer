@@ -13,6 +13,7 @@ export const ja = {
   'cmd.tab.close': 'タブを閉じる',
   'cmd.app.exit': '終了',
   'cmd.view.toggleEdit': '表示 / 編集の切替',
+  'cmd.view.toc': '目次を表示',
   'cmd.find.open': '検索…',
   'cmd.zoom.in': '拡大',
   'cmd.zoom.out': '縮小',
@@ -36,6 +37,8 @@ export const ja = {
   'tab.close': '閉じる',
   'mode.edit': '編集',
   'mode.view': '表示',
+  'toc.title': '目次',
+  'status.cursor': '行 {line}, 列 {col}',
 
   'confirm.discard': '未保存の変更があります。破棄してよろしいですか？',
   'confirm.overwrite': 'ファイルが外部で変更されています。上書き保存してよろしいですか？',

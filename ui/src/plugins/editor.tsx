@@ -1,5 +1,13 @@
 // Markdown editor pane (one per tab): a <textarea> with list continuation, indentation and save.
-import { type KeyboardEvent, type ReactElement, useEffect, useRef } from 'react';
+// The status bar shows the cursor position (line, column) while editing.
+import {
+  type KeyboardEvent,
+  type ReactElement,
+  type SyntheticEvent,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
 import type { App } from '../core/app';
 import type { PaneProps, Plugin } from '../core/types';
 import { useAppVersion } from '../core/useApp';
@@ -38,6 +46,29 @@ function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
   if (edit) applyEdit(ta, edit);
 }
 
+/** 1-based line and column of offset `pos` in `text` (the column counts characters). */
+export function cursorPosition(text: string, pos: number): { line: number; col: number } {
+  let line = 1;
+  for (let i = text.indexOf('\n'); i !== -1 && i < pos; i = text.indexOf('\n', i + 1)) line++;
+  return { line, col: pos - (text.lastIndexOf('\n', pos - 1) + 1) + 1 };
+}
+
+// The cursor position lives outside the app state: it changes on every key press, and only the
+// status bar item needs it (going through app.emit would re-render the whole window).
+let cursor = { line: 1, col: 1 };
+const cursorListeners = new Set<() => void>();
+function trackCursor(e: SyntheticEvent<HTMLTextAreaElement>) {
+  const ta = e.currentTarget;
+  const next = cursorPosition(ta.value, ta.selectionEnd);
+  if (next.line === cursor.line && next.col === cursor.col) return;
+  cursor = next;
+  for (const fn of cursorListeners) fn();
+}
+function subscribeCursor(fn: () => void) {
+  cursorListeners.add(fn);
+  return () => cursorListeners.delete(fn);
+}
+
 function Editor({ app, tab, active }: PaneProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -67,8 +98,15 @@ function Editor({ app, tab, active }: PaneProps) {
       spellCheck={false}
       aria-label={tab.doc?.name}
       onKeyDown={onKeyDown}
-      onInput={(e) => app.update(e.currentTarget.value, tab)}
-      className="block h-full w-full resize-none bg-bg px-4 pt-6 pb-16 font-mono text-[calc(16px*var(--zoom,1))] text-fg leading-relaxed outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))] sm:pt-8"
+      onInput={(e) => {
+        app.update(e.currentTarget.value, tab);
+        trackCursor(e);
+      }}
+      onSelect={trackCursor}
+      onKeyUp={trackCursor}
+      onClick={trackCursor}
+      onFocus={trackCursor}
+      className="editor-paper block h-full w-full resize-none px-4 pb-16 font-mono text-fg outline-none [tab-size:4] sm:px-[max(2rem,calc((100%-820px)/2))]"
     />
   );
 }
@@ -96,6 +134,14 @@ const PencilIcon = () => (
     <path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
   </svg>
 );
+
+/** "Ln 5, Col 12" in the status bar while editing. */
+function CursorStatus({ app }: { app: App }) {
+  useAppVersion(app);
+  const { line, col } = useSyncExternalStore(subscribeCursor, () => cursor);
+  if (!app.doc || app.mode !== 'edit') return null;
+  return <span className="tabular-nums">{app.t('status.cursor', { line, col })}</span>;
+}
 
 /**
  * View | Edit switch at the right end of the status bar. The current mode is shaded gray (pressed),
@@ -138,6 +184,7 @@ const editor: Plugin = {
   name: 'editor',
   setup(app) {
     app.addPane('edit', Editor);
+    app.addStatusItem(CursorStatus, 10);
     app.addStatusItem(ModeToggle, 100);
     const hasDoc = () => !!app.doc;
     app.command({
