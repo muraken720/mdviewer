@@ -10,7 +10,7 @@
 直したいときだけ、その場で編集。
 </p>
 
-<p align="center"><img src="docs/images/ja/demo.gif" alt="mdviewer: 数式と図、表、編集モード、ダークテーマと検索、表示メニュー"></p>
+<p align="center"><img src="docs/images/ja/hero-demo.gif" alt="mdviewer: 長いレポートを開き、目次の見出しをクリックしてその場所へ移動し、Ctrl+E でその場で 1 行直して、もう一度 Ctrl+E で整形表示を確認する"></p>
 
 <p align="center">
 <a href="https://github.com/muraken720/mdviewer/releases/latest"><img src="https://img.shields.io/badge/Download_for_Windows-0969da?style=for-the-badge" alt="Windows 版をダウンロード"></a><br>
@@ -31,9 +31,11 @@ Markdown を書いたり書き直したりするのは生成AIの仕事。mdview
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
 - **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ。表や Mermaid の図を楽に編集したい、自分の言語に翻訳したい――そうした作業はすべて LLM（生成AI）が得意とするところなので、mdviewer にはそのような編集機能をあえて追加しません
 
-使い方は [操作マニュアル](docs/manual/ja/README.md) を参照してください。マニュアルは、表・図・数式・絵文字などの表示見本を兼ねています（上の画面は、このマニュアルを表示したものです）。
+使い方は [操作マニュアル](docs/manual/ja/README.md) を参照してください。マニュアルは、表・図・数式・絵文字などの表示見本を兼ねています（「スクリーンショット」の最初のアニメーションは、このマニュアルを表示したものです）。
 
 ## スクリーンショット
+
+![mdviewer: 数式と図、表、編集モード、ダークテーマと検索、表示メニュー](docs/images/ja/demo.gif)
 
 | 表・タスクリスト・アラート | 編集モード（Markdown をそのまま編集） |
 |:---:|:---:|

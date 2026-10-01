@@ -2,7 +2,7 @@
 
 <p align="center"><strong>English</strong> | <a href="README.ja.md">日本語</a></p>
 
-<h2 align="center">Read AI-generated Markdown like a document.</h2>
+<h2 align="center">AI writes the Markdown.<br>mdviewer makes it a pleasure to read.</h2>
 
 <p align="center">
 Double-click a <code>.md</code> file.<br>
@@ -10,7 +10,7 @@ Read tables, Mermaid diagrams and math beautifully.<br>
 Edit only when you need to.
 </p>
 
-<p align="center"><img src="docs/images/demo.gif" alt="mdviewer: math and diagrams, tables, edit mode, dark theme and find, the View menu"></p>
+<p align="center"><img src="docs/images/hero-demo.gif" alt="mdviewer: open a long report, click a heading in the table of contents, jump there, press Ctrl+E to fix a line in place, and press Ctrl+E again to see it formatted"></p>
 
 <p align="center">
 <a href="https://github.com/muraken720/mdviewer/releases/latest"><img src="https://img.shields.io/badge/Download_for_Windows-0969da?style=for-the-badge" alt="Download for Windows"></a><br>
@@ -31,9 +31,11 @@ Your AI writes and rewrites the Markdown; mdviewer shows it as a nicely formatte
 - **Fast**: Markdown is converted in Rust ([pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark))
 - **Nothing extra**: only what you use every time you read a file or make a quick fix. Want to edit a table or a Mermaid diagram with ease, or translate a document into your language? Your LLM does all of that well, so mdviewer deliberately adds no such editing features
 
-See the [user guide](docs/manual/README.md) for how to use it. The guide doubles as a sample of what mdviewer can display: tables, diagrams, math, emoji and more (the screen above shows the guide itself).
+See the [user guide](docs/manual/README.md) for how to use it. The guide doubles as a sample of what mdviewer can display: tables, diagrams, math, emoji and more (the animation under Screenshots shows the guide itself).
 
 ## Screenshots
+
+![mdviewer: math and diagrams, tables, edit mode, dark theme and find, the View menu](docs/images/demo.gif)
 
 | Tables, task lists and alerts | Edit mode (edit the Markdown directly) |
 |:---:|:---:|
