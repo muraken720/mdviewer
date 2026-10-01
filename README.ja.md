@@ -1,18 +1,35 @@
-# mdviewer
+<h1 align="center">mdviewer</h1>
 
-[![CI](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/muraken720/mdviewer/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center"><a href="README.md">English</a> | <strong>日本語</strong></p>
 
-[English](README.md) | **日本語**
+<h2 align="center">AIが書いたMarkdownを、人が気持ちよく読むためのViewer。</h2>
 
-軽量・高速な Windows 向け Markdown ビューア／エディタ。
+<p align="center">
+<code>.md</code> をダブルクリックするだけ。<br>
+表も Mermaid の図も数式も、きれいに読める。<br>
+直したいときだけ、その場で編集。
+</p>
+
+<p align="center"><img src="docs/images/ja/demo.gif" alt="mdviewer: 数式と図、表、編集モード、ダークテーマと検索、表示メニュー"></p>
+
+<p align="center">
+<a href="https://github.com/muraken720/mdviewer/releases/latest"><img src="https://img.shields.io/badge/Download_for_Windows-0969da?style=for-the-badge" alt="Windows 版をダウンロード"></a><br>
+無料・オープンソース · Windows 10 / 11 · インストーラ版とポータブル版（<a href="#インストール">詳しく</a>）
+</p>
+
+<p align="center">
+<a href="https://github.com/muraken720/mdviewer/actions/workflows/ci.yml"><img src="https://github.com/muraken720/mdviewer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+</p>
+
+## mdviewer とは
+
+軽量・高速な Windows 向け Markdown ビューア／エディタです。
 Markdown を書いたり書き直したりするのは生成AIの仕事。mdviewer は、それを HTML に変換せずそのまま読みやすく表示し、ちょっとした手直しをその場でするためのツールです。
 
 - **軽い**: exe 単体で約 11 MB、うち約 5 MB は日本語フォント（Noto Sans JP）。描画には OS 標準の WebView2 を使うので、ブラウザエンジンは同梱しない（Rust + Tauri 2）
 - **速い**: Markdown は Rust（[pulldown-cmark](https://github.com/pulldown-cmark/pulldown-cmark)）で変換
 - **余計なものがない**: 読む・ちょっと直すために毎回使う機能だけ。表や Mermaid の図を楽に編集したい、自分の言語に翻訳したい――そうした作業はすべて LLM（生成AI）が得意とするところなので、mdviewer にはそのような編集機能をあえて追加しません
-
-![mdviewer: 数式と図、表、編集モード、ダークテーマと検索、表示メニュー](docs/images/ja/demo.gif)
 
 使い方は [操作マニュアル](docs/manual/ja/README.md) を参照してください。マニュアルは、表・図・数式・絵文字などの表示見本を兼ねています（上の画面は、このマニュアルを表示したものです）。
 
