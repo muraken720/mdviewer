@@ -2,7 +2,7 @@
 
 <p align="center"><a href="README.md">English</a> | <strong>日本語</strong></p>
 
-<h2 align="center">AIが書いたMarkdownを、人が気持ちよく読むためのViewer。</h2>
+<h2 align="center">AIが書いたMarkdownを、人がすらすら読むためのViewer。</h2>
 
 <p align="center">
 <code>.md</code> をダブルクリックするだけ。<br>

@@ -2,7 +2,7 @@
 
 <p align="center"><strong>English</strong> | <a href="README.ja.md">日本語</a></p>
 
-<h2 align="center">AI writes the Markdown.<br>mdviewer makes it a pleasure to read.</h2>
+<h2 align="center">AI writes the Markdown.<br>mdviewer makes it effortless to read.</h2>
 
 <p align="center">
 Double-click a <code>.md</code> file.<br>
